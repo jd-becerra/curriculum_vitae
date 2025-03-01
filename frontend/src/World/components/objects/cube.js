@@ -1,13 +1,13 @@
 import {
   Mesh,
   BoxGeometry,
-  MeshStandardMaterial,
+  MeshBasicMaterial,  // If we want to use a texture and shadows, use MeshStandardMaterial
   TextureLoader,
 } from "three";
 
 export default function createCube(props) {
   const geometry = new BoxGeometry(1, 1, 1);
-  const material = new MeshStandardMaterial({
+  const material = new MeshBasicMaterial({
     color: props.color,
   });
 

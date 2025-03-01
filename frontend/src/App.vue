@@ -23,8 +23,8 @@ html, body, #app, .v-application {
 /* Position TheWelcome component in the top left corner */
 .v-main {
   position: fixed;
-  top: 10%;
-  left: 10%;
+  top: 5%;
+  left: 5%;
   z-index: 1;
 }
 </style>

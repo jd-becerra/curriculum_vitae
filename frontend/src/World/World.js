@@ -7,7 +7,13 @@ import { Resizer } from "./systems/Resizer.js";
 import { createTerrain } from "./components/objects/terrain.js";
 import { createControls } from "./systems/controls.js";
 import { createCube } from "./components/objects/cube.js";
-import { Vector3 } from "three";
+import { Vector3, Object3D, CubeTextureLoader } from "three";
+import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
+import { createApp } from "vue";
+import ProjectLabel from "../components/labels/ProjectLabel.vue";
+import AboutLabel from "../components/labels/AboutLabel.vue";
+import ContactLabel from "../components/labels/ContactLabel.vue";
+import CertificatesLabel from "../components/labels/CertificatesLabel.vue";
 
 // These variables are module-scoped: we cannot access them
 // from outside the module.
@@ -15,6 +21,7 @@ let camera;
 let renderer;
 let scene;
 let loop;
+let labelRenderer;
 
 // In case we want to create a terrain
 function createWorldTerrain(scene) {
@@ -30,12 +37,48 @@ function createWorldTerrain(scene) {
   scene.add(terrain);
 }
 
+function createVueLabel(Component) {
+  const container = document.createElement("div");
+  createApp(Component).mount(container);
+  return new CSS3DObject(container);
+}
+
 class World {
-   constructor(container, labels) {
+   constructor(container) {
       // Instances of camera, scene, and renderer
       camera = createCamera();
       scene = createScene("gray");
       renderer = createRenderer();
+
+      // Create a CSS2DRenderer for labels
+      labelRenderer = new CSS3DRenderer();
+      labelRenderer.setSize(container.clientWidth, container.clientHeight);
+      labelRenderer.domElement.style.position = "absolute";
+      labelRenderer.domElement.style.top = "0px";
+      labelRenderer.domElement.style.width = "100%";
+      labelRenderer.domElement.style.height = "100%";
+      labelRenderer.domElement.style.transform = `scale(${window.devicePixelRatio})`;
+      labelRenderer.domElement.style.transformOrigin = "top left";
+      // Allow pointer events to pass through the label while still receiving them
+      // labelRenderer.domElement.style.pointerEvents = "none";
+      labelRenderer.domElement.style.backgroundColor = "transparent";
+      labelRenderer.domElement.style.zIndex = "1";
+      container.appendChild(labelRenderer.domElement);
+
+      // Set background
+      const loader = new CubeTextureLoader();
+      const path = "textures/skybox/";
+      const format = ".png";
+      const texture = loader.load([
+        path + "0" + format,
+        path + "1" + format,
+        path + "2" + format,
+        path + "3" + format,
+        path + "4" + format,
+        path + "5" + format,
+      ]);
+      scene.background = texture;
+
       // Initialize Loop
       loop = new Loop(camera, scene, renderer);
       container.append(renderer.domElement);
@@ -55,55 +98,54 @@ class World {
       });
       loop.updatables.push(cube);
       scene.add(cube);
+      cube.layers.enableAll();
 
-      // Add labels
-      const elem = document.createElement("div");
-      elem.textContent = "Lorem ipsum dolor sit amet consectetur adipiscing elit";
-      // Text color is black
-      elem.style.color = "black";
-      const tempV = new Vector3();
-      // get center of the cube
-      cube.updateWorldMatrix(true, false);
-      cube.getWorldPosition(tempV);
-      tempV.project(camera); // normalized screen coordinates
-      // convert normalized screen coordinates to CSS coordinates
-      labels.appendChild(elem);
-      const x = (tempV.x *  .5 + .5) * container.clientWidth;
-      const y = (tempV.y * -.5 + .5) * container.clientHeight;
-      // move the elem to that position
-      elem.style.transform = `translate(-50%, -50%) translate(${x}px,${y}px)`;
+      // Create Vue components for labels
+      const labels = [
+        createVueLabel(ProjectLabel),
+        createVueLabel(AboutLabel),
+        createVueLabel(ContactLabel),
+        createVueLabel(CertificatesLabel),
+      ];
+      scene.add(...labels);
 
-      // Update label position every frame
-      const updateLabelPosition = () => {
-        const tempV = new Vector3();
-        cube.updateWorldMatrix(true, false);
-        cube.getWorldPosition(tempV);
-        tempV.project(camera); // Convert world position to screen position
-
-        const x = (tempV.x * 0.5 + 0.5) * container.clientWidth;
-        const y = (tempV.y * -0.5 + 0.5) * container.clientHeight;
-
-        elem.style.left = `${x}px`;
-        elem.style.top = `${y}px`;
-      };
-      // Make an object with a tick method to push to the loop
-      const labelUpdate = { tick: updateLabelPosition };
-      loop.updatables.push(labelUpdate);
+      // Set the position of the labels and rotate them to face the camera
+      const dist = 400;
+      labels[0].position.set(0, 0, -dist);
+      labels[1].position.set(0, 0, dist);
+      labels[2].position.set(-dist, 0, 0);
+      labels[3].position.set(dist, 0, 0);
 
       // Create controls and push them to the loop
-      const controls = createControls(camera, renderer.domElement);
+      const controls = createControls(camera, labelRenderer.domElement);
       loop.updatables.push(controls);
 
-     const resizer = new Resizer(container, camera, renderer);
+      loop.updatables.push({
+        tick: (delta) => {
+          labels.forEach(label => {
+            label.lookAt(camera.position);
+          });
+
+          renderer.render(scene, camera);
+          labelRenderer.render(scene, camera);
+        },
+      });
+
+      const resizer = new Resizer(container, camera, renderer);
       resizer.onResize = () => {
-      this.render();
-     };
+        labelRenderer.setSize(container.clientWidth, container.clientHeight);
+        this.render();
+      };
+
+      this.render(); // render from the start
 
     }
     render() {
      // Draw a single frame
-     renderer.render(scene, camera);
-   }
+      renderer.render(scene, camera);
+      labelRenderer.render(scene, camera);
+    }
+
     // Animation handlers
    start() {
      loop.start();

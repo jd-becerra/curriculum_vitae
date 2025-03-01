@@ -12,18 +12,17 @@ import { World } from "@/World/World.js";
 export default {
   setup() {
     const sceneContainer = ref(null);
-    const labelsContainer = ref(null);
 
     onMounted(() => {
-      if (sceneContainer.value && labelsContainer.value) {
-        const world = new World(sceneContainer.value, labelsContainer.value);
+      if (sceneContainer.value) {
+        const world = new World(sceneContainer.value);
         world.start();
       } else {
-        console.error(`Scene container is ${sceneContainer.value} and labels container is ${labelsContainer.value}`);
+        console.error(`Could not find scene container`);
       }
     });
 
-    return { sceneContainer, labelsContainer };
+    return { sceneContainer };
   },
 };
 </script>
@@ -49,10 +48,10 @@ export default {
   left: 0;             /* make our position the top left of the container */
   top: 0;
   color: white;
-  z-indez: 10;
+  z-index: 10;
 }
 
-.three-labels>div {
+.label {
   position: absolute;  /* let us position them inside the container */
   left: 0;             /* make their default position the top left of the container */
   top: 0;
@@ -68,8 +67,16 @@ export default {
      0    1px 0 #000,
     -1px  1px 0 #000,
     -1px  0   0 #000;
+  color: black;
 }
 .three-labels>div:hover {
   color: red;
 }
+* {
+  font-smooth: always;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 </style>

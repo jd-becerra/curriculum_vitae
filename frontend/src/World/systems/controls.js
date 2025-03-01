@@ -6,7 +6,7 @@ function createControls(camera, canvas) {
 
  // Enable controls?
  controls.enabled = true;
- controls.autoRotate = true;
+ controls.autoRotate = false;
  controls.autoRotateSpeed = 0.2;
 
  // Control limits
@@ -26,6 +26,9 @@ function createControls(camera, canvas) {
  controls.enableDamping = true;
  controls.enableZoom = true;
  controls.enablePan = false;
+
+  controls.minDistance = 1;
+  controls.maxDistance = 30;
 
  controls.tick = () => controls.update();
 
