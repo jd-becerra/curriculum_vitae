@@ -19,7 +19,6 @@ import {
   lights[1].position.set(0, 10, -10); // back
   lights[2].position.set(0, -10, 0); // bottom
 
-
   lights[0].tick = (delta) => {};
   lights[1].tick = (delta) => {};
   lights[2].tick = (delta) => {};

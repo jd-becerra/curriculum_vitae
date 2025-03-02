@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import ThreeScene from "@/components/ThreeScene.vue";
-import TheWelcome from "./components/TheWelcome.vue";
+import MainView from './views/MainView.vue';
 </script>
 
 <template>
   <v-app>
-    <ThreeScene />
-    <TheWelcome />
+    <MainView />
   </v-app>
 </template>
 

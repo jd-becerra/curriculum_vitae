@@ -1,31 +1,30 @@
+<script setup lang="ts">
+  import { ref, onMounted, defineExpose } from 'vue';
+
+  const mainContainer = ref<HTMLDivElement | null>(null);
+  const sceneContainer = ref<HTMLDivElement | null>(null);
+  const labelsContainer = ref<HTMLDivElement | null>(null);
+
+  // Expose the scene container to the parent component
+  const getContainer = () => {
+    return sceneContainer.value as HTMLDivElement;
+  }
+  defineExpose({
+    getContainer,
+  })
+
+</script>
+
 <template>
   <div ref="mainContainer" class="main-container">
-    <div ref="sceneContainer" class="three-scene"></div>
-    <div ref="labelsContainer" class="three-labels"></div>
+    <div ref="sceneContainer" class="three-scene">
+      <!-- Three.js renderer will mount here -->
+    </div>
+    <div ref="labelsContainer" class="three-labels">
+      <!-- Labels, if any -->
+    </div>
   </div>
 </template>
-
-<script>
-import { onMounted, ref } from "vue";
-import { World } from "@/World/World.js";
-
-export default {
-  setup() {
-    const sceneContainer = ref(null);
-
-    onMounted(() => {
-      if (sceneContainer.value) {
-        const world = new World(sceneContainer.value);
-        world.start();
-      } else {
-        console.error(`Could not find scene container`);
-      }
-    });
-
-    return { sceneContainer };
-  },
-};
-</script>
 
 <style scoped>
 .main-container {

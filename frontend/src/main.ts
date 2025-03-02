@@ -5,6 +5,7 @@ import App from "./App.vue";
 import router from "./router";
 import { createVuetify } from 'vuetify';
 import 'vuetify/styles';
+import i18n  from './components/il8n.ts';
 
 // Vue configuration
 import {
@@ -73,6 +74,9 @@ const vuetify = createVuetify({
 
 // Create Vue app
 const app = createApp(App);
+
 app.use(router);
 app.use(vuetify);
+app.use(i18n);
+
 app.mount("#app");

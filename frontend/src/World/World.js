@@ -88,17 +88,19 @@ class World {
         loop.updatables.push(light);
         scene.add(light);
       });
-      lightHelpers.forEach(lightHelper => {
+
+      // If we want to see the lights in the scene, we can add the light helpers
+      /* lightHelpers.forEach(lightHelper => {
         scene.add(lightHelper);
-      });
+      }); */
 
       // Create a cube
-      const cube = createCube({
+      /* const cube = createCube({
         color: "white",
       });
       loop.updatables.push(cube);
       scene.add(cube);
-      cube.layers.enableAll();
+      cube.layers.enableAll(); */
 
       // Create Vue components for labels
       const labels = [
@@ -146,13 +148,57 @@ class World {
       labelRenderer.render(scene, camera);
     }
 
+
+    // Camera handlers
+    zoomCamera(direction) {
+      const distance = 0.5;
+      if (direction === "in") {
+        camera.position.z -= distance;
+      } else if (direction === "out") {
+        camera.position.z += distance;
+      }
+    }
+    rotateCamera(direction) {
+      console.log("Rotating camera in direction: ", direction);
+
+      const axis = new Vector3(0, 1, 0);
+      const angle = Math.PI / 2;
+      const pivot = new Vector3(0, 0, 0);
+
+      // Offset the camera position to the pivot
+      const offset = new Vector3().subVectors(camera.position, pivot);
+      const quaternion = new Object3D().quaternion;
+
+      if (direction === "left") {
+        quaternion.setFromAxisAngle(new Vector3(0, 1, 0), angle);
+      } else if (direction === "right") {
+        quaternion.setFromAxisAngle(new Vector3(0, 1, 0), -angle);
+      } else if (direction === "up") {
+        quaternion.setFromAxisAngle(new Vector3(1, 0, 0), angle);
+      } else if (direction === "down") {
+        quaternion.setFromAxisAngle(new Vector3(1, 0, 0), -angle);
+      } else if (direction === "reset") {
+        camera.position.set(0, 0, 10);
+        camera.lookAt(pivot);
+        return;
+      } else {
+        console.error("Invalid direction");
+        return;
+      }
+
+      // Rotate the offset
+      offset.applyQuaternion(quaternion);
+      camera.position.copy(pivot).add(offset);
+      camera.lookAt(pivot);
+    }
+
     // Animation handlers
-   start() {
-     loop.start();
-   }
+    start() {
+      loop.start();
+    }
     stop() {
-     loop.stop();
-   }
+      loop.stop();
+    }
  }
 
 export { World };
