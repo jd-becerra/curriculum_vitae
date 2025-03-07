@@ -9,7 +9,7 @@
     },
 
     "about": {
-        "title": "About",
-        "content": "My name is <strong>Jesús David</strong> and I am an aspiring software developer.<br>I am currently studying Software Engineering at the University of Colima.<br>I believe that the most important thing a developer must have is the ability to adapt and understand.<br>I am always looking for new challenges and opportunities to learn and grow.<br>My biggest interests are graphics programming, machine learning and backend development.<br>My favorite programming languages are C++ and Python.<br>I hope you enjoy this portfolio and feel free to contact me for any job opportunities or questions."
+        "title": "About me",
+        "description": "My name is <strong>Jesús David</strong> and I am an aspiring software developer.<br>I am currently studying Software Engineering at the University of Colima.<br>I believe that the most important thing a developer must have is the ability to adapt and understand.<br>I am always looking for new challenges and opportunities to learn and grow.<br>My biggest interests are graphics programming, machine learning and backend development.<br>My favorite programming languages are C++ and Python.<br>I hope you enjoy this portfolio and feel free to contact me for any job opportunities or questions."
     }
 }

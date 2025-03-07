@@ -28,6 +28,30 @@
     world.value.rotateCamera(direction);
   }
 
+  function moveCamera(direction: String) {
+    if (!world.value) {
+      console.error('World not found');
+      return;
+    }
+
+    world.value.moveCamera(direction);
+  }
+
+  /* onMounted(() => {
+    // Bind "W" key to move forward
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'w') {
+        moveCamera('forward');
+      } else if (event.key === 's') {
+        moveCamera('backward');
+      } else if (event.key === 'a') {
+        moveCamera('left');
+      } else if (event.key === 'd') {
+        moveCamera('right');
+      }
+    });
+  }); */
+
   function toggleLanguage() {
     locale.value = locale.value === 'en' ? 'es' : 'en';
   }
@@ -41,7 +65,7 @@
     <v-main>
       <v-container class="menu-container">
         <v-btn @click="toggleMenu" class="toggle-button">{{ menuVisible ? $t('menu.close') : $t('menu.open') }}</v-btn>
-        <v-expand-transition>
+        <Transition>
           <div v-if="menuVisible" class="menu-container-buttons">
             <WelcomeItem>
                 <template #icon>
@@ -71,7 +95,7 @@
               <template #heading>{{ $t('menu.projects') }}</template>
             </WelcomeItem>
           </div>
-        </v-expand-transition>
+        </Transition>
       </v-container>
       <v-container class="menu-rotation">
           <v-btn @click="rotateCamera('left')"><</v-btn>
@@ -105,7 +129,7 @@
     padding: 16px 0 0 16px;
     z-index: 10;
     pointer-events: all;
-    width: 20%;
+    width: 30%;
   }
 
   .menu-container-buttons {
@@ -125,6 +149,7 @@
     justify-content: flex-end; /* Align buttons to the right */
     pointer-events: all;
     padding: 16px;
+    width: 20%;
   }
 
   .menu-settings {

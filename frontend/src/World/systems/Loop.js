@@ -4,7 +4,7 @@ const clock = new Clock();
 
 
 class Loop {
- constructor(camera, scene, renderer) {
+ constructor(camera, scene, renderer, cssRenderer = null) {
    this.camera = camera;
    this.scene = scene;
    this.renderer = renderer;
@@ -14,9 +14,12 @@ class Loop {
  start() {
    this.renderer.setAnimationLoop(() => {
        this.tick();
-       // render a frame
-       this.renderer.render(this.scene, this.camera);
    });
+ }
+
+ render() {
+  this.renderer.render(this.scene, this.camera);
+
  }
 
  stop() {

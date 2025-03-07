@@ -1,11 +1,7 @@
 <template>
   <div class="about">
-    <h1>About</h1>
-    <p>
-      I am a software engineer with a passion for learning and problem solving. <br>
-      I have experience in full stack development, with a focus on front-end technologies. <br>
-      I am currently looking for opportunities to work on projects that will challenge me and help me grow as a developer.
-    </p>
+    <h1>{{ $t('about.title') }}</h1>
+    <p v-html="$t('about.description')"></p>
   </div>
 </template>
 

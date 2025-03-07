@@ -12,10 +12,15 @@ export default function createCube(props) {
   });
 
   const cube = new Mesh(geometry, material);
-  cube.position.set(0, 0, 0);
 
+  cube.position.set(0, 0, 0);
   cube.tick = (delta) => {
-    cube.rotation.y += 0.001;
+    //cube.rotation.y += 0.01;
+
+/*     // Move the cube in orbit
+    cube.position.x = Math.cos(cube.rotation.y) * 2;
+    cube.position.z = Math.sin(cube.rotation.y) * 2; */
+
   };
 
   return cube;
