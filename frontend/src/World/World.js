@@ -139,8 +139,9 @@ class World {
       renderer.domElement.style.height = "100%";
       renderer.domElement.style.zIndex = "1";
 
-      container.appendChild(labelRenderer.domElement);
       container.appendChild(renderer.domElement);
+      container.appendChild(labelRenderer.domElement);
+
       // Set background
       const loader = new CubeTextureLoader();
       const path = "textures/skybox/";
@@ -233,7 +234,7 @@ class World {
     }
     render() {
      // Draw a single frame
-
+      camera.updateMatrixWorld();
       renderer.render(scene, camera);
       labelRenderer.render(scene, camera);
     }
