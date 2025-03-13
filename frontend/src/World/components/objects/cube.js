@@ -13,7 +13,7 @@ export default function createCube(props) {
 
   const cube = new Mesh(geometry, material);
 
-  cube.position.set(0, 0, 0);
+  cube.position.set(2, 0, 0);
   cube.tick = (delta) => {
     //cube.rotation.y += 0.01;
 

@@ -26,6 +26,7 @@ let renderer;
 let scene;
 let loop;
 let labelRenderer;
+let labels = [];
 
 // variable helpers
 let isRotating = false;
@@ -46,7 +47,7 @@ function createWorldTerrain(scene) {
   scene.add(terrain);
 }
 
-function createVueLabel(Component) {
+function createVueLabel(Component, clientWidth, clientHeight) {
   const container = document.createElement("div");
   const app  = createApp(Component);
 
@@ -56,10 +57,13 @@ function createVueLabel(Component) {
 
   const obj = new Object3D();
   const cssObj = new CSS3DObject(container);
+  cssObj.name = Component.name;
   // scale the labels to fit the plane
-  const scale = 0.01;
+  const scale = 0.00001;
 
-  cssObj.scale.set(scale, scale, scale);
+  // Scale the labels based on container size
+  const scaleFactor = Math.min(clientWidth, clientHeight) * scale;
+  cssObj.scale.set(scaleFactor, scaleFactor, scaleFactor);
   obj.add(cssObj);
 
   var material = new MeshPhongMaterial({
@@ -68,27 +72,28 @@ function createVueLabel(Component) {
     blending: NoBlending,
     // side	: THREE.DoubleSide,
   });
-  var geometry = new PlaneGeometry( 4, 4 );
+  var geometry = new PlaneGeometry( 10, 4 );
   var mesh = new Mesh( geometry, material );
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   obj.lightShadowMesh = mesh
   obj.add( mesh );
 
+  obj.cssObj = cssObj; // For later reference
+
   return obj;
 }
 
-function getSceneObjects(scene) {
-  const objects = [];
-  scene.traverse((object) => {
+function updateLabels(clientWidth, clientHeight) {
+  const dist = 5;
 
-    // get all 3D objects
-    if (object.type === "Object3D") {
-      console.log(object);
-      objects.push(object);
-    }
+  const scale = 0.000015;
+  const scaleFactor = Math.min(clientWidth, clientHeight) * scale;
+  console.log(scaleFactor);
+  labels.forEach((label, index) => {
+    label.cssObj.scale.set(scaleFactor, scaleFactor, scaleFactor);
   });
-  return objects;
+
 }
 
 function rotateTick(delta) {
@@ -114,7 +119,7 @@ class World {
       // Create a pivot for the camera
       cameraPivot = new Object3D();
       cameraPivot.add(camera);
-      scene.add(camera);
+      scene.add(cameraPivot);
 
       // Create a CSS2DRenderer for labels
       labelRenderer = new CSS3DRenderer();
@@ -128,7 +133,7 @@ class World {
       // Allow pointer events to pass through the label while still receiving them
       labelRenderer.domElement.style.pointerEvents = "none";
       labelRenderer.domElement.style.backgroundColor = "transparent";
-      labelRenderer.domElement.style.zIndex = "0";
+      labelRenderer.domElement.style.zIndex = "2";
 
       renderer.setClearColor( 0x000000, 0 );
       renderer.shadowMap.enabled = true;
@@ -172,25 +177,25 @@ class World {
       }); */
 
       // Create a cube
-      const cube = createCube({
+      /* const cube = createCube({
         color: "blue",
       });
       cube.scale.set(0.5, 0.5, 0.5);
       loop.updatables.push(cube);
-      scene.add(cube);
+      scene.add(cube); */
 
       // load GLTF models (scene, path, position, scale)
       loadGLTF(scene, "3d_models/3d_github_logo.glb", [0, 0, 0.5], 0.1); // Github logo
-      loadGLTF(scene, "3d_models/3d_linkedin_logo.glb", [0, 0, -0.5], 0.1); // LinkedIn logo
+      loadGLTF(scene, "3d_models/3d_linkedin_logo.glb", [0, 0, 1], 0.1); // LinkedIn logo
 
       // Create Vue components for labels
-      const labels = [
-        createVueLabel(ProjectLabel),
-        createVueLabel(AboutLabel),
-        createVueLabel(ContactLabel),
-        createVueLabel(CertificatesLabel),
+      labels = [
+        createVueLabel(ProjectLabel, container.clientWidth, container.clientHeight),
+        createVueLabel(AboutLabel, container.clientWidth, container.clientHeight),
+        createVueLabel(ContactLabel, container.clientWidth, container.clientHeight),
+        createVueLabel(CertificatesLabel, container.clientWidth, container.clientHeight),
       ];
-      cube.add(...labels);
+      scene.add(...labels);
 
       // Set the position of the labels and rotate them to face the camera
       const dist = 5;
@@ -218,14 +223,16 @@ class World {
         tick: (delta) => {
           labelRenderer.render(scene, camera);
           renderer.render(scene, camera);
-
-          // log gltf model position
         },
       });
 
       const resizer = new Resizer(container, camera, renderer);
       resizer.onResize = () => {
         labelRenderer.setSize(container.clientWidth, container.clientHeight);
+        updateLabels(container.clientWidth, container.clientHeight);
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
         this.render();
       };
 
@@ -251,16 +258,14 @@ class World {
     }
 
     rotateCamera(direction) {
+      // Look at closest CSS3DObject label
+
       const angle = Math.PI / 2;
 
       if (direction === "left") {
         targetRotation.y += angle;
       } else if (direction === "right") {
         targetRotation.y -= angle;
-      } else if (direction === "up") {
-        targetRotation.x += angle;
-      } else if (direction === "down") {
-        targetRotation.x -= angle;
       } else if (direction === "reset") {
         cameraPivot.rotation.set(0, 0, 0);
         targetRotation.set(0, 0, 0);

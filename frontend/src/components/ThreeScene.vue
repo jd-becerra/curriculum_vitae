@@ -68,6 +68,7 @@
     -1px  0   0 #000;
   color: black;
 }
+
 .three-labels>div:hover {
   color: red;
 }
