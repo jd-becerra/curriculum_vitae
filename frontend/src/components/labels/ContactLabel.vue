@@ -33,7 +33,6 @@ export default {
   padding: 5rem;
   text-align: center;
   font-family: Arial, sans-serif;
-  pointer-events: none;
 }
 a {
   pointer-events: auto;

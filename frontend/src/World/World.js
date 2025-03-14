@@ -57,6 +57,11 @@ function createVueLabel(Component, clientWidth, clientHeight) {
 
   const obj = new Object3D();
   const cssObj = new CSS3DObject(container);
+  cssObj.element.style.pointerEvents = "none";
+  // Make all <a> tags clickable
+  cssObj.element.querySelectorAll("a").forEach((a) => {
+    a.style.pointerEvents = "auto";
+  });
   cssObj.name = Component.name;
   // scale the labels to fit the plane
   const scale = 0.00001;
@@ -72,11 +77,12 @@ function createVueLabel(Component, clientWidth, clientHeight) {
     blending: NoBlending,
     // side	: THREE.DoubleSide,
   });
+
   var geometry = new PlaneGeometry( 10, 4 );
   var mesh = new Mesh( geometry, material );
   mesh.castShadow = true;
   mesh.receiveShadow = true;
-  obj.lightShadowMesh = mesh
+  obj.lightShadowMesh = mesh;
   obj.add( mesh );
 
   obj.cssObj = cssObj; // For later reference
@@ -87,9 +93,8 @@ function createVueLabel(Component, clientWidth, clientHeight) {
 function updateLabels(clientWidth, clientHeight) {
   const dist = 5;
 
-  const scale = 0.000015;
+  const scale = 0.00001;
   const scaleFactor = Math.min(clientWidth, clientHeight) * scale;
-  console.log(scaleFactor);
   labels.forEach((label, index) => {
     label.cssObj.scale.set(scaleFactor, scaleFactor, scaleFactor);
   });
@@ -131,9 +136,14 @@ class World {
       labelRenderer.domElement.style.transform = `scale(${window.devicePixelRatio})`;
       labelRenderer.domElement.style.transformOrigin = "top left";
       // Allow pointer events to pass through the label while still receiving them
-      labelRenderer.domElement.style.pointerEvents = "none";
+      labelRenderer.domElement.style.pointerEvents = "auto";
       labelRenderer.domElement.style.backgroundColor = "transparent";
-      labelRenderer.domElement.style.zIndex = "2";
+      labelRenderer.domElement.style.zIndex = "1";
+
+      // Console log click events on the label renderer
+      labelRenderer.domElement.addEventListener("click", (event) => {
+        console.log("Label clicked", event);
+      });
 
       renderer.setClearColor( 0x000000, 0 );
       renderer.shadowMap.enabled = true;
@@ -142,7 +152,8 @@ class World {
       renderer.domElement.style.top = "0px";
       renderer.domElement.style.width = "100%";
       renderer.domElement.style.height = "100%";
-      renderer.domElement.style.zIndex = "1";
+      renderer.domElement.style.zIndex = "2";
+      renderer.domElement.style.pointerEvents = "none";
 
       container.appendChild(renderer.domElement);
       container.appendChild(labelRenderer.domElement);
@@ -210,7 +221,7 @@ class World {
       // Create controls and push them to the loop
       // const controls = createFirstPersonControls(camera, labelRenderer.domElement);
 
-      const controls = createOrbitControls(camera, renderer.domElement);
+      const controls = createOrbitControls(camera, labelRenderer.domElement);
 
       loop.updatables.push(controls);
 
@@ -242,8 +253,8 @@ class World {
     render() {
      // Draw a single frame
       camera.updateMatrixWorld();
-      renderer.render(scene, camera);
       labelRenderer.render(scene, camera);
+      renderer.render(scene, camera);
     }
 
 
