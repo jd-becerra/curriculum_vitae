@@ -6,22 +6,24 @@ import {
 
   // Create two directional lights (one in front, one behind), and one below pointing up
   const lights = [
-    new DirectionalLight(color, 4),
-    new DirectionalLight(color, 2 ),
-    new DirectionalLight(color, 2),
+    new DirectionalLight(color, 5),
+    new DirectionalLight(color, 5),
   ];
 
   // Create a light helper for each light
-  const lightHelpers = lights.map(light => new DirectionalLightHelper(light, 5));
+  const lightHelpers = [
+    new DirectionalLightHelper(lights[0], 2, "white"),
+    new DirectionalLightHelper(lights[1], 2, "red"),
+  ]
 
-  // Positions
-  lights[0].position.set(0, 10, 10); // up
-  lights[1].position.set(0, 10, -10); // back
-  lights[2].position.set(0, -10, 0); // bottom
+ // Positions
+  lights[0].position.set(5, 5, -15);
+  lights[1].position.set(0, 5, 10);
 
-  lights[0].tick = (delta) => {};
-  lights[1].tick = (delta) => {};
-  lights[2].tick = (delta) => {};
+  lights.forEach(light => {
+    light.tick = (delta) => {};
+  });
+
 
    return { lights, lightHelpers };
 }

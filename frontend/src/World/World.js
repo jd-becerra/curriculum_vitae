@@ -8,7 +8,7 @@ import { Resizer } from "./systems/Resizer.js";
 import { createTerrain } from "./components/objects/terrain.js";
 import { createOrbitControls, createFirstPersonControls, createDragControls, createPointerLockControls } from "./systems/controls.js";
 import { createCube } from "./components/objects/cube.js";
-import { Vector3, Object3D, CubeTextureLoader, Scene, MeshPhongMaterial,NoBlending, PCFSoftShadowMap, Mesh, PlaneGeometry, Color } from "three";
+import { Vector3, Object3D, CubeTextureLoader, Scene, MeshPhongMaterial,NoBlending, PCFSoftShadowMap, Mesh, PlaneGeometry, Color, Vector2 } from "three";
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 import { createApp } from "vue";
 import ProjectLabel from "../components/labels/ProjectLabel.vue";
@@ -47,7 +47,7 @@ function createWorldTerrain(scene) {
   scene.add(terrain);
 }
 
-function createVueLabel(Component, clientWidth, clientHeight) {
+function createVueLabel(Component, clientWidth, clientHeight, size = new Vector2(10, 4)) {
   const container = document.createElement("div");
   const app  = createApp(Component);
 
@@ -58,6 +58,7 @@ function createVueLabel(Component, clientWidth, clientHeight) {
   const obj = new Object3D();
   const cssObj = new CSS3DObject(container);
   cssObj.element.style.pointerEvents = "none";
+  cssObj.element.style.width = "50%";
   // Make all <a> tags clickable
   cssObj.element.querySelectorAll("a").forEach((a) => {
     a.style.pointerEvents = "auto";
@@ -78,12 +79,25 @@ function createVueLabel(Component, clientWidth, clientHeight) {
     // side	: THREE.DoubleSide,
   });
 
-  var geometry = new PlaneGeometry( 10, 4 );
+  var geometry = new PlaneGeometry(size.x, size.y);
   var mesh = new Mesh( geometry, material );
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   obj.lightShadowMesh = mesh;
   obj.add( mesh );
+
+  // Add a plane behind the main plane to cover the back of the label
+  var backMaterial = new MeshPhongMaterial({
+    opacity	: 0.15,
+    color	: new Color( 0x111111 ),
+    blending: NoBlending,
+  });
+
+  var backMesh = new Mesh( geometry, backMaterial );
+  backMesh.position.z = -0.01; // Slightly behind the main plane
+  backMesh.castShadow = true;
+  backMesh.receiveShadow = true;
+  obj.add( backMesh );
 
   obj.cssObj = cssObj; // For later reference
 
@@ -112,6 +126,10 @@ function rotateTick(delta) {
       isRotating = false;
     }
   }
+}
+
+function degToRad(degrees) {
+  return degrees * (Math.PI / 180);
 }
 
 class World {
@@ -183,9 +201,9 @@ class World {
       });
 
       // If we want to see the lights in the scene, we can add the light helpers
-      /* lightHelpers.forEach(lightHelper => {
+      lightHelpers.forEach(lightHelper => {
         scene.add(lightHelper);
-      }); */
+      });
 
       // Create a cube
       /* const cube = createCube({
@@ -196,15 +214,16 @@ class World {
       scene.add(cube); */
 
       // load GLTF models (scene, path, position, scale)
-      loadGLTF(scene, "3d_models/3d_github_logo.glb", [0, 0, 0.5], 0.1); // Github logo
-      loadGLTF(scene, "3d_models/3d_linkedin_logo.glb", [0, 0, 1], 0.1); // LinkedIn logo
+/*       loadGLTF(scene, "3d_models/3d_github_logo.glb", [0, 0, 0.5], 0.1); // Github logo
+      loadGLTF(scene, "3d_models/3d_linkedin_logo.glb", [0, 0, 1], 0.1); // LinkedIn logo */
+      loadGLTF(scene, "3d_models/cabin.glb", [-20, -10, -10], 0.7); // Log cabin interior
 
-      // Create Vue components for labels
+      /* // Create Vue components for labels [front, back, left, right]
       labels = [
-        createVueLabel(ProjectLabel, container.clientWidth, container.clientHeight),
         createVueLabel(AboutLabel, container.clientWidth, container.clientHeight),
         createVueLabel(ContactLabel, container.clientWidth, container.clientHeight),
         createVueLabel(CertificatesLabel, container.clientWidth, container.clientHeight),
+        createVueLabel(ProjectLabel, container.clientWidth, container.clientHeight),
       ];
       scene.add(...labels);
 
@@ -216,10 +235,18 @@ class World {
       labels[2].position.set(-dist, 0, 0);
       labels[2].rotation.y = Math.PI / 2; // rotate 90 degrees on the y axis
       labels[3].position.set(dist, 0, 0);
-      labels[3].rotation.y = -Math.PI / 2; // rotate -90 degrees on the y axis
+      labels[3].rotation.y = -Math.PI / 2; // rotate -90 degrees on the y axis */
 
       // Create controls and push them to the loop
       // const controls = createFirstPersonControls(camera, labelRenderer.domElement);
+
+      let labelComputer = createVueLabel(ProjectLabel, container.clientWidth, container.clientHeight, new Vector2(4.5, 2.5));
+      labelComputer.position.set(-14, -1.2, -7.5);
+      labelComputer.rotation.y = degToRad(36);
+      labelComputer.rotation.x = degToRad(-8);
+      labelComputer.rotation.z = degToRad(4);
+
+      scene.add(labelComputer);
 
       const controls = createOrbitControls(camera, labelRenderer.domElement);
 
