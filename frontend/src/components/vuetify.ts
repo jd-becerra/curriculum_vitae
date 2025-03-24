@@ -25,7 +25,9 @@ import {
   VToolbarTitle,
   VSlideXTransition,
   VDialog,
-  VProgressCircular
+  VProgressCircular,
+  VCarousel,
+  VCarouselItem
 } from 'vuetify/components';
 import { Ripple, Intersect, Scroll, Touch } from 'vuetify/directives';
 const vuetify = createVuetify({
@@ -54,7 +56,9 @@ const vuetify = createVuetify({
     VToolbarTitle,
     VSlideXTransition,
     VDialog,
-    VProgressCircular
+    VProgressCircular,
+    VCarousel,
+    VCarouselItem
   },
   directives: {
     Ripple,

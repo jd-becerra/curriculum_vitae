@@ -11,5 +11,30 @@
     "about": {
         "title": "About me",
         "description": "Being a 6th grade Software Engineering student, I am always eager to learn and improve my skills in order to use them in a competitive and exciting environment. With this in mind, I'm currently seeking for entry level jobs to begin my career in software development.<br> The programming languages I have most experience with are Python, C/C++ and Javascript. I am also proficient working with Linux systems, which I regularly use for personal and academic purposes. I have a continuous pursuit for learning about new technologies and concepts, and I always strive to stay up-to-date with the latest tech news.<br> I am excited to connect with your organization in order to apply my skills in real scenarios, continue learning, and ultimately bring value to your projects' vision to the best of my abilities."
+    },
+
+    "projects-vue": {
+        "title": "Projects",
+        "description": "Here you can find some of the projects I have worked on. You can find more on my GitHub profile.",
+        "projects" : [
+            {
+                "title": "Alicia - Demo for a Time Bending Game",
+                "description": "This is a description of the first project.",
+                "image": "img\\projects_scr\\p1.png",
+                "link": "https://github.com/jd-becerra/alicia"
+            },
+            {
+                "title": "Chess Game for Nand2Tetris ",
+                "description": "This is a description of the second project.",
+                "image": "img\\projects_scr\\p2.png",
+                "link": "https://github.com/jd-becerra/nand2tetris-Chess"
+            },
+            {
+                "title": "Interpolation Calculator",
+                "description": "This is a description of the third project.",
+                "image": "img\\projects_scr\\p3.png",
+                "link": "https://github.com/jd-becerra/interpolationCalculator"
+            }
+        ]
     }
 }

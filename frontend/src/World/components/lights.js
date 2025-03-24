@@ -1,19 +1,19 @@
 import {
   DirectionalLight,
   DirectionalLightHelper,
+  AmbientLight,
 } from "three";
  function createLights(color) {
 
   // Create two directional lights (one in front, one behind), and one below pointing up
   const lights = [
     new DirectionalLight(color, 5),
-    new DirectionalLight(color, 5),
+    new AmbientLight(color, 0.5),
   ];
 
   // Create a light helper for each light
   const lightHelpers = [
     new DirectionalLightHelper(lights[0], 2, "white"),
-    new DirectionalLightHelper(lights[1], 2, "red"),
   ]
 
  // Positions

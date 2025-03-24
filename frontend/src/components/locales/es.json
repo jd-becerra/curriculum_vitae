@@ -11,5 +11,30 @@
     "about": {
         "title": "Acerca de",
         "description": "Como estudiante de cuarto año de Ingeniería de Software, siempre estoy ansioso por aprender y mejorar mis habilidades para utilizarlas en un entorno competitivo y gratificante. Con esto en mente, actualmente estoy buscando trabajos que permitan comenzar mi carrera en el desarrollo de software e ingresar al mundo laboral.<br> Los lenguajes de programación con los que tengo más experiencia son Python, C/C++ y JavaScript, además de contar con habilidades trabajando en sistemas Linux, utilizándolos regularmente para fines personales y académicos. Así mismo, mantengo una búsqueda constante por aprender sobre nuevas tecnologías y conceptos, estando siempre al día con las últimas noticias en tecnología. <br> Estoy emocionado por conectar con tu organización, ya que así podré aplicar mis habilidades en escenarios reales, continuar aprendiendo y aportar en lo que pueda a la visión de tus proyectos."
+    },
+
+    "projects-vue": {
+        "title": "Projects",
+        "description": "Here you can find some of the projects I have worked on. You can find more on my GitHub profile.",
+        "projects" : [
+            {
+                "title": "Alicia - Demo for a Time Bending Game",
+                "description": "This is a description of the first project.",
+                "image": "img\\projects_scr\\p1.png",
+                "link": "https://github.com/jd-becerra/alicia"
+            },
+            {
+                "title": "Chess Game for Nand2Tetris ",
+                "description": "This is a description of the second project.",
+                "image": "img\\projects_scr\\p2.png",
+                "link": "https://github.com/jd-becerra/nand2tetris-Chess"
+            },
+            {
+                "title": "Interpolation Calculator",
+                "description": "This is a description of the third project.",
+                "image": "img\\projects_scr\\p3.png",
+                "link": "https://github.com/jd-becerra/interpolationCalculator"
+            }
+        ]
     }
 }
