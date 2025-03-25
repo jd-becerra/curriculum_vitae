@@ -17,23 +17,25 @@ function createOrbitControls(camera, canvas) {
  // to prevent the user from clipping with the objects.
 
  // Y axis (allow to look up only a bit)
- controls.maxPolarAngle = MathUtils.degToRad(120); // look up
+ controls.maxPolarAngle = MathUtils.degToRad(100); // look up
  controls.minPolarAngle = MathUtils.degToRad(80); // look down
 
  // X axis
-/*  controls.minAzimuthAngle = MathUtils.degToRad(-90); // default
-  controls.maxAzimuthAngle = MathUtils.degToRad(90); */
+  controls.maxAzimuthAngle = MathUtils.degToRad(60); // look right
+  controls.minAzimuthAngle = MathUtils.degToRad(30); // look left
 
  // Smooth camera:
  // Remember to add to loop updatables to work.
  controls.enableDamping = true;
  controls.enableZoom = true;
- controls.enablePan = false;
+ controls.enablePan = true;
 
-  controls.minDistance = 1;
+  controls.minDistance = 20;
   controls.maxDistance = 30;
 
- controls.tick = () => controls.update();
+  controls.target.set(0, 2, -10);
+
+  controls.tick = () => controls.update();
 
  return controls;
 }
@@ -41,8 +43,8 @@ function createOrbitControls(camera, canvas) {
 function createFirstPersonControls(camera, canvas) {
   const controls = new FirstPersonControls(camera, canvas);
   // Movement settings
-  controls.movementSpeed = 5;
-  controls.lookSpeed = 0.5;
+  controls.movementSpeed = 100;
+  controls.lookSpeed = 5;
   // Vertical constraints
   controls.lookVertical = true;
   controls.constrainVertical = true;

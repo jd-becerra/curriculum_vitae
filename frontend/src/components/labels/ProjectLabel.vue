@@ -1,9 +1,9 @@
 <template>
   <div class="projects">
-    <v-carousel cycle>
+    <v-carousel cycle cover >
       <v-carousel-item>
         <v-card>
-          <v-card-title>$t('projects-vue.title')</v-card-title>
+          <v-card-title>{{$t('projects-vue.title')}}</v-card-title>
           <v-card-text>
             <p v-html="$t('projects-vue.description')"></p>
           </v-card-text>
@@ -13,16 +13,16 @@
       <v-carousel-item
         v-for="(project, index) in $tm('projects-vue.projects')"
         :key="index"
-        :src="project.image"
         cover
         @click="sendTo(project.link)"
       >
-        <v-card>
+        <v-card class="project-card">
           <v-card-title>{{ project.title }}</v-card-title>
           <v-card-text>
             <p v-html="project.description"></p>
           </v-card-text>
         </v-card>
+        <v-img :src="project.image" class="project-image"></v-img>
       </v-carousel-item>
     </v-carousel>
   </div>
@@ -44,25 +44,32 @@ export default {
 <style scoped>
 .projects {
   background-color: #f5f5f5;
-  padding: 5rem;
   text-align: center;
   font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  overflow: hidden;
 }
 
 .v-carousel {
-  width: 50vw;
   margin: auto;
-  padding: 2rem;
 }
+
 .v-carousel-item {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 60vh;
   cursor: pointer;
+  position: relative;
+}
+
+.project-card {
+  position: relative;
+  z-index: 1;
+}
+
+.project-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  
+  object-fit: cover;
+  z-index: 0;
 }
 </style>

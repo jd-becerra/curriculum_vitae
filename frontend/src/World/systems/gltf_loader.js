@@ -14,6 +14,7 @@ function loadGLTF(scene, path, position, scale, name = '') {
         model.scale.set(scale, scale, scale);
         scene.add(model);
         model.renderOrder = 1;
+
         resolve(model); // Return the model when it's loaded
       },
       undefined,
