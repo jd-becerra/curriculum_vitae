@@ -1,8 +1,8 @@
 <template>
-  <div class="projects">
-    <v-carousel cycle cover >
+  <v-container class="projects">
+    <v-carousel cycle>
       <v-carousel-item>
-        <v-card>
+        <v-card class="project-card">
           <v-card-title>{{$t('projects-vue.title')}}</v-card-title>
           <v-card-text>
             <p v-html="$t('projects-vue.description')"></p>
@@ -21,11 +21,11 @@
           <v-card-text>
             <p v-html="project.description"></p>
           </v-card-text>
+          <v-img :src="project.image" class="project-image"></v-img>
         </v-card>
-        <v-img :src="project.image" class="project-image"></v-img>
       </v-carousel-item>
     </v-carousel>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -43,33 +43,47 @@ export default {
 
 <style scoped>
 .projects {
-  background-color: #f5f5f5;
-  text-align: center;
-  font-family: Arial, sans-serif;
-  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin-top: 0;
 }
 
-.v-carousel {
-  margin: auto;
+.projects-carousel {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
 }
 
-.v-carousel-item {
-  cursor: pointer;
-  position: relative;
+.project-slide {
+  width: 100%;
+  height: 100%;
 }
 
+.introduction-card,
 .project-card {
-  position: relative;
-  z-index: 1;
+  width: 100%;
+  max-width: 100%;
+  margin-top: 0;
 }
 
 .project-image {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  
-  object-fit: cover;
-  z-index: 0;
+  object-fit: scale-down;
+  margin-top: 0; /* Ensure no space between card and image */
+}
+
+/* Ensure text doesn't overflow */
+.text-subtitle-1,
+.text-body-2 {
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.next, .prev {
+  color: black;
 }
 </style>

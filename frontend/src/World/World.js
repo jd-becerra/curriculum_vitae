@@ -13,7 +13,18 @@ import { createSkybox } from "./components/background.js";
 import { PickHelper } from "./systems/pick_helper.js";
 
 // Three.js imports
-import { Vector3, Object3D, Scene, MeshPhongMaterial, NoBlending, PCFSoftShadowMap, Mesh, PlaneGeometry, Color, Vector2 } from "three";
+import {
+  Vector3,
+  Object3D,
+  Scene,
+  MeshPhongMaterial,
+  NoBlending,
+  PCFSoftShadowMap,
+  Mesh, PlaneGeometry,
+  Color,
+  Vector2,
+  EquirectangularReflectionMapping,
+} from "three";
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
@@ -44,22 +55,62 @@ let targetPivot = new Vector3(0, 0, 0);
 const startCameraPosition = {x: -40, y: 5, z: -40};
 const startCameraRotation = {x: 0, y: 80, z: 0};
 
-// In case we want to create a terrain
-function createWorldTerrain(scene) {
-    // Create terrain
-  // Random values for terrain vertices
-  const vertex_count = 12675;
-  const random_values = Array.from({length: vertex_count}, () => Math.random() - 0.5);
-  const terrain = createTerrain({
-    color: "green",
-    random_values: random_values,
-  });
-  loop.updatables.push(terrain);
-  scene.add(terrain);
+// Resolutions
+const widths = {
+  1920: 570,
+  1760: 560,
+  1680: 550,
+  1600: 550,
+  1440: 550,
+  1366: 550,
+  1280: 540,
+  1152: 530,
+  1024: 520,
+  900: 510,
+  800: 500,
+  700: 490,
+  600: 480,
+  500: 470,
+  400: 460,
+  300: 450,
 }
 
+const heights = {
+  1000: 430,
+  900: 420,
+  800: 420,
+  700: 410,
+  600: 400,
+  500: 400,
+  400: 390,
+  300: 380,
+  200: 370,
+}
+
+function getClosestSize(width, height) {
+  const closestWidth = Object.keys(widths).reduce((prev, curr) => {
+    curr = Number(curr); // Convert string key to number
+    prev = Number(prev);
+    return (Math.abs(curr - width) < Math.abs(prev - width) && curr <= width) ? curr : prev;
+  });
+
+  const closestHeight = Object.keys(heights).reduce((prev, curr) => {
+    curr = Number(curr); // Convert string key to number
+    prev = Number(prev);
+    return (Math.abs(curr - height) < Math.abs(prev - height) && curr <= height) ? curr : prev;
+  });
+
+  const w = widths[closestWidth];
+  const h = heights[closestHeight];
+
+  return {
+    width: w,
+    height: h,
+  };
+};
+
 function createVueLabel(Component, clientWidth, clientHeight, size = new Vector2(10, 4)) {
-  const container = document.createElement("div");
+  const container = document.createElement("v-app");
   const app  = createApp(Component);
 
   app.use(i18n); // Add locale feature
@@ -69,9 +120,18 @@ function createVueLabel(Component, clientWidth, clientHeight, size = new Vector2
   const obj = new Object3D();
   const cssObj = new CSS3DObject(container);
   cssObj.element.style.pointerEvents = "auto";
-  // Make the container fill the screen (center elements)
-  cssObj.element.style.width = "500px";
-  cssObj.element.style.height = "300px";
+
+  const aspectRatio = clientWidth / clientHeight;
+
+  // Calculate base width dynamically
+  const baseSize = getClosestSize(clientWidth, clientHeight);
+  const baseWidth = baseSize.width;
+  const height = baseSize.height;
+
+  // Set container dimensions
+  cssObj.element.style.width = `${baseWidth}px`;
+  cssObj.element.style.height = `${height}px`;
+  cssObj.element.style.overflow = "hidden"; // Prevent unwanted stretching
 
   // Choose allowed pointer events
   const allowedPointerEvents = ["a", "button", "v-carousel-item"];
@@ -84,12 +144,10 @@ function createVueLabel(Component, clientWidth, clientHeight, size = new Vector2
   });
   cssObj.name = Component.name;
   // scale the labels to fit the plane
-  const scale = 0.00001;
-
-  // Scale the labels based on container size
-  const scaleFactor = Math.min(clientWidth, clientHeight) * scale;
-  cssObj.scale.set(scaleFactor, scaleFactor, scaleFactor);
+  const scale = 0.000016;
+  cssObj.scale.set(baseSize.width * scale, baseSize.height * scale, 1);
   obj.add(cssObj);
+
 
   var material = new MeshPhongMaterial({
     transparent: true,
@@ -107,17 +165,28 @@ function createVueLabel(Component, clientWidth, clientHeight, size = new Vector2
 
   obj.cssObj = cssObj; // For later reference
 
+
   return obj;
 }
 
 function updateLabels(clientWidth, clientHeight) {
-  const dist = 5;
+  // Resize labels
 
-  const scale = 0.00001;
-  const scaleFactor = Math.min(clientWidth, clientHeight) * scale;
-  labels.forEach((label, index) => {
-    label.cssObj.scale.set(scaleFactor, scaleFactor, scaleFactor);
-  });
+  labels.forEach(label => {
+    const baseSize = getClosestSize(clientWidth, clientHeight);
+    console.log("Setting base size: ", baseSize, "for ", clientWidth, "x", clientHeight);
+    const baseWidth = baseSize.width;
+    const height = baseSize.height;
+
+    label.cssObj.element.style.width = `${baseWidth}px`;
+    label.cssObj.element.style.height = `${height}px`;
+
+    // Set the scale of the label
+    const scale = 0.000016;
+    label.cssObj.scale.set(baseWidth * scale, height * scale, 1);
+    label.lightShadowMesh.geometry.dispose();
+  }
+  );
 
 }
 
@@ -174,9 +243,9 @@ class World {
       container.appendChild(labelRenderer.domElement);
 
       // Set background (with skybox)
-      const path = "textures/skybox/";
+/*       const path = "textures/skybox/";
       const format = ".jpg";
-      scene.background = createSkybox(path, format);
+      scene.background = createSkybox(path, format); */
 
       // Initialize Loop
       loop = new Loop(camera, scene, renderer);
@@ -193,19 +262,9 @@ class World {
         scene.add(lightHelper);
       });
 
-      // Create a cube
-      /* const cube = createCube({
-        color: "blue",
-      });
-      cube.scale.set(0.5, 0.5, 0.5);
-      loop.updatables.push(cube);
-      scene.add(cube); */
-
-      // load GLTF models (scene, path, position, scale)
-/*       loadGLTF(scene, "3d_models/3d_github_logo.glb", [0, 0, 0.5], 0.1); // Github logo
-      loadGLTF(scene, "3d_models/3d_linkedin_logo.glb", [0, 0, 1], 0.1); // LinkedIn logo */
-      loadGLTF(scene, "3d_models/cabin_log.glb", [-20, -10, -10], 0.7, "cabin"); // Log cabin interior
-      loadGLTF(scene, "3d_models/desk.glb", [-20, -10, -10], 0.7, "desk");
+      loadGLTF(scene, loop, "3d_models/cabin_log.glb", [-20, -10, -10], 0.7, "cabin"); // Log cabin interior
+      loadGLTF(scene, loop, "3d_models/desk.glb", [-20, -10, -10], 0.7, "desk");
+      loadGLTF(scene, loop, "3d_models/notebook.glb", [-20, -10, -10], 0.7, "notebook");
 
       let labelComputer = createVueLabel(ProjectLabel, container.clientWidth, container.clientHeight, new Vector2(5.1, 2.7));
       labelComputer.position.set(-16, -0.7, -5.6);
@@ -257,6 +316,14 @@ class World {
         this.render();
       };
 
+      // Load HDR background
+/*       new RGBELoader().load("textures/snow.hdr", function (texture) {
+        texture.mapping = EquirectangularReflectionMapping;
+        scene.background = texture;
+        scene.environment = texture;
+      }); */
+
+
       this.render(); // render from the start
 
     }
@@ -265,17 +332,6 @@ class World {
       camera.updateMatrixWorld();
       labelRenderer.render(scene, camera);
       renderer.render(scene, camera);
-    }
-
-
-    // Camera handlers
-    zoomCamera(direction) {
-      const distance = 0.5;
-      if (direction === "in") {
-        camera.position.z -= distance;
-      } else if (direction === "out") {
-        camera.position.z += distance;
-      }
     }
 
     rotateCamera(direction) {
@@ -300,30 +356,7 @@ class World {
       isRotating = true;
     }
 
-    // Movement handlers
-    moveCamera(direction) {
-      const distance = 0.5;
-
-      // Get direction the camera is facing
-      const forward = new Vector3(0, 0, -1);
-      const right = new Vector3(1, 0, 0);
-
-      forward.applyQuaternion(camera.quaternion);
-      right.applyQuaternion(camecameraraPivot.quaternion);
-
-      if (direction === "forward") {
-        camera.position.add(forward.multiplyScalar(distance));
-      } else if (direction === "backward") {
-        camera.position.sub(forward.multiplyScalar(distance));
-      } else if (direction === "left") {
-        camera.position.sub(right.multiplyScalar(distance));
-      } else if (direction === "right") {
-        camera.position.add(right.multiplyScalar(distance));
-      } else {
-        console.error("Invalid direction");
-        return;
-      }
-    }
+    // Helpers to control camera events
 
     // Animation handlers
     start() {
