@@ -25,7 +25,7 @@ function loadGLTF(scene, loop, path, position, scale, name = '') {
         loop.updatables.push({
           tick: (delta) => {
             // Make animation faster (too slow on threejs)
-            model.mixer.update(delta * 40);
+            model.mixer.update(delta * 1.5);
           },
         });
 

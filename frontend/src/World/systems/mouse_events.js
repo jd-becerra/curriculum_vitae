@@ -1,8 +1,67 @@
 import { MathUtils } from 'three';
 import {Tween, Easing} from '@tweenjs/tween.js';
-import { AnimationClip } from 'three';
+import { AnimationClip, LoopOnce, LoopRepeat } from 'three';
+
+// State variables
+let isBookOpen = false;
+let isSocialsAreaActive = false;
+
+function getAnimation(animations, name) {
+  for (let i = 0; i < animations.length; i++) {
+    const animation = animations[i];
+    if (animation.name === name) {
+      return animation;
+    }
+  }
+  return null;
+}
+
+function handleSocialsHover(object, loop, picker) {
+  // Make the object bounce
+  loop.updatables.push({
+    tick: (delta) => {
+      object.rotation.y += delta * 0.1;
+      object.rotation.x += delta * 0.1;
+      object.rotation.z += delta * 0.1;
+    }
+  });
+
+}
+
 
 function handleAboutClick(camera, controls, object, loop) {
+  const minDistance = 28;
+  const maxDistance = 32;
+  const to = {x: -35, y: 0, z: -10};
+
+  const angles = {
+    yUp: MathUtils.degToRad(95),
+    yDown: MathUtils.degToRad(90),
+    xLeft: MathUtils.degToRad(80),
+    xRight: MathUtils.degToRad(95)
+  }
+  moveToArea(controls, loop, to, angles);
+}
+
+function handleSocialsClick(camera, controls, object, loop) {
+  const minDistance = 28;
+  const maxDistance = 32;
+  const to = {x: -40, y: 5, z: -24};
+  const angles = {
+    yDown: MathUtils.degToRad(90),
+    yUp: MathUtils.degToRad(92),
+    xLeft: MathUtils.degToRad(85),
+    xRight: MathUtils.degToRad(87)
+  }
+  moveToArea(controls, loop, to, angles);
+}
+
+function toggleIsSocialsActive() {
+  isSocialsAreaActive = !isSocialsAreaActive;
+  return isSocialsAreaActive;
+}
+
+function moveToArea(controls, loop, to, angles) {
   controls.minDistance = 28;
   controls.maxDistance = 32;
 
@@ -10,11 +69,6 @@ function handleAboutClick(camera, controls, object, loop) {
     x: controls.target.x,
     y: controls.target.y,
     z: controls.target.z
-  };
-  const to = {
-    x: -35,
-    y: 0,
-    z: -10
   };
 
   const t = new Tween(from)
@@ -32,8 +86,8 @@ function handleAboutClick(camera, controls, object, loop) {
     azimuth: [controls.minAzimuthAngle, controls.maxAzimuthAngle]
   };
   const toAngles = {
-    polar: [MathUtils.degToRad(90), MathUtils.degToRad(95)],
-    azimuth: [MathUtils.degToRad(80), MathUtils.degToRad(90)]
+    polar: [angles.yDown, angles.yUp], // Y axis
+    azimuth: [angles.xLeft, angles.xRight] // X axis
   };
 
   const t2 = new Tween(fromAngles)
@@ -78,10 +132,23 @@ function handleOpenBook(object) {
     return;
   }
 
-  // Play first animation
+  // Determine which animation to play
+  let bookAnimation = isBookOpen ? getAnimation(mixer.animations, "Close") : getAnimation(mixer.animations, "Open");
+  isBookOpen = !isBookOpen;
 
-  const animation = mixer.clipAction(mixer.animations[0], mixer.target);
-  animation.play();
+  if (!bookAnimation) {
+    console.error('No animation found for object:', object.name);
+    return;
+  }
+
+  // Stop all other animations to prevent conflicts
+  mixer.stopAllAction();
+
+  // Play the new animation
+  const animation = mixer.clipAction(bookAnimation, mixer.target);
+  animation.setLoop(LoopOnce);
+  animation.clampWhenFinished = true;
+  animation.reset().play(); // Ensure animation starts fresh
 }
 
-export { handleAboutClick, handleOpenBook };
+export { handleAboutClick, handleOpenBook, handleSocialsClick, handleSocialsHover, toggleIsSocialsActive };

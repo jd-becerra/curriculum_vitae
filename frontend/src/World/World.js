@@ -262,9 +262,14 @@ class World {
         scene.add(lightHelper);
       });
 
-      loadGLTF(scene, loop, "3d_models/cabin_log.glb", [-20, -10, -10], 0.7, "cabin"); // Log cabin interior
-      loadGLTF(scene, loop, "3d_models/desk.glb", [-20, -10, -10], 0.7, "desk");
-      loadGLTF(scene, loop, "3d_models/notebook.glb", [-20, -10, -10], 0.7, "notebook");
+
+      const objectsPos = [-20, -10, -10];
+      loadGLTF(scene, loop, "3d_models/logo_github.glb", objectsPos, 0.7, "github"); // GitHub logo
+      loadGLTF(scene, loop, "3d_models/logo_linkedin.glb", objectsPos, 0.7, "linkedin"); // LinkedIn logo
+      loadGLTF(scene, loop, "3d_models/logo_gmail.glb", objectsPos, 0.7, "gmail"); // Gmail logo
+      loadGLTF(scene, loop, "3d_models/cabin_log.glb", objectsPos, 0.7, "cabin"); // Log cabin interior
+      loadGLTF(scene, loop, "3d_models/desk.glb", objectsPos, 0.7, "desk");
+      loadGLTF(scene, loop, "3d_models/notebook.glb", objectsPos, 0.7, "notebook");
 
       let labelComputer = createVueLabel(ProjectLabel, container.clientWidth, container.clientHeight, new Vector2(5.1, 2.7));
       labelComputer.position.set(-16, -0.7, -5.6);
@@ -274,13 +279,21 @@ class World {
       scene.add(labelComputer);
 
       // create cubes that will be used as click areas for the labels
-      let cubeComputer = createCube({
+      const cubeComputer = createCube({
         color: "blue",
-        scale: [20,10,20],
-        position: [-10, -4, -11],
+        scale: [15,10,20],
+        position: [-15, -4, -11],
         name: "aboutArea",
       });
       scene.add(cubeComputer);
+
+      const cubeSocials = createCube({
+        color: "red",
+        scale: [7,5,20],
+        position: [-15, 5, -25],
+        name: "socialsArea",
+      });
+      scene.add(cubeSocials);
 
       const controls = createOrbitControls(camera, labelRenderer.domElement);
       loop.updatables.push(controls);
@@ -298,13 +311,22 @@ class World {
 
       // Add the pick helper
       const pickHelper = new PickHelper();
+      // Listener for clicks
       window.addEventListener("click", (event) => {
         const normalizedPosition = {
           x: (event.clientX / window.innerWidth) * 2 - 1,
           y: -(event.clientY / window.innerHeight) * 2 + 1,
         };
-        pickHelper.pick(normalizedPosition, scene, camera, controls, loop);
+        pickHelper.click(normalizedPosition, scene, camera, controls, loop);
       });
+
+/*    window.addEventListener("mousemove", (event) => {
+        const normalizedPosition = {
+          x: (event.clientX / window.innerWidth) * 2 - 1,
+          y: -(event.clientY / window.innerHeight) * 2 + 1,
+        };
+        pickHelper.hover(normalizedPosition, scene, camera, loop);
+      }); */
 
       const resizer = new Resizer(container, camera, renderer);
       resizer.onResize = () => {
