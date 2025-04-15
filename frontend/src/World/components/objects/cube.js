@@ -12,6 +12,7 @@ export default function createCube(props) {
   const scale = props.scale || [1, 1, 1];
   const position = props.position || [0, 0, 0];
   const geometry = new BoxGeometry(scale[0], scale[1], scale[2]);
+  const wireframe = new WireframeGeometry(geometry);
   const material = new MeshPhongMaterial({
     color: props.color,
     transparent: true,

@@ -278,6 +278,13 @@ class World {
       labelComputer.rotateX(degToRad(-10));
       scene.add(labelComputer);
 
+      let labelAbout = createVueLabel(AboutLabel, container.clientWidth, container.clientHeight, new Vector2(5.1, 2.7));
+      labelAbout.position.set(-12, -1, -11);
+      labelAbout.updateMatrix();
+      labelAbout.rotateY(degToRad(20));
+      labelAbout.rotateX(degToRad(-10));
+      scene.add(labelAbout);
+
       // create cubes that will be used as click areas for the labels
       const cubeComputer = createCube({
         color: "blue",
@@ -339,7 +346,7 @@ class World {
       };
 
       // Load HDR background
-/*       new RGBELoader().load("textures/snow.hdr", function (texture) {
+/*    new RGBELoader().load("textures/snow.hdr", function (texture) {
         texture.mapping = EquirectangularReflectionMapping;
         scene.background = texture;
         scene.environment = texture;

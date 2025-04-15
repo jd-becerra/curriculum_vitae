@@ -61,6 +61,10 @@ function toggleIsSocialsActive() {
   return isSocialsAreaActive;
 }
 
+function getIsSocialsActive() {
+  return isSocialsAreaActive;
+}
+
 function moveToArea(controls, loop, to, angles) {
   controls.minDistance = 28;
   controls.maxDistance = 32;
@@ -151,4 +155,11 @@ function handleOpenBook(object) {
   animation.reset().play(); // Ensure animation starts fresh
 }
 
-export { handleAboutClick, handleOpenBook, handleSocialsClick, handleSocialsHover, toggleIsSocialsActive };
+export {
+  handleAboutClick,
+  handleOpenBook,
+  handleSocialsClick,
+  handleSocialsHover,
+  toggleIsSocialsActive,
+  getIsSocialsActive,
+};

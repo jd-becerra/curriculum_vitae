@@ -4,7 +4,10 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createAnimationMixer } from './animation.js';
 
 const clickableObjects = [
-  'notebook'
+  'notebook',
+  'linkedin',
+  'github',
+  'gmail',
 ];
 
 function loadGLTF(scene, loop, path, position, scale, name = '') {
@@ -30,9 +33,10 @@ function loadGLTF(scene, loop, path, position, scale, name = '') {
         });
 
         // Set clickable property for all objects inside the model if applicable
-        if (clickableObjects.includes(model.name)) {
+        if (clickableObjects.includes(model.name) || (model.parent && clickableObjects.includes(model.parent.name))) {
           model.traverse((child) => {
             if (child.isMesh) {
+              console.log(`Setting clickable for ${child.name}`);
               child.clickable = true; // Set clickable property
               child.material.emissive = child.material.color.clone(); // Store original color
               child.material.emissiveIntensity = 0.5; // Set emissive intensity
