@@ -2,8 +2,14 @@
 import { AnimationMixer } from 'three';
 
 function createAnimationMixer(gltf, loop) {
-  const mixer = new AnimationMixer(gltf);
   const clips = gltf.animations;
+  if (clips.length === 0) {
+    return null;
+  }
+
+  console.log(`Animation clips found: ${gltf.animations[0].name}`);
+
+  const mixer = new AnimationMixer(gltf);
   mixer.animations = clips;
 
   // Set the animation root (might be a skeleton or the model itself)

@@ -21,8 +21,8 @@ function createOrbitControls(camera, canvas) {
  controls.minPolarAngle = MathUtils.degToRad(80); // look down
 
  // X axis
-  controls.maxAzimuthAngle = MathUtils.degToRad(60); // look right
-  controls.minAzimuthAngle = MathUtils.degToRad(30); // look left
+  controls.maxAzimuthAngle = MathUtils.degToRad(70); // look right
+  controls.minAzimuthAngle = MathUtils.degToRad(0); // look left
 
  // Smooth camera:
  // Remember to add to loop updatables to work.

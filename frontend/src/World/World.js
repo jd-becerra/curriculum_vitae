@@ -52,7 +52,7 @@ let labels = [];
 let isRotating = false;
 let targetRotation = new Vector3(0, 0, 0);
 let targetPivot = new Vector3(0, 0, 0);
-const startCameraPosition = {x: -40, y: 5, z: -40};
+const startCameraPosition = {x: -75, y: 5, z: -65};
 const startCameraRotation = {x: 0, y: 80, z: 0};
 
 // Resolutions
@@ -269,21 +269,16 @@ class World {
       loadGLTF(scene, loop, "3d_models/logo_gmail.glb", objectsPos, 0.7, "gmail"); // Gmail logo
       loadGLTF(scene, loop, "3d_models/cabin_log.glb", objectsPos, 0.7, "cabin"); // Log cabin interior
       loadGLTF(scene, loop, "3d_models/desk.glb", objectsPos, 0.7, "desk");
+      loadGLTF(scene, loop, "3d_models/bookcase.glb", objectsPos, 0.7, "bookcase");
+      loadGLTF(scene, loop, "3d_models/fireplace.glb", objectsPos, 0.7, "fireplace");
       loadGLTF(scene, loop, "3d_models/notebook.glb", objectsPos, 0.7, "notebook");
 
       let labelComputer = createVueLabel(ProjectLabel, container.clientWidth, container.clientHeight, new Vector2(5.1, 2.7));
-      labelComputer.position.set(-16, -0.7, -5.6);
+      labelComputer.position.set(-16, -0.7, -3.3);
       labelComputer.updateMatrix();
       labelComputer.rotateY(degToRad(90));
       labelComputer.rotateX(degToRad(-10));
       scene.add(labelComputer);
-
-      let labelAbout = createVueLabel(AboutLabel, container.clientWidth, container.clientHeight, new Vector2(5.1, 2.7));
-      labelAbout.position.set(-12, -1, -11);
-      labelAbout.updateMatrix();
-      labelAbout.rotateY(degToRad(20));
-      labelAbout.rotateX(degToRad(-10));
-      scene.add(labelAbout);
 
       // create cubes that will be used as click areas for the labels
       const cubeComputer = createCube({

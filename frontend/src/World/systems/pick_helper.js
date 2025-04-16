@@ -40,6 +40,8 @@ class PickHelper {
         return;
       }
 
+
+
       // Handle clicks on selected objects
       const objectName = this.pickedObject.name;
       if (objectName== 'aboutArea') {
