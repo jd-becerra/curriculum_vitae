@@ -16,13 +16,13 @@ function createOrbitControls(camera, canvas) {
  // It's recommended to set some control boundaries
  // to prevent the user from clipping with the objects.
 
- // Y axis (allow to look up only a bit)
- controls.maxPolarAngle = MathUtils.degToRad(100); // look up
+ // Y axis (allow to look up only a bit). Final values: max = 85, min = 80
+ controls.maxPolarAngle = MathUtils.degToRad(85); // look up
  controls.minPolarAngle = MathUtils.degToRad(80); // look down
 
- // X axis
-  controls.maxAzimuthAngle = MathUtils.degToRad(70); // look right
-  controls.minAzimuthAngle = MathUtils.degToRad(0); // look left
+ // X axis. Final values: max = 35, min = 30
+  controls.maxAzimuthAngle = MathUtils.degToRad(180); // look right
+  controls.minAzimuthAngle = MathUtils.degToRad(-180); // look left
 
  // Smooth camera:
  // Remember to add to loop updatables to work.
@@ -30,10 +30,10 @@ function createOrbitControls(camera, canvas) {
  controls.enableZoom = true;
  controls.enablePan = true;
 
-  controls.minDistance = 20;
-  controls.maxDistance = 30;
+  controls.minDistance = 1;
+  controls.maxDistance = 10;
 
-  controls.target.set(0, 2, -10);
+  controls.target.set(0, 5, 0);
 
   controls.tick = () => controls.update();
 

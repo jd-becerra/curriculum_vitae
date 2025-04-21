@@ -8,6 +8,7 @@ import { Loop } from "./systems/Loop.js";
 import { Resizer } from "./systems/Resizer.js";
 import { createTerrain } from "./components/objects/terrain.js";
 import { createOrbitControls, createFirstPersonControls, createDragControls, createPointerLockControls } from "./systems/controls.js";
+import { createSnowShaderPlane } from "./components/shaders.js";
 import { createCube } from "./components/objects/cube.js";
 import { createSkybox } from "./components/background.js";
 import { PickHelper } from "./systems/pick_helper.js";
@@ -24,6 +25,8 @@ import {
   Color,
   Vector2,
   EquirectangularReflectionMapping,
+  LOD,
+  LoadingManager,
 } from "three";
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
@@ -48,12 +51,14 @@ let loop;
 let labelRenderer;
 let labels = [];
 
+const loadingPromises = [];
+
 // variable helpers
 let isRotating = false;
 let targetRotation = new Vector3(0, 0, 0);
 let targetPivot = new Vector3(0, 0, 0);
-const startCameraPosition = {x: -75, y: 5, z: -65};
-const startCameraRotation = {x: 0, y: 80, z: 0};
+const startCameraPosition = {x: -10, y: 10, z: -30};
+const startCameraRotation = {x: 0, y: 0, z: 0};
 
 // Resolutions
 const widths = {
@@ -210,7 +215,7 @@ function degToRad(degrees) {
 class World {
    constructor(container) {
       // Instances of camera, scene, and renderer
-      camera = createCamera(startCameraPosition, startCameraRotation);
+      camera = createCamera(startCameraPosition, startCameraRotation, container.clientWidth, container.clientHeight);
       scene = createScene("gray");
       renderer = createRenderer();
       scene.add(camera);
@@ -263,21 +268,35 @@ class World {
       });
 
 
+      // For performance, we will add an LOD object to reduce the number of polygons rendered
+      const lod = new LOD();
+
       const objectsPos = [-20, -10, -10];
-      loadGLTF(scene, loop, "3d_models/logo_github.glb", objectsPos, 0.7, "github"); // GitHub logo
-      loadGLTF(scene, loop, "3d_models/logo_linkedin.glb", objectsPos, 0.7, "linkedin"); // LinkedIn logo
-      loadGLTF(scene, loop, "3d_models/logo_gmail.glb", objectsPos, 0.7, "gmail"); // Gmail logo
-      loadGLTF(scene, loop, "3d_models/cabin_log.glb", objectsPos, 0.7, "cabin"); // Log cabin interior
-      loadGLTF(scene, loop, "3d_models/desk.glb", objectsPos, 0.7, "desk");
-      loadGLTF(scene, loop, "3d_models/bookcase.glb", objectsPos, 0.7, "bookcase");
-      loadGLTF(scene, loop, "3d_models/fireplace.glb", objectsPos, 0.7, "fireplace");
-      loadGLTF(scene, loop, "3d_models/notebook.glb", objectsPos, 0.7, "notebook");
+
+      loadGLTF(scene, loop, "3d_models/room.glb", objectsPos, 0.7, "cabin");
+      // loadGLTF(scene, loop, "3d_models/trophies.glb", objectsPos, 0.7, "github"); // For socials and credits
+      loadGLTF(scene, loop, "3d_models/desk.glb", objectsPos, 0.7, "desk", 20);
+      // loadGLTF(scene, loop, "3d_models/bookcase.glb", objectsPos, 0.7, "bookcase");
+      // loadGLTF(scene, loop, "3d_models/fireplace.glb", objectsPos, 0.7, "fireplace");
+      // We'll add the exterior model to the LOD object since it's a large model and is far away
+      // loadGLTF(scene, loop, "3d_models/exterior.glb", objectsPos, 0.7, "exterior");
+      // scene.add(lod);
+
+      // Add snow shader
+      const snowShaderPlane = createSnowShaderPlane(container.clientHeight, new Vector3(-30, -30, -15));
+      // Add tick to update the shader
+      loop.updatables.push({
+        tick: (delta) => {
+          snowShaderPlane.material.uniforms.elapsedTime.value += delta;
+        },
+      });
+      scene.add(snowShaderPlane);
 
       let labelComputer = createVueLabel(ProjectLabel, container.clientWidth, container.clientHeight, new Vector2(5.1, 2.7));
-      labelComputer.position.set(-16, -0.7, -3.3);
+      labelComputer.position.set(-26.2, -1.4, -9.9);
       labelComputer.updateMatrix();
       labelComputer.rotateY(degToRad(90));
-      labelComputer.rotateX(degToRad(-10));
+      labelComputer.rotateX(degToRad(0));
       scene.add(labelComputer);
 
       // create cubes that will be used as click areas for the labels
@@ -287,7 +306,7 @@ class World {
         position: [-15, -4, -11],
         name: "aboutArea",
       });
-      scene.add(cubeComputer);
+      // scene.add(cubeComputer);
 
       const cubeSocials = createCube({
         color: "red",
@@ -295,9 +314,10 @@ class World {
         position: [-15, 5, -25],
         name: "socialsArea",
       });
-      scene.add(cubeSocials);
+      // scene.add(cubeSocials);
 
       const controls = createOrbitControls(camera, labelRenderer.domElement);
+
       loop.updatables.push(controls);
       // Add the rotate tick to the loop
       loop.updatables.push({
@@ -341,11 +361,15 @@ class World {
       };
 
       // Load HDR background
-/*    new RGBELoader().load("textures/snow.hdr", function (texture) {
+      new RGBELoader().load("textures/puresky.hdr", function (texture) {
         texture.mapping = EquirectangularReflectionMapping;
         scene.background = texture;
         scene.environment = texture;
-      }); */
+
+        // Reduce the brightness of the HDR background
+        texture.intensity = 0.5;
+
+      });
 
 
       this.render(); // render from the start

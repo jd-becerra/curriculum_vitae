@@ -11,7 +11,18 @@ const clickableObjects = [
   'gmail',
 ];
 
-function loadGLTF(scene, loop, path, position, scale, name = '') {
+function loadGLTF(
+    scene,
+    loop,
+    path,
+    position,
+    scale,
+    name = '',
+    selectable = false,
+    area = "",
+    lod = null,
+    lod_level = -1,
+  ) {
   return new Promise((resolve, reject) => {
     const loader = new GLTFLoader();
     loader.load(
@@ -35,6 +46,8 @@ function loadGLTF(scene, loop, path, position, scale, name = '') {
             },
           });
         }
+        model.selectable = selectable;
+        model.area = area;
 
         // Set clickable property for all objects inside the model if applicable
         if (clickableObjects.includes(model.name) || (model.parent && clickableObjects.includes(model.parent.name))) {
@@ -61,10 +74,17 @@ function loadGLTF(scene, loop, path, position, scale, name = '') {
           }
         }
 
+        // If we have an lod, add model to the corresponding lod level
+        if (lod && lod_level !== null && lod_level >= 0) {
+          lod.addLevel(model, lod_level);
+        }
 
         resolve(model); // Return the model when it's loaded
       },
-      undefined,
+      // called while loading
+      (xhr) => {
+        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+      },
       (error) => reject(error)
     );
   });
