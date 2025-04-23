@@ -12,7 +12,6 @@
   defineExpose({
     getContainer,
   })
-
 </script>
 
 <template>

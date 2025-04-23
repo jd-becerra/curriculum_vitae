@@ -41,6 +41,7 @@ import CertificatesLabel from "../components/labels/CertificatesLabel.vue";
 import { createApp } from "vue";
 import i18n from "../components/i18n.ts";
 import vuetify from "../components/vuetify.ts";
+import Stats from "stats.js";
 
 // These variables are module-scoped: we cannot access them
 // from outside the module.
@@ -174,6 +175,25 @@ function createVueLabel(Component, clientWidth, clientHeight, size = new Vector2
   return obj;
 }
 
+function showStats() {
+  var stats = new Stats();
+  stats.showPanel( 1 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+  document.body.appendChild( stats.dom );
+
+  function animate() {
+
+    stats.begin();
+
+    // monitored code goes here
+
+    stats.end();
+
+    requestAnimationFrame( animate );
+
+  }
+  requestAnimationFrame( animate );
+}
+
 function loadHDR(path, loadingManager) {
   return new Promise((resolve, reject) => {
 /*     new RGBELoader(loadingManager).load(
@@ -237,6 +257,7 @@ function degToRad(degrees) {
 class World {
    constructor(container) {
       const manager = createLoadingManager();
+      showStats();
 
       // Instances of camera, scene, and renderer
       camera = createCamera(startCameraPosition, startCameraRotation, container.clientWidth, container.clientHeight);
