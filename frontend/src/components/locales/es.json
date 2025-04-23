@@ -8,6 +8,11 @@
         "projects": "Proyectos"
     },
 
+    "scene-renderer": {
+        "loading-text": "Cargando escena...",
+        "progress": "archivos cargados."
+    },
+
     "about": {
         "title": "Acerca de",
         "description": "Como estudiante de cuarto año de Ingeniería de Software, siempre estoy ansioso por aprender y mejorar mis habilidades para utilizarlas en un entorno competitivo y gratificante. Con esto en mente, actualmente estoy buscando trabajos que permitan comenzar mi carrera en el desarrollo de software e ingresar al mundo laboral.<br> Los lenguajes de programación con los que tengo más experiencia son Python, C/C++ y JavaScript, además de contar con habilidades trabajando en sistemas Linux, utilizándolos regularmente para fines personales y académicos. Así mismo, mantengo una búsqueda constante por aprender sobre nuevas tecnologías y conceptos, estando siempre al día con las últimas noticias en tecnología. <br> Estoy emocionado por conectar con tu organización, ya que así podré aplicar mis habilidades en escenarios reales, continuar aprendiendo y aportar en lo que pueda a la visión de tus proyectos."

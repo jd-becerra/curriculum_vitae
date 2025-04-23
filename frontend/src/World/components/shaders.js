@@ -32,16 +32,16 @@ const snowFragmentShader = `
 `;
 
 function createSnowShaderPlane(innerHeight = 40.0, initialPos = new THREE.Vector3(0, 0, 0)) {
-  const particleSystemHeight = 20.0;
+  const particleSystemHeight = 40.0;
   const particleSystemWidth = 10.0;
   const particleSystemDepth = 70.0;
-  const count = 50; // number of particles
+  const count = 70; // number of particles
 
   // Create points all lined horizontally, half on the left and half on the right
   const positions = new Float32Array(count * 3);
   for (let i = 0; i < count; i++) {
     positions[i * 3] = initialPos.x + (Math.random() - 0.5) * particleSystemWidth; // random X
-    positions[i * 3 + 1] = initialPos.y + (Math.random() - 0.5) * particleSystemHeight; // random Y
+    positions[i * 3 + 1] = Math.random() * particleSystemHeight; // random Y
     positions[i * 3 + 2] = initialPos.z + (Math.random() - 0.5) * particleSystemDepth; // random Z
   }
 

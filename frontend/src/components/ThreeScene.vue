@@ -17,6 +17,13 @@
 
 <template>
   <div ref="mainContainer" class="main-container">
+    <div ref="loading" class="loading">
+      <div class="loading-bar-container">
+        <div class="loading-bar"></div>
+      </div>
+      <p class="loading-description" >{{ $t( 'scene-renderer.loading-text' ) }}</p>
+    </div>
+
     <div ref="sceneContainer" class="three-scene">
       <!-- Three.js renderer will mount here -->
     </div>
@@ -50,28 +57,46 @@
   z-index: 10;
 }
 
-.label {
-  position: absolute;  /* let us position them inside the container */
-  left: 0;             /* make their default position the top left of the container */
+.loading {
+  position: fixed;     /* make it fixed to always cover the screen */
+  left: 0;             /* start at the top-left corner */
   top: 0;
-  cursor: pointer;     /* change the cursor to a hand when over us */
-  font-size: large;
-  user-select: none;   /* don't let the text get selected */
-  text-shadow:         /* create a black outline */
-    -1px -1px 0 #000,
-     0   -1px 0 #000,
-     1px -1px 0 #000,
-     1px  0   0 #000,
-     1px  1px 0 #000,
-     0    1px 0 #000,
-    -1px  1px 0 #000,
-    -1px  0   0 #000;
-  color: black;
+  width: 100%;         /* cover the entire width of the screen */
+  height: 100%;        /* cover the entire height of the screen */
+  background-color: #555555;
+  z-index: 9999;       /* ensure it is above all other elements */
+  display: flex;
+  flex-direction: column; /* stack elements vertically */
+  justify-content: center;
+  align-items: center;
+  pointer-events: auto;
+  opacity: 0.1;
+}
+
+.loading-bar-container {
+  width: 50%;
+  height: 10px;
+  background-color: #333;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.loading-bar {
+  height: 100%;
+  width: 0%;
+  background: #888109;
+  transition: width 0.3s ease;
+}
+
+.loading-description {
+  color: white;
+  margin-top: 10px;
 }
 
 .three-labels>div:hover {
   color: red;
 }
+
 * {
   font-smooth: always;
   -webkit-font-smoothing: antialiased;

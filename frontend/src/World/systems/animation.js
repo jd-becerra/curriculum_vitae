@@ -7,18 +7,12 @@ function createAnimationMixer(gltf, loop) {
     return null;
   }
 
-  console.log(`Animation clips found: ${gltf.animations[0].name}`);
-
-  const mixer = new AnimationMixer(gltf);
-  mixer.animations = clips;
-
-  // Set the animation root (might be a skeleton or the model itself)
   const model = gltf.scene;
-  mixer.target = model;
   const skeleton = model.getObjectByProperty('type', 'Bone');
-  if (skeleton) {
-    mixer.target = skeleton;
-  }
+
+  const mixer = new AnimationMixer(skeleton || model);
+  mixer.animations = clips;
+  mixer.target = skeleton || model;
 
   return mixer;
 }

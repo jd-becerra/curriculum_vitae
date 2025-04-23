@@ -2,7 +2,7 @@
 
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createAnimationMixer } from './animation.js';
-import { LoopRepeat, LoopPingPong } from 'three';
+import { LoopRepeat, LoopPingPong, Color } from 'three';
 
 const clickableObjects = [
   'notebook',
@@ -14,6 +14,7 @@ const clickableObjects = [
 function loadGLTF(
     scene,
     loop,
+    loadingManager,
     path,
     position,
     scale,
@@ -24,7 +25,7 @@ function loadGLTF(
     lod_level = -1,
   ) {
   return new Promise((resolve, reject) => {
-    const loader = new GLTFLoader();
+    const loader = new GLTFLoader(loadingManager);
     loader.load(
       path,
       (gltf) => {
@@ -32,7 +33,6 @@ function loadGLTF(
         model.name = name;
         model.position.set(...position);
         model.scale.set(scale, scale, scale);
-        scene.add(model);
         model.renderOrder = 1;
 
         // create animation mixer
@@ -41,8 +41,11 @@ function loadGLTF(
           console.log(`Animation mixer created for ${model.name}`);
           loop.updatables.push({
             tick: (delta) => {
-              // Make animation faster (too slow on threejs)
-              model.mixer.update(delta * 1.5);
+
+              let time = delta;
+
+              if (model.name == 'fire') time = delta * 0.5; // Slow down fire animation
+              model.mixer.update(delta);
             },
           });
         }
@@ -59,13 +62,16 @@ function loadGLTF(
               child.material.emissiveIntensity = 0.5; // Set emissive intensity
             }
           });
-        }
+        } 
 
-        // If model name is "fireplace", start fire animation (0th animation)
-        if (model.name === 'fireplace') {
+        // These models have animations that should be played automatically
+        if (model.name === 'fire'  || model.name === 'candle_flame' || model.name === 'butterfly') {
+
           if (model.mixer && model.mixer.animations.length > 0) {
             const mixer = model.mixer;
-            const action = mixer.clipAction(mixer.animations[0], mixer.target);
+            const clip = mixer.animations[0]; // Get the first animation clip
+            console.log('Fireplace animation found:', clip);
+            const action = mixer.clipAction(clip);
             action.setLoop(LoopPingPong); // Loop the animation
             action.clampWhenFinished = false; // Allow looping
             action.play();
@@ -79,12 +85,16 @@ function loadGLTF(
           lod.addLevel(model, lod_level);
         }
 
+        model.onAfterRender = (renderer, scene, camera) => {
+          console.log(`Model ${model.name} rendered`);
+        };
+
+
+        scene.add(model);
         resolve(model); // Return the model when it's loaded
       },
       // called while loading
-      (xhr) => {
-        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-      },
+      (xhr) => {},
       (error) => reject(error)
     );
   });

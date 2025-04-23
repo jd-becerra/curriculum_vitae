@@ -6,12 +6,12 @@ import { createRenderer } from "./systems/renderer.js";
 import { loadGLTF } from "./systems/gltf_loader.js";
 import { Loop } from "./systems/Loop.js";
 import { Resizer } from "./systems/Resizer.js";
-import { createTerrain } from "./components/objects/terrain.js";
 import { createOrbitControls, createFirstPersonControls, createDragControls, createPointerLockControls } from "./systems/controls.js";
 import { createSnowShaderPlane } from "./components/shaders.js";
 import { createCube } from "./components/objects/cube.js";
 import { createSkybox } from "./components/background.js";
 import { PickHelper } from "./systems/pick_helper.js";
+import { createLoadingManager } from "./systems/loading_manager.js";
 
 // Three.js imports
 import {
@@ -26,10 +26,10 @@ import {
   Vector2,
   EquirectangularReflectionMapping,
   LOD,
-  LoadingManager,
 } from "three";
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
+import { EXRLoader } from 'three/addons/loaders/EXRLoader.js';
 
 // Vue components
 import ProjectLabel from "../components/labels/ProjectLabel.vue";
@@ -174,6 +174,28 @@ function createVueLabel(Component, clientWidth, clientHeight, size = new Vector2
   return obj;
 }
 
+function loadHDR(path, loadingManager) {
+  return new Promise((resolve, reject) => {
+/*     new RGBELoader(loadingManager).load(
+      path,
+      (texture) => resolve(texture),
+      undefined,
+      (err) => reject(err)
+    ); */
+
+    // Experimental EXR loader
+    new EXRLoader(loadingManager).load(
+      path,
+      (texture) => {
+        texture.mapping = EquirectangularReflectionMapping;
+        resolve(texture);
+      },
+      undefined,
+      (err) => reject(err)
+    );
+  });
+}
+
 function updateLabels(clientWidth, clientHeight) {
   // Resize labels
 
@@ -214,6 +236,8 @@ function degToRad(degrees) {
 
 class World {
    constructor(container) {
+      const manager = createLoadingManager();
+
       // Instances of camera, scene, and renderer
       camera = createCamera(startCameraPosition, startCameraRotation, container.clientWidth, container.clientHeight);
       scene = createScene("gray");
@@ -273,17 +297,23 @@ class World {
 
       const objectsPos = [-20, -10, -10];
 
-      loadGLTF(scene, loop, "3d_models/room.glb", objectsPos, 0.7, "cabin");
-      // loadGLTF(scene, loop, "3d_models/trophies.glb", objectsPos, 0.7, "github"); // For socials and credits
-      loadGLTF(scene, loop, "3d_models/desk.glb", objectsPos, 0.7, "desk", 20);
-      // loadGLTF(scene, loop, "3d_models/bookcase.glb", objectsPos, 0.7, "bookcase");
-      // loadGLTF(scene, loop, "3d_models/fireplace.glb", objectsPos, 0.7, "fireplace");
-      // We'll add the exterior model to the LOD object since it's a large model and is far away
-      // loadGLTF(scene, loop, "3d_models/exterior.glb", objectsPos, 0.7, "exterior");
+      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/room.glb", objectsPos, 0.7, "room"));
+      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/trophies.glb", objectsPos, 0.7, "trophies")); // For socials and credits
+      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/desk.glb", objectsPos, 0.7, "desk", 20));
+      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/bookcase.glb", objectsPos, 0.7, "bookcase"));
+      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/notebook.glb", objectsPos, 0.7, "notebook"));
+      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/butterfly.glb", objectsPos, 0.7, "butterfly"));
+      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/fireplace.glb", objectsPos, 0.7, "fireplace"));
+      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/fire.glb", objectsPos, 0.7, "fire"));
+      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/candle_flame.glb", objectsPos, 0.7, "candle_flame"));
+      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/exterior.glb", objectsPos, 0.7, "exterior"));
       // scene.add(lod);
 
       // Add snow shader
-      const snowShaderPlane = createSnowShaderPlane(container.clientHeight, new Vector3(-30, -30, -15));
+      const snowShaderPlane = createSnowShaderPlane(container.clientHeight, new Vector3(-40, -60, -15));
+      snowShaderPlane.position.y = -20;
+      snowShaderPlane.position.x = -5;
+      snowShaderPlane.position.z = 10;
       // Add tick to update the shader
       loop.updatables.push({
         tick: (delta) => {
@@ -303,10 +333,10 @@ class World {
       const cubeComputer = createCube({
         color: "blue",
         scale: [15,10,20],
-        position: [-15, -4, -11],
+        position: [-15, -3, -5],
         name: "aboutArea",
       });
-      // scene.add(cubeComputer);
+      scene.add(cubeComputer);
 
       const cubeSocials = createCube({
         color: "red",
@@ -361,18 +391,30 @@ class World {
       };
 
       // Load HDR background
-      new RGBELoader().load("textures/puresky.hdr", function (texture) {
-        texture.mapping = EquirectangularReflectionMapping;
-        scene.background = texture;
-        scene.environment = texture;
+      loadingPromises.push(
+        loadHDR("textures/background.exr", manager).then((texture) => {
+          texture.mapping = EquirectangularReflectionMapping;
+          texture.intensity = 0.1;
+          scene.background = texture;
+          scene.environment = texture;
+        })
+      );
 
-        // Reduce the brightness of the HDR background
-        texture.intensity = 0.5;
 
+       // render from the start
+
+      // Log when all models are loaded
+      Promise.all(loadingPromises).then(() => {
+        setTimeout(() => {
+          this.render();
+          const loadingElement = document.querySelector(".loading");
+          if (loadingElement) {
+            loadingElement.style.display = "none";
+          } else {
+            console.error("Loading element not found");
+          }
+        }, 0);
       });
-
-
-      this.render(); // render from the start
 
     }
     render() {
