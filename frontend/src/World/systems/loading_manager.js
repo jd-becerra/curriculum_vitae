@@ -6,11 +6,11 @@ function createLoadingManager() {
   const manager = new LoadingManager();
   const { t } = useI18n();
   manager.onStart = function (url, itemsLoaded, itemsTotal) {
-    console.log('Started loading file: ' + url);
+    // console.log('Started loading file: ' + url);
   };
 
   manager.onLoad = function () {
-    console.log('All items loaded.');
+    // console.log('All items loaded.');
     const loadingElement = document.querySelector(".loading");
     if (loadingElement) {
       loadingElement.style.display = "none";

@@ -30,7 +30,7 @@ function createOrbitControls(camera, canvas) {
  controls.enableZoom = true;
  controls.enablePan = true;
 
-  controls.minDistance = 1;
+  controls.minDistance = 0;
   controls.maxDistance = 10;
 
   controls.target.set(17, 4, 17);

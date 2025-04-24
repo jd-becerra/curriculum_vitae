@@ -19,6 +19,7 @@ import {
   Object3D,
   Scene,
   MeshPhongMaterial,
+  MeshBasicMaterial,
   NoBlending,
   PCFSoftShadowMap,
   Mesh, PlaneGeometry,
@@ -63,34 +64,34 @@ const startCameraRotation = {x: 0, y: 0, z: 0};
 
 // Resolutions
 const widths = {
-  1920: 570,
-  1760: 560,
-  1680: 550,
-  1600: 550,
-  1440: 550,
-  1366: 550,
-  1280: 540,
-  1152: 530,
-  1024: 520,
-  900: 510,
-  800: 500,
-  700: 490,
-  600: 480,
-  500: 470,
-  400: 460,
-  300: 450,
+  1920: 690,
+  1760: 680,
+  1680: 670,
+  1600: 670,
+  1440: 670,
+  1366: 670,
+  1280: 660,
+  1152: 650,
+  1024: 640,
+  900: 630,
+  800: 620,
+  700: 610,
+  600: 600,
+  500: 590,
+  400: 580,
+  300: 570,
 }
 
 const heights = {
-  1000: 430,
-  900: 420,
-  800: 420,
-  700: 410,
-  600: 400,
-  500: 400,
-  400: 390,
-  300: 380,
-  200: 370,
+  1000: 500,
+  900: 490,
+  800: 490,
+  700: 480,
+  600: 470,
+  500: 470,
+  400: 460,
+  300: 450,
+  200: 440,
 }
 
 function getClosestSize(width, height) {
@@ -155,7 +156,7 @@ function createVueLabel(Component, clientWidth, clientHeight, size = new Vector2
   obj.add(cssObj);
 
 
-  var material = new MeshPhongMaterial({
+  var material = new MeshBasicMaterial({
     transparent: true,
     opacity	: 0,
     color	: new Color( 0x111111 ),
@@ -318,16 +319,16 @@ class World {
 
       const objectsPos = [-20, -10, -10];
 
-      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/room.glb", objectsPos, 0.7, "room"));
-      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/trophies.glb", objectsPos, 0.7, "trophies")); // For socials and credits
-      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/desk.glb", objectsPos, 0.7, "desk", 20));
-      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/bookcase.glb", objectsPos, 0.7, "bookcase"));
-      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/notebook.glb", objectsPos, 0.7, "notebook"));
-      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/butterfly.glb", objectsPos, 0.7, "butterfly"));
-      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/fireplace.glb", objectsPos, 0.7, "fireplace"));
-      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/fire.glb", objectsPos, 0.7, "fire"));
-      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/candle_flame.glb", objectsPos, 0.7, "candle_flame"));
-      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/exterior.glb", objectsPos, 0.7, "exterior"));
+      // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/room.glb", objectsPos, 0.7, "room"));
+      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/trophies.glb", objectsPos, 0.7, "trophies", "socials")); // For socials and credits
+      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/desk.glb", objectsPos, 0.7, "desk", "projects"));
+      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/bookcase.glb", objectsPos, 0.7, "bookcase", "about"));
+      // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/notebook.glb", objectsPos, 0.7, "notebook"));
+      // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/butterfly.glb", objectsPos, 0.7, "butterfly"));
+      // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/fireplace.glb", objectsPos, 0.7, "fireplace"));
+      // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/fire.glb", objectsPos, 0.7, "fire"));
+      // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/candle_flame.glb", objectsPos, 0.7, "candle_flame"));
+      // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/exterior.glb", objectsPos, 0.7, "exterior"));
       // scene.add(lod);
 
       // Add snow shader
@@ -343,8 +344,8 @@ class World {
       });
       scene.add(snowShaderPlane);
 
-      let labelComputer = createVueLabel(ProjectLabel, container.clientWidth, container.clientHeight, new Vector2(5.1, 2.7));
-      labelComputer.position.set(-26.2, -1.4, -9.9);
+      let labelComputer = createVueLabel(ProjectLabel, container.clientWidth, container.clientHeight, new Vector2(7.1, 4.0));
+      labelComputer.position.set(-26.2, -0.7, -9.5);
       labelComputer.updateMatrix();
       labelComputer.rotateY(degToRad(90));
       labelComputer.rotateX(degToRad(0));
@@ -355,17 +356,23 @@ class World {
         color: "blue",
         scale: [15,10,20],
         position: [-15, -3, -5],
-        name: "aboutArea",
+        name: "projectsArea",
       });
       scene.add(cubeComputer);
-
       const cubeSocials = createCube({
         color: "red",
-        scale: [7,5,20],
-        position: [-15, 5, -25],
+        scale: [14,12,10],
+        position: [14, 4, -30],
         name: "socialsArea",
       });
-      // scene.add(cubeSocials);
+      scene.add(cubeSocials);
+      const cubeBookcase = createCube({
+        color: "yellow",
+        scale: [14,22,10],
+        position: [-5, 0, -30],
+        name: "aboutArea",
+      });
+      scene.add(cubeBookcase);
 
       const controls = createOrbitControls(camera, labelRenderer.domElement);
 
@@ -384,13 +391,21 @@ class World {
 
       // Add the pick helper
       const pickHelper = new PickHelper();
-      // Listener for clicks
+      // Listeners
       window.addEventListener("click", (event) => {
         const normalizedPosition = {
           x: (event.clientX / window.innerWidth) * 2 - 1,
           y: -(event.clientY / window.innerHeight) * 2 + 1,
         };
         pickHelper.click(normalizedPosition, scene, camera, controls, loop);
+      });
+      window.addEventListener("mousemove", (event) => {
+        const normalizedPosition = {
+          x: (event.clientX / window.innerWidth) * 2 - 1,
+          y: -(event.clientY / window.innerHeight) * 2 + 1,
+        };
+        const screenPosition = new Vector2(event.clientX, event.clientY);
+        pickHelper.hover(normalizedPosition, scene, camera, loop, screenPosition);
       });
 
 /*    window.addEventListener("mousemove", (event) => {
@@ -412,14 +427,14 @@ class World {
       };
 
       // Load HDR background
-      loadingPromises.push(
+/*       loadingPromises.push(
         loadHDR("textures/background.exr", manager).then((texture) => {
           texture.mapping = EquirectangularReflectionMapping;
           texture.intensity = 0.1;
           scene.background = texture;
           scene.environment = texture;
         })
-      );
+      ); */
 
 
        // render from the start

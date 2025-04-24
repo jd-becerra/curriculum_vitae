@@ -40,7 +40,7 @@ import {RectAreaLightHelper} from 'three/addons/helpers/RectAreaLightHelper.js';
   lights[1].position.set(-5, 11, -9);
   lights[1].rotation.x = -Math.PI / 2;
   candleLight.position.set(-25.5, 0, -16.5);
-  fireplaceLight.position.set(11, -6, -25);
+  fireplaceLight.position.set(15, -6, -25);
 
   lights.forEach(light => {
     light.tick = (delta) => {};

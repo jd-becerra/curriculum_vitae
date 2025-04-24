@@ -68,8 +68,9 @@
   flex-direction: column; /* stack elements vertically */
   justify-content: center;
   align-items: center;
-  pointer-events: auto;
-  opacity: 0.1;
+  /* block interaction with elements below */
+  pointer-events: none;
+  opacity: 0.1; /* for debugging */
 }
 
 .loading-bar-container {
