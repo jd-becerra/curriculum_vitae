@@ -1,8 +1,13 @@
-import { MathUtils } from 'three';
 import {Tween, Easing} from '@tweenjs/tween.js';
-import { AnimationClip, LoopOnce, LoopRepeat, Mesh, Plane, MeshBasicMaterial } from 'three';
-import { FontLoader } from 'three/addons/loaders/FontLoader.js';
-import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import {
+  LoopOnce,
+  TextureLoader,
+  PlaneGeometry,
+  MathUtils,
+  Mesh,
+  MeshBasicMaterial
+} from 'three';
+import { useI18n } from 'vue-i18n';
 
 // State variables
 let isBookOpen = false;
@@ -68,23 +73,44 @@ function handleSocialsClick(camera, controls, object, loop) {
 }
 
 function handleAboutClick(camera, controls, object, loop, scene) {
-  // Add text to the scene
-  const fontLoader = new FontLoader();
-  fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {
-    const textGeo = new TextGeometry('Hard Skills', {
-      font: font,
-      size: 1,
-      height: 0.1,
-      curveSegments: 12,
-      bevelEnabled: false,
-    });
-    const textMaterial = new MeshBasicMaterial({ color: 0xffffff });
-    const hardSkillsSection = new Mesh(textGeo, textMaterial);
-    hardSkillsSection.name = "Hard Skills Section";
-    hardSkillsSection.position.set(-3, 2, -50);
-    hardSkillsSection.scale.z = 0.1;
-    scene.add(hardSkillsSection);
+  // Solution 3 (Create a plane and add a png texture to it). This is more efficient than creating a 3D object
+  const geometry = new PlaneGeometry(3, 1);
+  const hardSkillsmaterial = new MeshBasicMaterial({ color: 0xffffff, transparent: true });
+  const hardSkillsHeader = new Mesh(geometry, hardSkillsmaterial);
+  hardSkillsHeader.name = "Hard Skills Section";
+  hardSkillsHeader.position.set(-5.1, 5.2, -26);
+
+  const textureLoader = new TextureLoader();
+  textureLoader.load('img/section_headers/hard_skills.png', (texture) => {
+    hardSkillsHeader.material.map = texture;
+    hardSkillsHeader.material.needsUpdate = true;
   });
+
+  const softSkillsmaterial = new MeshBasicMaterial({ color: 0xffffff, transparent: true });
+  const softSkillsHeader = new Mesh(geometry, softSkillsmaterial);
+  softSkillsHeader.name = "Soft Skills Section";
+  softSkillsHeader.position.set(-1, 5.2, -26);
+  textureLoader.load('img/section_headers/soft_skills.png', (texture) => {
+    softSkillsHeader.material.map = texture;
+    softSkillsHeader.material.needsUpdate = true;
+  });
+
+
+  // Add tick to make it bounce
+  let elapsed = 0;
+  const bounceHeight = 0.1;
+  const bounceSpeed = 3;
+  const initialY = hardSkillsHeader.position.y;
+  loop.updatables.push({
+    tick: (delta) => {
+      elapsed += delta;
+      hardSkillsHeader.position.y = initialY + Math.sin(elapsed * bounceSpeed) * bounceHeight;
+      softSkillsHeader.position.y = initialY + Math.sin(elapsed * bounceSpeed) * bounceHeight;
+    }
+  });
+
+  scene.add(softSkillsHeader);
+  scene.add(hardSkillsHeader);
 
   const to = {x: -3, y: 3.5, z: -50};
   const angles = {

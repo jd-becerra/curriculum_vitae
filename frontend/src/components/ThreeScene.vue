@@ -4,6 +4,8 @@
   const mainContainer = ref<HTMLDivElement | null>(null);
   const sceneContainer = ref<HTMLDivElement | null>(null);
   const labelsContainer = ref<HTMLDivElement | null>(null);
+  const loading = ref<HTMLDivElement | null>(null);
+  const sceneSectionHeaders = ref<HTMLDivElement | null>(null);
 
   // Expose the scene container to the parent component
   const getContainer = () => {
@@ -21,6 +23,9 @@
         <div class="loading-bar"></div>
       </div>
       <p class="loading-description" >{{ $t( 'scene-renderer.loading-text' ) }}</p>
+    </div>
+
+    <div ref="sceneSectionHeaders" class="scene-section-headers">
     </div>
 
     <div ref="sceneContainer" class="three-scene">
@@ -95,6 +100,18 @@
 
 .three-labels>div:hover {
   color: red;
+}
+
+.scene-section-headers {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* allow interaction with the scene */
+  z-index: 9999; /* ensure it is above all other elements */
+
+  display: none; /* hide by default */
 }
 
 * {
