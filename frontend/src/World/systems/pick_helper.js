@@ -69,7 +69,7 @@ class PickHelper {
         }
       }
       else if (objectName == 'aboutArea') {
-        mouseEvents.handleAboutClick(camera, controls, this.pickedObject, loop);
+        mouseEvents.handleAboutClick(camera, controls, this.pickedObject, loop, scene);
         const activateAboutArea = mouseEvents.toggleIsAboutActive();
         if (activateAboutArea) {
           const objectToRemove = scene.getObjectByName("aboutArea");

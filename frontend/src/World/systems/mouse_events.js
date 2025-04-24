@@ -1,6 +1,8 @@
 import { MathUtils } from 'three';
 import {Tween, Easing} from '@tweenjs/tween.js';
-import { AnimationClip, LoopOnce, LoopRepeat } from 'three';
+import { AnimationClip, LoopOnce, LoopRepeat, Mesh, Plane, MeshBasicMaterial } from 'three';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
 // State variables
 let isBookOpen = false;
@@ -65,7 +67,25 @@ function handleSocialsClick(camera, controls, object, loop) {
   moveToArea(controls, loop, to, angles);
 }
 
-function handleAboutClick(camera, controls, object, loop) {
+function handleAboutClick(camera, controls, object, loop, scene) {
+  // Add text to the scene
+  const fontLoader = new FontLoader();
+  fontLoader.load('fonts/helvetiker_regular.typeface.json', (font) => {
+    const textGeo = new TextGeometry('Hard Skills', {
+      font: font,
+      size: 1,
+      height: 0.1,
+      curveSegments: 12,
+      bevelEnabled: false,
+    });
+    const textMaterial = new MeshBasicMaterial({ color: 0xffffff });
+    const hardSkillsSection = new Mesh(textGeo, textMaterial);
+    hardSkillsSection.name = "Hard Skills Section";
+    hardSkillsSection.position.set(-3, 2, -50);
+    hardSkillsSection.scale.z = 0.1;
+    scene.add(hardSkillsSection);
+  });
+
   const to = {x: -3, y: 3.5, z: -50};
   const angles = {
     yDown: MathUtils.degToRad(90),
