@@ -26,6 +26,7 @@ export function createOutlineComposer(renderer, scene, camera, container) {
   outlinePass.hiddenEdgeColor.set("#190a05");
   composer.addPass(outlinePass);
 
+  // This caused an error with the outlinePass, might fix it later
 /*   const fxaaPass = new ShaderPass(FXAAShader);
   fxaaPass.material.uniforms["resolution"].value.set(
     1 / container.innerWidth,
