@@ -432,7 +432,7 @@ class World {
       // Log when all models are loaded
       Promise.all(loadingPromises).then(() => {
         setTimeout(() => {
-          resizer.onResize(); // I don't like this solution
+          // resizer.onResize(); // I don't like this solution
           this.render();
           const loadingElement = document.querySelector(".loading");
           if (loadingElement) {

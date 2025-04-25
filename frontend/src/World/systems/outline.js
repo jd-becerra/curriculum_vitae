@@ -26,12 +26,12 @@ export function createOutlineComposer(renderer, scene, camera, container) {
   outlinePass.hiddenEdgeColor.set("#190a05");
   composer.addPass(outlinePass);
 
-  const fxaaPass = new ShaderPass(FXAAShader);
+/*   const fxaaPass = new ShaderPass(FXAAShader);
   fxaaPass.material.uniforms["resolution"].value.set(
     1 / container.innerWidth,
     1 / container.innerHeight
   );
-  composer.addPass(fxaaPass);
+  composer.addPass(fxaaPass); */
 
   return {
     composer,
