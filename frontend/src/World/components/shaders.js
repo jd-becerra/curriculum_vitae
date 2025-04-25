@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import { Vector3, BufferGeometry, BufferAttribute, ShaderMaterial, Color, Points } from 'three';
 
 const snowVertexShader = `
   uniform float radiusX;
@@ -31,7 +31,7 @@ const snowFragmentShader = `
   }
 `;
 
-function createSnowShaderPlane(innerHeight = 40.0, initialPos = new THREE.Vector3(0, 0, 0)) {
+export function createSnowShaderPlane(innerHeight = 40.0, initialPos = new Vector3(0, 0, 0)) {
   const particleSystemHeight = 40.0;
   const particleSystemWidth = 10.0;
   const particleSystemDepth = 70.0;
@@ -45,12 +45,12 @@ function createSnowShaderPlane(innerHeight = 40.0, initialPos = new THREE.Vector
     positions[i * 3 + 2] = initialPos.z + (Math.random() - 0.5) * particleSystemDepth; // random Z
   }
 
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const geometry = new BufferGeometry();
+  geometry.setAttribute('position', new BufferAttribute(positions, 3));
 
-  const material = new THREE.ShaderMaterial({
+  const material = new ShaderMaterial({
     uniforms: {
-      color: { value: new THREE.Color(0xffffff) },
+      color: { value: new Color(0xffffff) },
       size: { type: 'f', value: 0.8 },
       scale: { type: 'f', value: innerHeight / 2 },
       height: { value: particleSystemHeight },
@@ -64,8 +64,6 @@ function createSnowShaderPlane(innerHeight = 40.0, initialPos = new THREE.Vector
     transparent: true,
   });
 
-  const points = new THREE.Points(geometry, material);
+  const points = new Points(geometry, material);
   return points;
 }
-
-export { createSnowShaderPlane };

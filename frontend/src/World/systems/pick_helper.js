@@ -94,13 +94,19 @@ class PickHelper {
     }
   }
 
-  hover(normalizedPosition, scene, camera, loop, screenPosition) {
+  hover(normalizedPosition, scene, camera, loop, screenPosition, outlinePass) {
     this.raycaster.setFromCamera(normalizedPosition, camera);
     const intersectedObjects = this.raycaster.intersectObjects(scene.children);
+
 
     let newHoveredObject = null;
     if (intersectedObjects.length > 0) {
       let candidate = intersectedObjects[0].object;
+
+      if (candidate != this.hoveredObject) {
+        outlinePass.selectedObjects = [];
+        this.hoveredObject = candidate;
+      }
 
       if (mouseEvents.getIsAreaActive("socials") && candidate.clickable) {
         // Change cursor to pointer
@@ -124,11 +130,19 @@ class PickHelper {
 
         document.body.style.cursor = 'default';
       }
+
+      // Add hovered object to outline pass
+      if (this.hoveredObject.clickable) {
+        outlinePass.selectedObjects.push(this.hoveredObject);
+        document.body.style.cursor = 'pointer';
+      }
     } else {
       // Remove hover effects
       mouseEvents.handleSocialIconHover(null, loop);
       mouseEvents.handleHardSkillsHover(null, loop, screenPosition);
       document.body.style.cursor = 'default';
+
+      outlinePass.selectedObjects = [];
     }
   }
 

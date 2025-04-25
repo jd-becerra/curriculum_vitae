@@ -12,6 +12,7 @@ import { createCube } from "./components/objects/cube.js";
 import { createSkybox } from "./components/background.js";
 import { PickHelper } from "./systems/pick_helper.js";
 import { createLoadingManager } from "./systems/loading_manager.js";
+import { createOutlineComposer } from "./systems/outline.js";
 
 // Three.js imports
 import {
@@ -52,6 +53,7 @@ let scene;
 let loop;
 let labelRenderer;
 let labels = [];
+let outlineComposer;
 
 const loadingPromises = [];
 
@@ -238,19 +240,6 @@ function updateLabels(clientWidth, clientHeight) {
 
 }
 
-function rotateTick(delta) {
-  if (isRotating) {
-    const step = 0.05; // Smaller step for smoother rotation
-    camera.rotation.y += (targetRotation.y - camera.rotation.y) * step;
-    camera.rotation.x += (targetRotation.x - camera.rotation.x) * step;
-
-    if (Math.abs(targetRotation.y - camera.rotation.y) < 0.001 &&
-        Math.abs(targetRotation.x - camera.rotation.x) < 0.001) {
-      isRotating = false;
-    }
-  }
-}
-
 function degToRad(degrees) {
   return degrees * (Math.PI / 180);
 }
@@ -264,6 +253,7 @@ class World {
       camera = createCamera(startCameraPosition, startCameraRotation, container.clientWidth, container.clientHeight);
       scene = createScene("gray");
       renderer = createRenderer();
+      renderer.setPixelRatio(window.devicePixelRatio);
       scene.add(camera);
 
       // Create a CSS2DRenderer for labels
@@ -377,15 +367,14 @@ class World {
       const controls = createOrbitControls(camera, labelRenderer.domElement);
 
       loop.updatables.push(controls);
-      // Add the rotate tick to the loop
-      loop.updatables.push({
-        tick: rotateTick,
-      });
+
+      // Create composer for outline
+      const { composer, outlinePass, onResize: resizeComposer } = createOutlineComposer(renderer, scene, camera, container);
+      outlineComposer = composer;
 
       loop.updatables.push({
         tick: (delta) => {
-          labelRenderer.render(scene, camera);
-          renderer.render(scene, camera);
+          this.render();
         },
       });
 
@@ -405,7 +394,7 @@ class World {
           y: -(event.clientY / window.innerHeight) * 2 + 1,
         };
         const screenPosition = new Vector2(event.clientX, event.clientY);
-        pickHelper.hover(normalizedPosition, scene, camera, loop, screenPosition);
+        pickHelper.hover(normalizedPosition, scene, camera, loop, screenPosition, outlinePass);
       });
 
 /*    window.addEventListener("mousemove", (event) => {
@@ -423,6 +412,7 @@ class World {
         camera.aspect = container.clientWidth / container.clientHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(container.clientWidth, container.clientHeight);
+        resizeComposer(container.clientWidth, container.clientHeight);
         this.render();
       };
 
@@ -442,6 +432,7 @@ class World {
       // Log when all models are loaded
       Promise.all(loadingPromises).then(() => {
         setTimeout(() => {
+          resizer.onResize(); // I don't like this solution
           this.render();
           const loadingElement = document.querySelector(".loading");
           if (loadingElement) {
@@ -457,7 +448,8 @@ class World {
      // Draw a single frame
       camera.updateMatrixWorld();
       labelRenderer.render(scene, camera);
-      renderer.render(scene, camera);
+      // renderer.render(scene, camera);
+      outlineComposer.render();
     }
 
     rotateCamera(direction) {

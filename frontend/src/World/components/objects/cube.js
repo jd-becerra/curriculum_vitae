@@ -16,7 +16,7 @@ export default function createCube(props) {
   const material = new MeshPhongMaterial({
     color: props.color,
     transparent: true,
-    opacity: 0.9, // Default opacity set to 0.5
+    opacity: 0, // Default opacity set to 0.5
     emissive: 0x270000,
   });
 

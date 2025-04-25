@@ -272,7 +272,7 @@ function handleSocialIconHover(newHoveredObject, loop) {
 
   hovSocialIcon = newHoveredObject;
 
-  if (hovSocialIcon) {
+  if (hovSocialIcon && newHoveredObject.selectableArea == "socials") {
     // Transform the hovered object
     hovSocialIconInitialY = hovSocialIcon.position.y;
     hovSocialIconInitialRotation = hovSocialIcon.rotation.y;
