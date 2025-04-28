@@ -1,5 +1,7 @@
 <script setup lang="ts">
-  import { ref, onMounted, defineExpose } from 'vue';
+  import { ref, onMounted, defineExpose, computed } from 'vue';
+  import HardSkillsLabel from "./labels/HardSkillsLabel.vue"
+  import { useMainStore } from './store';
 
   const mainContainer = ref<HTMLDivElement | null>(null);
   const sceneContainer = ref<HTMLDivElement | null>(null);
@@ -7,12 +9,16 @@
   const loading = ref<HTMLDivElement | null>(null);
   const sceneSectionHeaders = ref<HTMLDivElement | null>(null);
 
+  // Store state variables
+  const store = useMainStore();
+  const showHardSkills = computed(() => store.showHardSkills);
+
   // Expose the scene container to the parent component
   const getContainer = () => {
     return sceneContainer.value as HTMLDivElement;
   }
   defineExpose({
-    getContainer,
+    getContainer
   })
 </script>
 
@@ -25,7 +31,10 @@
       <p class="loading-description" >{{ $t( 'scene-renderer.loading-text' ) }}</p>
     </div>
 
-    <div ref="sceneSectionHeaders" class="scene-section-headers">
+    <div ref="sceneSectionHeaders" class="scene-section-headers"></div>
+
+    <div ref="inspectView" class="inspect-view">
+      <HardSkillsLabel v-if="showHardSkills" />
     </div>
 
     <div ref="sceneContainer" class="three-scene">
@@ -51,6 +60,7 @@
   width: 100%;
   height: 100%;
   display: block;
+  overflow: hidden;
 }
 
 .three-labels {
@@ -73,7 +83,6 @@
   flex-direction: column; /* stack elements vertically */
   justify-content: center;
   align-items: center;
-  /* block interaction with elements below */
   pointer-events: none;
   opacity: 0.1; /* for debugging */
 }
@@ -109,9 +118,22 @@
   width: 100%;
   height: 100%;
   pointer-events: none; /* allow interaction with the scene */
-  z-index: 9999; /* ensure it is above all other elements */
+  z-index: 11; /* ensure it is above all other elements */
 
   display: none; /* hide by default */
+}
+
+.inspect-view {
+  display: flex;
+  align-items: center; /* vertical center */
+  justify-content: center; /* horizontal center */
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none; /* optional if you want mouse clicks to pass through */
+  z-index: 12;
 }
 
 * {

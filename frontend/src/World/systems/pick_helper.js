@@ -1,12 +1,12 @@
 import { Raycaster } from 'three';
 import * as mouseEvents from './mouse_events.js';
+import { useMainStore } from '../../components/store';
 
 class PickHelper {
   constructor() {
     this.raycaster = new Raycaster();
     this.pickedObject = null;
     this.pickedObjectSavedColor = 0;
-
     this.hoveredObject = null;
 
     this.hardSkills = [
@@ -19,10 +19,17 @@ class PickHelper {
       'Vue',
       'SQL',
     ]
+
+    // Since we use Pinia, we also read the store to detect if we should force the state of the mouse events
+    this.store = useMainStore();
   }
 
   // Public methods
   click(normalizedPosition, scene, camera, controls, loop) {
+    if (!this.store.isMouseEventsAllowed) {
+      return;
+    }
+
     const time = loop.time;
 
     // Restore the color if there was a previously picked object
@@ -84,17 +91,23 @@ class PickHelper {
       }
       // If clicked object is a social media icon, open the corresponding link
       else if (mouseEvents.getIsAreaActive("socials")) {
-        console.log("Clicked on social media icon:", this.pickedObject.name);
         mouseEvents.handleSocialIconClick(this.pickedObject.name, loop);
       }
       else if (mouseEvents.getIsAreaActive("about")) {
-        console.log("Clicked on about icon:", this.pickedObject.name);
-        // mouseEvents.handleAboutBookClick(this.pickedObject.name, loop);
+        this.store.disableMouseEvents();
+        this._removeHoverEffects(loop, normalizedPosition);
+        // For now, we assume that hard skill books will be shown first (will be changed later)
+        mouseEvents.handleHardSkillsClick(this.pickedObject.name, loop);
       }
     }
   }
 
   hover(normalizedPosition, scene, camera, loop, screenPosition, outlinePass) {
+    if (!this.store.isMouseEventsAllowed) {
+      document.body.style.cursor = 'default';
+      return;
+    }
+
     this.raycaster.setFromCamera(normalizedPosition, camera);
     const intersectedObjects = this.raycaster.intersectObjects(scene.children);
 
@@ -138,8 +151,7 @@ class PickHelper {
       }
     } else {
       // Remove hover effects
-      mouseEvents.handleSocialIconHover(null, loop);
-      mouseEvents.handleHardSkillsHover(null, loop, screenPosition);
+      this._removeHoverEffects(loop, screenPosition);
       document.body.style.cursor = 'default';
 
       outlinePass.selectedObjects = [];
@@ -165,6 +177,12 @@ class PickHelper {
       };
       this.hover(normalizedPosition, scene, camera, loop);
     });
+  }
+
+  _removeHoverEffects(loop, screenPosition) {
+    mouseEvents.handleSocialIconHover(null, loop);
+    mouseEvents.handleHardSkillsHover(null, loop, screenPosition);
+    document.body.style.cursor = 'default';
   }
 
 }

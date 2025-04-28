@@ -11,5 +11,8 @@
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
-  }
+  },
+  "types": [
+   "vuex/types"
+  ]
 }

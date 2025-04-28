@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { ref } from 'vue'
-  import WelcomeItem from './WelcomeItem.vue'
+  import NavigationItem from './NavigationItem.vue'
   import DocumentationIcon from './icons/IconDocumentation.vue'
   import ToolingIcon from './icons/IconTooling.vue'
   import EcosystemIcon from './icons/IconEcosystem.vue'
@@ -37,21 +37,6 @@
     world.value.moveCamera(direction);
   }
 
-  /* onMounted(() => {
-    // Bind "W" key to move forward
-    window.addEventListener('keydown', (event) => {
-      if (event.key === 'w') {
-        moveCamera('forward');
-      } else if (event.key === 's') {
-        moveCamera('backward');
-      } else if (event.key === 'a') {
-        moveCamera('left');
-      } else if (event.key === 'd') {
-        moveCamera('right');
-      }
-    });
-  }); */
-
   function toggleLanguage() {
     locale.value = locale.value === 'en' ? 'es' : 'en';
   }
@@ -67,33 +52,33 @@
         <v-btn @click="toggleMenu" class="toggle-button">{{ menuVisible ? $t('menu.close') : $t('menu.open') }}</v-btn>
         <Transition>
           <div v-if="menuVisible" class="menu-container-buttons">
-            <WelcomeItem>
+            <NavigationItem>
                 <template #icon>
                   <DocumentationIcon />
                 </template>
-                <template #heading>{{$t('menu.welcome')}}</template>
-            </WelcomeItem>
+                <template #heading>{{$t('menu.Navigation')}}</template>
+            </NavigationItem>
 
-            <WelcomeItem>
+            <NavigationItem>
               <template #icon>
                 <ToolingIcon />
               </template>
               <template #heading>{{ $t('menu.about') }}</template>
-            </WelcomeItem>
+            </NavigationItem>
 
-            <WelcomeItem>
+            <NavigationItem>
               <template #icon>
                 <EcosystemIcon />
               </template>
               <template #heading>{{ $t('menu.contact') }}</template>
-            </WelcomeItem>
+            </NavigationItem>
 
-            <WelcomeItem>
+            <NavigationItem>
               <template #icon>
                 <CommunityIcon />
               </template>
               <template #heading>{{ $t('menu.projects') }}</template>
-            </WelcomeItem>
+            </NavigationItem>
           </div>
         </Transition>
       </v-container>
@@ -116,6 +101,7 @@
     top: 0;
     left: 0;
     pointer-events: none;
+    overflow: hidden;
   }
 
   .toggle-button {

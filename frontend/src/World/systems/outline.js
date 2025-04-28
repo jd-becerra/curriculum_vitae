@@ -1,8 +1,6 @@
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
-import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass";
-import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader";
 import {
   Vector2,
 } from "three";
@@ -26,14 +24,6 @@ export function createOutlineComposer(renderer, scene, camera, container) {
   outlinePass.hiddenEdgeColor.set("#190a05");
   composer.addPass(outlinePass);
 
-  // This caused an error with the outlinePass, might fix it later
-/*   const fxaaPass = new ShaderPass(FXAAShader);
-  fxaaPass.material.uniforms["resolution"].value.set(
-    1 / container.innerWidth,
-    1 / container.innerHeight
-  );
-  composer.addPass(fxaaPass); */
-
   return {
     composer,
     outlinePass,
@@ -42,7 +32,6 @@ export function createOutlineComposer(renderer, scene, camera, container) {
     onResize: (width, height) => {
       composer.setSize(width, height);
       outlinePass.setSize(width, height);
-      fxaaPass.material.uniforms['resolution'].value.set(1 / width, 1 / height);
     },
   };
 }

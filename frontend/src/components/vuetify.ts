@@ -27,7 +27,8 @@ import {
   VDialog,
   VProgressCircular,
   VCarousel,
-  VCarouselItem
+  VCarouselItem,
+  VDivider
 } from 'vuetify/components';
 import { Ripple, Intersect, Scroll, Touch } from 'vuetify/directives';
 const vuetify = createVuetify({
@@ -58,7 +59,8 @@ const vuetify = createVuetify({
     VDialog,
     VProgressCircular,
     VCarousel,
-    VCarouselItem
+    VCarouselItem,
+    VDivider
   },
   directives: {
     Ripple,

@@ -5,9 +5,10 @@ import {
   PlaneGeometry,
   MathUtils,
   Mesh,
-  MeshBasicMaterial
+  MeshBasicMaterial,
 } from 'three';
 import { useI18n } from 'vue-i18n';
+import { useMainStore } from '../../components/store';
 
 // State variables
 let isBookOpen = false;
@@ -28,6 +29,38 @@ let hovHardSkill = null;
 let hovHardSkillInitialX = null;
 let hovHardSkillTick = null;
 let hovHardSkillTag = null;
+
+// Three.js helpers
+const textureLoader = new TextureLoader();
+
+function loadPngHeader(url, name, pos, scale, loop, scene) {
+  const geometry = new PlaneGeometry(scale.x, scale.y);
+  const material = new MeshBasicMaterial({ color: 0xffffff, transparent: true });
+  const header = new Mesh(geometry, material);
+  header.name = name;
+
+  header.position.set(pos.x, pos.y, pos.z);
+
+  textureLoader.load(url, (texture) => {
+    header.material.map = texture;
+    header.material.needsUpdate = true;
+  });
+
+  // Add tick to make it bounce
+  let elapsed = 0;
+  const bounceHeight = 0.1;
+  const bounceSpeed = 3;
+  const initialY = header.position.y;
+  loop.updatables.push({
+    tick: (delta) => {
+      elapsed += delta;
+      const y = initialY + Math.sin(elapsed * bounceSpeed) * bounceHeight;
+      header.position.set(pos.x, y, pos.z);
+    }
+  });
+
+  scene.add(header);
+}
 
 function getAnimation(animations, name) {
   for (let i = 0; i < animations.length; i++) {
@@ -73,46 +106,11 @@ function handleSocialsClick(camera, controls, object, loop) {
 }
 
 function handleAboutClick(camera, controls, object, loop, scene) {
-  // Solution 3 (Create a plane and add a png texture to it). This is more efficient than creating a 3D object
-  const geometry = new PlaneGeometry(3, 1);
-  const hardSkillsmaterial = new MeshBasicMaterial({ color: 0xffffff, transparent: true });
-  const hardSkillsHeader = new Mesh(geometry, hardSkillsmaterial);
-  hardSkillsHeader.name = "Hard Skills Section";
-  hardSkillsHeader.position.set(-5.1, 5.2, -26);
+  const planeSize = {x: 3, y: 1.5};
+  loadPngHeader('img/section_headers/hard_skills.png', "Hard Skills Section", {x: -5.1, y: 5.2, z: -26}, planeSize, loop, scene);
+  loadPngHeader('img/section_headers/soft_skills.png', "Soft Skills Section", {x: -1.6, y: 4.9, z: -26}, planeSize, loop, scene);
 
-  const textureLoader = new TextureLoader();
-  textureLoader.load('img/section_headers/hard_skills.png', (texture) => {
-    hardSkillsHeader.material.map = texture;
-    hardSkillsHeader.material.needsUpdate = true;
-  });
-
-  const softSkillsmaterial = new MeshBasicMaterial({ color: 0xffffff, transparent: true });
-  const softSkillsHeader = new Mesh(geometry, softSkillsmaterial);
-  softSkillsHeader.name = "Soft Skills Section";
-  softSkillsHeader.position.set(-1, 5.2, -26);
-  textureLoader.load('img/section_headers/soft_skills.png', (texture) => {
-    softSkillsHeader.material.map = texture;
-    softSkillsHeader.material.needsUpdate = true;
-  });
-
-
-  // Add tick to make it bounce
-  let elapsed = 0;
-  const bounceHeight = 0.1;
-  const bounceSpeed = 3;
-  const initialY = hardSkillsHeader.position.y;
-  loop.updatables.push({
-    tick: (delta) => {
-      elapsed += delta;
-      hardSkillsHeader.position.y = initialY + Math.sin(elapsed * bounceSpeed) * bounceHeight;
-      softSkillsHeader.position.y = initialY + Math.sin(elapsed * bounceSpeed) * bounceHeight;
-    }
-  });
-
-  scene.add(softSkillsHeader);
-  scene.add(hardSkillsHeader);
-
-  const to = {x: -3, y: 3.5, z: -50};
+  const to = {x: -3, y: 3.5, z: -49};
   const angles = {
     yDown: MathUtils.degToRad(90),
     yUp: MathUtils.degToRad(90),
@@ -375,6 +373,14 @@ function handleHardSkillsHover(newHoveredObject, loop, mousePosition) {
   }
 }
 
+function handleHardSkillsClick(newHoveredObject, loop) {
+  document.querySelector('.label-renderer').style.pointerEvents = "none";
+  document.querySelector('.inspect-view').style.pointerEvents = "auto";
+
+  const store = useMainStore();
+  store.triggerShowHardSkills();
+}
+
 function _removeSocialIconTick(loop) {
   if (hovSocialIconTick && loop.updatables.includes(hovSocialIconTick)) {
     const index = loop.updatables.indexOf(hovSocialIconTick);
@@ -390,6 +396,7 @@ export {
   handleSocialIconClick,
   handleSocialIconHover,
   handleHardSkillsHover,
+  handleHardSkillsClick,
   toggleIsSocialsActive,
   toggleIsAboutActive,
   getIsAreaActive,

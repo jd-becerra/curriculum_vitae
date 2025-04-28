@@ -13,6 +13,7 @@ import { createSkybox } from "./components/background.js";
 import { PickHelper } from "./systems/pick_helper.js";
 import { createLoadingManager } from "./systems/loading_manager.js";
 import { createOutlineComposer } from "./systems/outline.js";
+import { useMainStore } from "../components/store.ts";
 
 // Three.js imports
 import {
@@ -259,6 +260,8 @@ class World {
       // Create a CSS2DRenderer for labels
       labelRenderer = new CSS3DRenderer();
       labelRenderer.setSize(container.clientWidth, container.clientHeight);
+      // Name the renderer
+      labelRenderer.domElement.className = "label-renderer";
       labelRenderer.domElement.style.position = "absolute";
       labelRenderer.domElement.style.top = "0px";
       labelRenderer.domElement.style.width = "100%";
@@ -266,7 +269,7 @@ class World {
       labelRenderer.domElement.style.transform = `scale(${window.devicePixelRatio})`;
       labelRenderer.domElement.style.transformOrigin = "top left";
       // Allow pointer events to pass through the label while still receiving them
-      labelRenderer.domElement.style.pointerEvents = "auto";
+      labelRenderer.domElement.style.pointerEvents = "none";
       labelRenderer.domElement.style.backgroundColor = "transparent";
       labelRenderer.domElement.style.zIndex = "1";
 
@@ -372,12 +375,6 @@ class World {
       const { composer, outlinePass, onResize: resizeComposer } = createOutlineComposer(renderer, scene, camera, container);
       outlineComposer = composer;
 
-      loop.updatables.push({
-        tick: (delta) => {
-          this.render();
-        },
-      });
-
       // Add the pick helper
       const pickHelper = new PickHelper();
       // Listeners
@@ -396,6 +393,15 @@ class World {
         const screenPosition = new Vector2(event.clientX, event.clientY);
         pickHelper.hover(normalizedPosition, scene, camera, loop, screenPosition, outlinePass);
       });
+      const store = useMainStore();
+      store.disableMouseEvents();
+
+      loop.updatables.push({
+        tick: (delta) => {
+          this.render();
+        },
+      });
+
 
 /*    window.addEventListener("mousemove", (event) => {
         const normalizedPosition = {
@@ -433,6 +439,9 @@ class World {
       Promise.all(loadingPromises).then(() => {
         setTimeout(() => {
           // resizer.onResize(); // I don't like this solution
+          // Once the world is loaded, allow clicks
+          store.enableMouseEvents();
+          labelRenderer.domElement.style.pointerEvents = "auto";
           this.render();
           const loadingElement = document.querySelector(".loading");
           if (loadingElement) {
