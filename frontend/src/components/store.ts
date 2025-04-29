@@ -93,6 +93,17 @@ export const useMainStore = defineStore('main', {
     },
     enableMouseEvents() {
       this.shouldAllowMouseEvents = true;
+
+      const labelRenderer = document.querySelector('.label-renderer') as HTMLElement;
+      if (labelRenderer){
+        labelRenderer.style.pointerEvents = "auto";
+      }
+
+      // Set all elements in class "vue-label-3d" to pointer-events: auto
+      const labels = document.querySelectorAll('.vue-label-3d');
+      labels.forEach((label) => {
+        (label as HTMLElement).style.pointerEvents = "auto";
+      });
     },
 
     // Hide elements
@@ -119,6 +130,17 @@ export const useMainStore = defineStore('main', {
     },
     disableMouseEvents() {
       this.shouldAllowMouseEvents = false;
+
+      const labelRenderer = document.querySelector('.label-renderer') as HTMLElement;
+      if (labelRenderer){
+        labelRenderer.style.pointerEvents = "none";
+      }
+
+      // Set all elements in class "3d-vue-label" to pointer-events: none
+      const labels = document.querySelectorAll('.vue-label-3d');
+      labels.forEach((label) => {
+        (label as HTMLElement).style.pointerEvents = "none";
+      });
     }
   },
   getters: {

@@ -1,4 +1,5 @@
 import { createVuetify } from 'vuetify';
+import { aliases, mdi } from 'vuetify/iconsets/mdi-svg';
 
 import {
   VApp,
@@ -17,6 +18,7 @@ import {
   VList,
   VListItem,
   VListItemTitle,
+  VListGroup,
   VForm,
   VTextarea,
   VTextField,
@@ -49,6 +51,7 @@ const vuetify = createVuetify({
     VList,
     VListItem,
     VListItemTitle,
+    VListGroup,
     VForm,
     VTextarea,
     VTextField,
@@ -67,7 +70,14 @@ const vuetify = createVuetify({
     Intersect,
     Scroll,
     Touch
-  }
+  },
+  icons: {
+    defaultSet: 'mdi',
+    aliases,
+    sets: {
+      mdi,
+    },
+  },
 });
 
 

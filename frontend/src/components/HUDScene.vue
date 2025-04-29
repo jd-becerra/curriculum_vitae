@@ -1,96 +1,158 @@
 <script setup lang="ts">
-  import { ref } from 'vue'
-  import NavigationItem from './NavigationItem.vue'
-  import DocumentationIcon from './icons/IconDocumentation.vue'
-  import ToolingIcon from './icons/IconTooling.vue'
-  import EcosystemIcon from './icons/IconEcosystem.vue'
-  import CommunityIcon from './icons/IconCommunity.vue'
-  import SupportIcon from './icons/IconSupport.vue'
-  import { inject } from 'vue';
-  // @ts-ignore
-  import { World } from '@/World/World.js';
-  import { onMounted } from 'vue';
-  import { useI18n } from 'vue-i18n';
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import NavigationItem from './NavigationItem.vue'
+import { inject } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useMainStore } from './store'
 
-  const world = inject('world') as any; // get the world from the provider
-  const { locale } = useI18n();
-  const menuVisible = ref(false);
-  const toggleMenu = () => {
-    menuVisible.value = !menuVisible.value;
-  };
+import {
+  mdiHome,
+  mdiBriefcaseOutline,
+  mdiAccountCircle,
+  mdiGithub
+// @ts-ignore
+} from '@mdi/js';
 
-  function rotateCamera(direction: String) {
-    if (!world.value) {
-      console.error('World not found');
-      return;
-    }
 
-    world.value.rotateCamera(direction);
+const world = inject('world') as any
+const { t, locale } = useI18n();
+const store = useMainStore();
+
+const menuVisible = ref(false)
+
+const toggleMenu = () => {
+  menuVisible.value = !menuVisible.value;
+  if (menuVisible.value) {
+    store.disableMouseEvents();
+  } else {
+    store.enableMouseEvents();
   }
+}
 
-  function moveCamera(direction: String) {
-    if (!world.value) {
-      console.error('World not found');
-      return;
-    }
+const returnToMainView = () => {
+  menuVisible.value = false;
+  store.enableMouseEvents();
+  world.value.moveToMainArea();
+}
+const moveToProjects = () => {
+  menuVisible.value = false;
+  store.enableMouseEvents();
+  world.value.moveToProjectsArea();
+}
+const moveToSocials = () => {
+  menuVisible.value = false;
+  store.enableMouseEvents();
+  world.value.moveToSocialsArea();
+}
+const moveToAbout = () => {
+  menuVisible.value = false;
+  store.enableMouseEvents();
+  world.value.moveToAboutArea();
+}
 
-    world.value.moveCamera(direction);
+function toggleLanguage() {
+  locale.value = locale.value === 'en' ? 'es' : 'en'
+}
+
+function getLanguage() {
+  return locale.value
+}
+
+// Detect clicks outside the menu and close it
+const menuRef = ref<any>(null);
+const handleClickOutside = (event: MouseEvent) => {
+  const menuElement = menuRef.value?.$el as HTMLElement | undefined;
+  if (menuVisible.value && menuElement && !menuElement.contains(event.target as Node)) {
+    menuVisible.value = false;
+    store.enableMouseEvents();
   }
+};
 
-  function toggleLanguage() {
-    locale.value = locale.value === 'en' ? 'es' : 'en';
-  }
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
 
-  function getLanguage() {
-    return locale.value;
-  }
 </script>
 
-  <template>
-    <v-main>
-      <v-container class="menu-container">
-        <v-btn @click="toggleMenu" class="toggle-button">{{ menuVisible ? $t('menu.close') : $t('menu.open') }}</v-btn>
-        <Transition>
-          <div v-if="menuVisible" class="menu-container-buttons">
-            <NavigationItem>
-                <template #icon>
-                  <DocumentationIcon />
+<template>
+  <v-main>
+    <v-container ref="menuRef" class="menu-container">
+      <v-btn @click="toggleMenu" class="toggle-button">
+        {{ menuVisible ? $t('menu.close') : $t('menu.open') }}
+      </v-btn>
+
+        <v-list v-if="menuVisible" class="menu-container-buttons">
+          <!-- Main View (return to beginning) -->
+          <v-list-item>
+            <NavigationItem :prepend-icon=mdiHome @click="returnToMainView">
+              <template #heading>{{ $t('menu.main-view') }}</template>
+            </NavigationItem>
+          </v-list-item>
+
+            <v-container class="section-buttons-container">
+              <!-- Projects -->
+              <v-list-item>
+                <NavigationItem :prepend-icon=mdiBriefcaseOutline @click="moveToProjects">
+                <template #heading>{{ $t('menu.projects') }}</template>
+                </NavigationItem>
+              </v-list-item>
+
+              <!-- About Section (group) -->
+              <v-list-group>
+                <template v-slot:activator="{ props }">
+                <v-list-item
+                  v-bind="props"
+                >
+                  <NavigationItem :prepend-icon=mdiAccountCircle>
+                  <template #heading>{{ $t('menu.about') }}</template>
+                  </NavigationItem>
+                </v-list-item>
                 </template>
-                <template #heading>{{$t('menu.Navigation')}}</template>
-            </NavigationItem>
 
-            <NavigationItem>
-              <template #icon>
-                <ToolingIcon />
-              </template>
-              <template #heading>{{ $t('menu.about') }}</template>
-            </NavigationItem>
+                <!-- About Subitems -->
 
-            <NavigationItem>
-              <template #icon>
-                <EcosystemIcon />
-              </template>
-              <template #heading>{{ $t('menu.contact') }}</template>
-            </NavigationItem>
+                <v-list-item>
+                <NavigationItem>
+                  <template #heading>{{ $t('menu.summary') }}</template>
+                </NavigationItem>
+                </v-list-item>
 
-            <NavigationItem>
-              <template #icon>
-                <CommunityIcon />
-              </template>
-              <template #heading>{{ $t('menu.projects') }}</template>
-            </NavigationItem>
-          </div>
-        </Transition>
-      </v-container>
-      <v-container class="menu-rotation">
-          <v-btn @click="rotateCamera('left')"><</v-btn>
-          <v-btn @click="rotateCamera('right')">></v-btn>
-      </v-container>
-      <v-container class="menu-settings">
-        <v-btn @click="toggleLanguage">{{ getLanguage() }}</v-btn>
-      </v-container>
-    </v-main>
-  </template>
+                <v-list-item>
+                <NavigationItem>
+                  <template #heading>{{ $t('menu.skills') }}</template>
+                </NavigationItem>
+                </v-list-item>
+
+                <v-list-item>
+                <NavigationItem>
+                  <template #heading>{{ $t('menu.experience') }}</template>
+                </NavigationItem>
+                </v-list-item>
+              </v-list-group>
+
+              <!-- Socials -->
+              <v-list-item>
+                <NavigationItem :prepend-icon=mdiGithub @click="moveToSocials">
+                <template #heading>{{ $t('menu.socials') }}</template>
+                </NavigationItem>
+              </v-list-item>
+            </v-container>
+
+        </v-list>
+    </v-container>
+
+    <v-container class="menu-download-cv">
+      <v-btn>Download CV</v-btn>
+    </v-container>
+
+    <v-container class="menu-settings">
+      <v-btn @click="toggleLanguage">{{ getLanguage() }}</v-btn>
+    </v-container>
+  </v-main>
+</template>
 
 <style scoped>
   .v-main {
@@ -114,20 +176,25 @@
     left: 0;
     padding: 16px 0 0 16px;
     z-index: 10;
-    pointer-events: all;
-    width: 30%;
+    pointer-events: auto;
+    width: auto;
   }
 
   .menu-container-buttons {
     display: flex;
     flex-direction: column;
-    padding-left: 30px;
-    gap: 10px;
+    padding-left: 1rem;
     background-color: rgb(58, 58, 58);
+    color: white;
     opacity: 0.9;
   }
 
-  .menu-rotation {
+  .section-buttons-container {
+    margin-top: -1rem;
+    margin-left: 0.5rem;
+  }
+
+  .menu-download-cv {
     position: absolute;
     bottom: 0;
     right: 0;
@@ -148,4 +215,8 @@
     width: 10%;
     pointer-events: all;
   }
-  </style>
+
+  .about-subitems {
+    padding-left: 30px;
+  }
+</style>

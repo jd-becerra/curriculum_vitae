@@ -2,10 +2,13 @@
     "menu": {
         "open": "Navegation",
         "close": "Close",
-        "welcome": "Welcome",
-        "about": "About",
-        "contact": "Contact",
-        "projects": "Projects"
+        "main-view": "Return to Main View",
+        "about": "About Me",
+            "summary": "Summary",
+            "skills": "My Skills",
+            "experience": "Certificates, Education and Experience",
+        "socials": "Contact and Credits",
+        "projects": "My Projects"
     },
 
     "scene-renderer": {

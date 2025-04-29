@@ -33,114 +33,6 @@ let hovHardSkillTag = null;
 // Three.js helpers
 const textureLoader = new TextureLoader();
 
-function loadPngHeader(url, name, pos, scale, loop, scene) {
-  const geometry = new PlaneGeometry(scale.x, scale.y);
-  const material = new MeshBasicMaterial({ color: 0xffffff, transparent: true });
-  const header = new Mesh(geometry, material);
-  header.name = name;
-
-  header.position.set(pos.x, pos.y, pos.z);
-
-  textureLoader.load(url, (texture) => {
-    header.material.map = texture;
-    header.material.needsUpdate = true;
-  });
-
-  // Add tick to make it bounce
-  let elapsed = 0;
-  const bounceHeight = 0.1;
-  const bounceSpeed = 3;
-  const initialY = header.position.y;
-  loop.updatables.push({
-    tick: (delta) => {
-      elapsed += delta;
-      const y = initialY + Math.sin(elapsed * bounceSpeed) * bounceHeight;
-      header.position.set(pos.x, y, pos.z);
-    }
-  });
-
-  scene.add(header);
-}
-
-function getAnimation(animations, name) {
-  for (let i = 0; i < animations.length; i++) {
-    const animation = animations[i];
-    if (animation.name === name) {
-      return animation;
-    }
-  }
-  return null;
-}
-
-function handleSocialsHover(object, loop, picker) {
-  // Make the object bounce
-  loop.updatables.push({
-    tick: (delta) => {
-      object.rotateY(delta * 0.5);
-    }
-  });
-
-}
-
-function handleProjectsClick(camera, controls, object, loop) {
-  const to = {x: -40, y: 0, z: -10};
-
-  const angles = {
-    yUp: MathUtils.degToRad(95),
-    yDown: MathUtils.degToRad(90),
-    xLeft: MathUtils.degToRad(80),
-    xRight: MathUtils.degToRad(100)
-  }
-  moveToArea(controls, loop, to, angles);
-}
-
-function handleSocialsClick(camera, controls, object, loop) {
-  const to = {x: 15, y: 4, z: -42};
-  const angles = {
-    yDown: MathUtils.degToRad(90),
-    yUp: MathUtils.degToRad(92),
-    xLeft: MathUtils.degToRad(-5),
-    xRight: MathUtils.degToRad(5)
-  }
-  moveToArea(controls, loop, to, angles);
-}
-
-function handleAboutClick(camera, controls, object, loop, scene) {
-  const planeSize = {x: 3, y: 1.5};
-  loadPngHeader('img/section_headers/hard_skills.png', "Hard Skills Section", {x: -5.1, y: 5.2, z: -26}, planeSize, loop, scene);
-  loadPngHeader('img/section_headers/soft_skills.png', "Soft Skills Section", {x: -1.6, y: 4.9, z: -26}, planeSize, loop, scene);
-
-  const to = {x: -3, y: 3.5, z: -49};
-  const angles = {
-    yDown: MathUtils.degToRad(90),
-    yUp: MathUtils.degToRad(90),
-    xLeft: MathUtils.degToRad(-2),
-    xRight: MathUtils.degToRad(1)
-  }
-  moveToArea(controls, loop, to, angles, 31, 32);
-}
-
-function toggleIsSocialsActive() {
-  isSocialsAreaActive = !isSocialsAreaActive;
-  return isSocialsAreaActive;
-}
-
-function toggleIsAboutActive() {
-  isAboutAreaActive = !isAboutAreaActive;
-  return isAboutAreaActive;
-}
-
-function getIsAreaActive(area, subArea = "") {
-  if (area === 'socials') {
-    return isSocialsAreaActive;
-  } else if (area === 'about') {
-    if (subArea === '') {
-      return isAboutAreaActive;
-    }
-  }
-  return false;
-}
-
 function moveToArea(controls, loop, to, angles, minDist = 20, maxDist = 32) {
   controls.minDistance = minDist;
   controls.maxDistance = maxDist;
@@ -189,6 +81,157 @@ function moveToArea(controls, loop, to, angles, minDist = 20, maxDist = 32) {
       t2.update();
     }
   });
+}
+
+function loadPngHeader(url, name, pos, scale, loop, scene) {
+  const geometry = new PlaneGeometry(scale.x, scale.y);
+  const material = new MeshBasicMaterial({ color: 0xffffff, transparent: true });
+  const header = new Mesh(geometry, material);
+  header.name = name;
+
+  header.position.set(pos.x, pos.y, pos.z);
+
+  textureLoader.load(url, (texture) => {
+    header.material.map = texture;
+    header.material.needsUpdate = true;
+  });
+
+  // Add tick to make it bounce
+  let elapsed = 0;
+  const bounceHeight = 0.1;
+  const bounceSpeed = 3;
+  const initialY = header.position.y;
+  loop.updatables.push({
+    tick: (delta) => {
+      elapsed += delta;
+      const y = initialY + Math.sin(elapsed * bounceSpeed) * bounceHeight;
+      header.position.set(pos.x, y, pos.z);
+    }
+  });
+
+  scene.add(header);
+}
+
+function removeAreaSelectors(scene) {
+  const projectsArea = scene.getObjectByName("projectsArea");
+  if (projectsArea) {
+    scene.remove(projectsArea);
+  }
+
+  const socialsArea = scene.getObjectByName("socialsArea");
+  if (socialsArea) {
+    scene.remove(socialsArea);
+  }
+
+  const aboutArea = scene.getObjectByName("aboutArea");
+  if (aboutArea) {
+    scene.remove(aboutArea);
+  }
+}
+
+function getAnimation(animations, name) {
+  for (let i = 0; i < animations.length; i++) {
+    const animation = animations[i];
+    if (animation.name === name) {
+      return animation;
+    }
+  }
+  return null;
+}
+
+function handleSocialsHover(object, loop, picker) {
+  // Make the object bounce
+  loop.updatables.push({
+    tick: (delta) => {
+      object.rotateY(delta * 0.5);
+    }
+  });
+
+}
+
+// Returns to the initial state of the scene
+function handleReturnToMainView(controls, loop) {
+  const to = {x: 17, y: 4, z: 17};
+  const angles = {
+    yDown: MathUtils.degToRad(80),
+    yUp: MathUtils.degToRad(85),
+    xLeft: MathUtils.degToRad(30),
+    xRight: MathUtils.degToRad(35)
+  }
+
+  moveToArea(controls, loop, to, angles, 5, 10);
+}
+
+// Moves to the general Projects area (the desk with computer)
+function handleProjectsClick(controls, loop, scene) {
+  removeAreaSelectors(scene);
+
+  const to = {x: -40, y: 0, z: -10};
+
+  const angles = {
+    yUp: MathUtils.degToRad(95),
+    yDown: MathUtils.degToRad(90),
+    xLeft: MathUtils.degToRad(80),
+    xRight: MathUtils.degToRad(100)
+  }
+  moveToArea(controls, loop, to, angles);
+}
+
+// Moves to the general Socials area (over the fireplace, with trophies (contact icons) and a plaque with credits)
+function handleSocialsClick(controls, loop, scene) {
+  removeAreaSelectors(scene);
+
+  isSocialsAreaActive = true;
+
+  const to = {x: 15, y: 4, z: -42};
+  const angles = {
+    yDown: MathUtils.degToRad(90),
+    yUp: MathUtils.degToRad(92),
+    xLeft: MathUtils.degToRad(-5),
+    xRight: MathUtils.degToRad(5)
+  }
+  moveToArea(controls, loop, to, angles);
+}
+
+// Moves to the general About Me area (a bookcase with books, picture frames and a flower pot)
+function handleAboutClick(controls, loop, scene) {
+  removeAreaSelectors(scene);
+
+  isAboutAreaActive = true;
+
+  const planeSize = {x: 3, y: 1.5};
+  loadPngHeader('img/section_headers/hard_skills.png', "Hard Skills Section", {x: -5.1, y: 5.2, z: -26}, planeSize, loop, scene);
+  loadPngHeader('img/section_headers/soft_skills.png', "Soft Skills Section", {x: -1.6, y: 4.9, z: -26}, planeSize, loop, scene);
+
+  const to = {x: -3, y: 3.5, z: -49};
+  const angles = {
+    yDown: MathUtils.degToRad(90),
+    yUp: MathUtils.degToRad(90),
+    xLeft: MathUtils.degToRad(-2),
+    xRight: MathUtils.degToRad(1)
+  }
+  moveToArea(controls, loop, to, angles, 31, 32);
+}
+
+function toggleIsSocialsActive() {
+  isSocialsAreaActive = !isSocialsAreaActive;
+  return isSocialsAreaActive;
+}
+
+function toggleIsAboutActive() {
+  isAboutAreaActive = !isAboutAreaActive;
+  return isAboutAreaActive;
+}
+
+function getIsAreaActive(area, subArea = "") {
+  if (area === 'socials') {
+    return isSocialsAreaActive;
+  } else if (area === 'about') {
+    if (subArea === '') {
+      return isAboutAreaActive;
+    }
+  }
+  return false;
 }
 
 function handleOpenBook(object) {
@@ -389,6 +432,7 @@ function _removeSocialIconTick(loop) {
 }
 
 export {
+  handleReturnToMainView,
   handleProjectsClick,
   handleSocialsClick,
   handleAboutClick,

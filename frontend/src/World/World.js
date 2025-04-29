@@ -6,14 +6,20 @@ import { createRenderer } from "./systems/renderer.js";
 import { loadGLTF } from "./systems/gltf_loader.js";
 import { Loop } from "./systems/Loop.js";
 import { Resizer } from "./systems/Resizer.js";
-import { createOrbitControls, createFirstPersonControls, createDragControls, createPointerLockControls } from "./systems/controls.js";
+import { createOrbitControls } from "./systems/controls.js";
 import { createSnowShaderPlane } from "./components/shaders.js";
 import { createCube } from "./components/objects/cube.js";
-import { createSkybox } from "./components/background.js";
+// import { createSkybox } from "./components/background.js";
 import { PickHelper } from "./systems/pick_helper.js";
 import { createLoadingManager } from "./systems/loading_manager.js";
 import { createOutlineComposer } from "./systems/outline.js";
 import { useMainStore } from "../components/store.ts";
+import {
+  handleReturnToMainView,
+  handleProjectsClick,
+  handleSocialsClick,
+  handleAboutClick,
+} from "./systems/mouse_events.js";
 
 // Three.js imports
 import {
@@ -52,6 +58,7 @@ let camera;
 let renderer;
 let scene;
 let loop;
+let controls;
 let labelRenderer;
 let labels = [];
 let outlineComposer;
@@ -59,9 +66,6 @@ let outlineComposer;
 const loadingPromises = [];
 
 // variable helpers
-let isRotating = false;
-let targetRotation = new Vector3(0, 0, 0);
-let targetPivot = new Vector3(0, 0, 0);
 const startCameraPosition = {x: -10, y: 10, z: -30};
 const startCameraRotation = {x: 0, y: 0, z: 0};
 
@@ -130,6 +134,7 @@ function createVueLabel(Component, clientWidth, clientHeight, size = new Vector2
   const obj = new Object3D();
   const cssObj = new CSS3DObject(container);
   cssObj.element.style.pointerEvents = "auto";
+  cssObj.element.className = "vue-label-3d";
 
   const aspectRatio = clientWidth / clientHeight;
 
@@ -144,20 +149,18 @@ function createVueLabel(Component, clientWidth, clientHeight, size = new Vector2
   cssObj.element.style.overflow = "hidden"; // Prevent unwanted stretching
 
   // Choose allowed pointer events
-  const allowedPointerEvents = ["a", "button", "v-carousel-item"];
-  let allowedElements = [];
+/*   const allowedPointerEvents = ["a", "button", "v-carousel-item"];
   // Get all elements that are allowed to receive pointer events
   allowedPointerEvents.forEach(el => {
     cssObj.element.querySelectorAll(el).forEach(el => {
       el.style.pointerEvents = "auto";
     });
-  });
+  }); */
   cssObj.name = Component.name;
   // scale the labels to fit the plane
   const scale = 0.000016;
   cssObj.scale.set(baseSize.width * scale, baseSize.height * scale, 1);
   obj.add(cssObj);
-
 
   var material = new MeshBasicMaterial({
     transparent: true,
@@ -181,7 +184,7 @@ function createVueLabel(Component, clientWidth, clientHeight, size = new Vector2
 
 function showStats() {
   var stats = new Stats();
-  stats.showPanel( 1 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+  stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
   document.body.appendChild( stats.dom );
 
   function animate() {
@@ -302,10 +305,10 @@ class World {
       });
 
       // If we want to see the lights in the scene, we can add the light helpers
-      lightHelpers.forEach(lightHelper => {
+      /* lightHelpers.forEach(lightHelper => {
         scene.add(lightHelper);
       });
-
+     */
 
       // For performance, we will add an LOD object to reduce the number of polygons rendered
       const lod = new LOD();
@@ -367,7 +370,7 @@ class World {
       });
       scene.add(cubeBookcase);
 
-      const controls = createOrbitControls(camera, labelRenderer.domElement);
+      controls = createOrbitControls(camera, labelRenderer.domElement);
 
       loop.updatables.push(controls);
 
@@ -461,29 +464,22 @@ class World {
       outlineComposer.render();
     }
 
-    rotateCamera(direction) {
-      // Look at closest CSS3DObject label
-
-      const angle = Math.PI / 2;
-
-      if (direction === "left") {
-        targetRotation.y += angle;
-      } else if (direction === "right") {
-        targetRotation.y -= angle;
-      } else if (direction === "reset") {
-        camera.rotation.set(0, 0, 0);
-        targetRotation.set(0, 0, 0);
-        camera.position.set(0, 0, 10); // Reset camera offset if needed
-        return;
-      } else {
-        console.error("Invalid direction");
-        return;
-      }
-
-      isRotating = true;
+    // Helpers to move to different areas
+    moveToMainArea() {
+      handleReturnToMainView(controls, loop, scene);
     }
 
-    // Helpers to control camera events
+    moveToProjectsArea() {
+      handleProjectsClick(controls, loop, scene);
+    }
+
+    moveToSocialsArea() {
+      handleSocialsClick(controls, loop, scene);
+    }
+
+    moveToAboutArea() {
+      handleAboutClick(controls, loop, scene);
+    }
 
     // Animation handlers
     start() {

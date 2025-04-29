@@ -55,35 +55,15 @@ class PickHelper {
       // Handle clicks on selected objects
       const objectName = this.pickedObject.name;
       if (objectName == 'projectsArea') {
-        mouseEvents.handleProjectsClick(camera, controls, this.pickedObject, loop);
-
-        const objectToRemove = scene.getObjectByName("projectsArea");
-        if (objectToRemove) {
-          scene.remove(objectToRemove);
-        }
+        mouseEvents.handleProjectsClick(controls, loop, scene);
         this.pickedObject = null;
       }
       else if (objectName == 'socialsArea') {
-        mouseEvents.handleSocialsClick(camera, controls, this.pickedObject, loop, self);
-        const activateSocialsArea = mouseEvents.toggleIsSocialsActive();
-        if (activateSocialsArea) {
-          // Remove the object from the scene
-          const objectToRemove = scene.getObjectByName("socialsArea");
-          if (objectToRemove) {
-            scene.remove(objectToRemove);
-          }
-          this.pickedObject = null;
-        }
+        mouseEvents.handleSocialsClick(controls, loop, scene);
+        this.pickedObject = null;
       }
       else if (objectName == 'aboutArea') {
-        mouseEvents.handleAboutClick(camera, controls, this.pickedObject, loop, scene);
-        const activateAboutArea = mouseEvents.toggleIsAboutActive();
-        if (activateAboutArea) {
-          const objectToRemove = scene.getObjectByName("aboutArea");
-          if (objectToRemove) {
-            scene.remove(objectToRemove);
-          }
-        }
+        mouseEvents.handleAboutClick(controls, loop, scene);
         this.pickedObject = null;
       }
       else if (objectName == 'Notebook') {
@@ -103,11 +83,6 @@ class PickHelper {
   }
 
   hover(normalizedPosition, scene, camera, loop, screenPosition, outlinePass) {
-    if (!this.store.isMouseEventsAllowed) {
-      document.body.style.cursor = 'default';
-      return;
-    }
-
     this.raycaster.setFromCamera(normalizedPosition, camera);
     const intersectedObjects = this.raycaster.intersectObjects(scene.children);
 

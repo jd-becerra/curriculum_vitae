@@ -2,10 +2,13 @@
     "menu": {
         "open": "Navegation",
         "close": "Close",
-        "welcome": "Welcome",
-        "about": "About",
-        "contact": "Contact",
-        "projects": "Projects"
+        "main-view": "Return to Main View",
+        "about": "About Me",
+            "summary": "Summary",
+            "skills": "My Skills",
+            "experience": "Certificates, Education and Experience",
+        "socials": "Contact and Credits",
+        "projects": "My Projects"
     },
 
     "scene-renderer": {
@@ -43,7 +46,8 @@
         ]
     },
     "hard-skills": {
-        "title": "The main hard skills I possess are:",
+        "title": "Main technical skills:",
+        "main-description": "Throughout my academic journey and personal projects, I have developed a set of technical skills that form the foundation of my work in software development, web technologies, backend systems, and computer science fundamentals. I strongly believe these skills reflect not only the tools and languages I have learned, but also the way I approach learning itself: with a focus on practical application, problem-solving, and a deep curiosity for understanding how systems work at every level.",
         "skills": [
             {
                 "name": "C++",
