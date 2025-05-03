@@ -9,6 +9,7 @@ import {
 } from 'three';
 import { useI18n } from 'vue-i18n';
 import { useMainStore } from '../../components/store';
+import { createAreaSelectors, removeAreaSelectors } from '../components/objects/cube';
 
 // State variables
 let isBookOpen = false;
@@ -29,9 +30,69 @@ let hovHardSkill = null;
 let hovHardSkillInitialX = null;
 let hovHardSkillTick = null;
 let hovHardSkillTag = null;
+const hardSkillIndexes = {
+  "C++": 0,
+  "Python": 1,
+  "Javascript": 2,
+  "HTML_+_CSS": 3,
+  "MySQL": 4,
+  "Nodejs": 5,
+  "Linux": 6,
+  "Git": 7,
+  "Frontend_Frameworks": 8,
+  "English": 9,
+  "Chinese": 10,
+  "More": 11
+}
+
+// Headers that can be rendered
+let headersToRender = [];
+let lang = 'en';
 
 // Three.js helpers
 const textureLoader = new TextureLoader();
+
+function getCurrentLocale() {
+  const mainStore = useMainStore();
+  return mainStore.getLocale;
+}
+
+function getHeadersByLang(locale) {
+  const basePath = `img/section_headers/${locale}`;
+
+  return {
+    "about": {
+      path: `${basePath}/about_me.png`,
+      name: "About Me Section",
+      position: {x: -1.6, y: 1, z: -26},
+    },
+    "certificates": {
+      path: `${basePath}/certificates.png`,
+      name: "Certificates Section",
+      position: {x: -5.1, y: -5, z: -26},
+    },
+    "experience": {
+      path: `${basePath}/experience.png`,
+      name: "Experience Section",
+      position: {x: -1.6, y: -5, z: -26},
+    },
+    "soft_skills": {
+      path: `${basePath}/soft_skills.png`,
+      name: "Soft Skills Section",
+      position: {x: -1.6, y: 4.9, z: -26},
+    },
+    "hard_skills": {
+      path: `${basePath}/hard_skills.png`,
+      name: "Hard Skills Section",
+      position: {x: -5.1, y: 5.2, z: -26},
+    },
+  };
+}
+
+function reloadHeadersOnLangChange(loop, scene, headersToRender, locale) {
+  removePngHeaders(scene); // Ensure old headers are removed
+  createPngHeaders(loop, scene, headersToRender, locale); // Load new ones
+}
 
 function moveToArea(controls, loop, to, angles, minDist = 20, maxDist = 32) {
   controls.minDistance = minDist;
@@ -112,23 +173,6 @@ function loadPngHeader(url, name, pos, scale, loop, scene) {
   scene.add(header);
 }
 
-function removeAreaSelectors(scene) {
-  const projectsArea = scene.getObjectByName("projectsArea");
-  if (projectsArea) {
-    scene.remove(projectsArea);
-  }
-
-  const socialsArea = scene.getObjectByName("socialsArea");
-  if (socialsArea) {
-    scene.remove(socialsArea);
-  }
-
-  const aboutArea = scene.getObjectByName("aboutArea");
-  if (aboutArea) {
-    scene.remove(aboutArea);
-  }
-}
-
 function getAnimation(animations, name) {
   for (let i = 0; i < animations.length; i++) {
     const animation = animations[i];
@@ -150,7 +194,18 @@ function handleSocialsHover(object, loop, picker) {
 }
 
 // Returns to the initial state of the scene
-function handleReturnToMainView(controls, loop) {
+function handleReturnToMainView(controls, loop, scene) {
+  removeAreaSelectors(scene);
+
+  handleSocialIconHover(null, loop);
+  handleHardSkillsHover(null, loop, null);
+  isBookOpen = false;
+  isSocialsAreaActive = false;
+  isAboutAreaActive = false;
+
+  // Return area selectors
+  createAreaSelectors(scene);
+
   const to = {x: 17, y: 4, z: 17};
   const angles = {
     yDown: MathUtils.degToRad(80),
@@ -165,6 +220,12 @@ function handleReturnToMainView(controls, loop) {
 // Moves to the general Projects area (the desk with computer)
 function handleProjectsClick(controls, loop, scene) {
   removeAreaSelectors(scene);
+
+  handleSocialIconHover(null, loop);
+  handleHardSkillsHover(null, loop, null);
+  isBookOpen = false;
+  isSocialsAreaActive = false;
+  isAboutAreaActive = false;
 
   const to = {x: -40, y: 0, z: -10};
 
@@ -181,6 +242,10 @@ function handleProjectsClick(controls, loop, scene) {
 function handleSocialsClick(controls, loop, scene) {
   removeAreaSelectors(scene);
 
+  handleHardSkillsHover(null, loop, null);
+  isBookOpen = false;
+  isAboutAreaActive = false;
+
   isSocialsAreaActive = true;
 
   const to = {x: 15, y: 4, z: -42};
@@ -193,15 +258,73 @@ function handleSocialsClick(controls, loop, scene) {
   moveToArea(controls, loop, to, angles);
 }
 
-// Moves to the general About Me area (a bookcase with books, picture frames and a flower pot)
-function handleAboutClick(controls, loop, scene) {
-  removeAreaSelectors(scene);
+function removePngHeaders(scene) {
+  const hardSkillsHeader = scene.getObjectByName("Hard Skills Section");
+  if (hardSkillsHeader) {
+    scene.remove(hardSkillsHeader);
+  }
 
-  isAboutAreaActive = true;
+  const softSkillsHeader = scene.getObjectByName("Soft Skills Section");
+  if (softSkillsHeader) {
+    scene.remove(softSkillsHeader);
+  }
+
+  const aboutHeader = scene.getObjectByName("About Me Section");
+  if (aboutHeader) {
+    scene.remove(aboutHeader);
+  }
+
+  const experienceHeader = scene.getObjectByName("Experience Section");
+  if (experienceHeader) {
+    scene.remove(experienceHeader);
+  }
+
+  const certificatesHeader = scene.getObjectByName("Certificates Section");
+  if (certificatesHeader) {
+    scene.remove(certificatesHeader);
+  }
+}
+
+function createPngHeaders(loop, scene, headersToRender) {
+  lang = getCurrentLocale();
 
   const planeSize = {x: 3, y: 1.5};
-  loadPngHeader('img/section_headers/hard_skills.png', "Hard Skills Section", {x: -5.1, y: 5.2, z: -26}, planeSize, loop, scene);
-  loadPngHeader('img/section_headers/soft_skills.png', "Soft Skills Section", {x: -1.6, y: 4.9, z: -26}, planeSize, loop, scene);
+  const headers = getHeadersByLang(lang);
+
+  headersToRender.forEach(key => {
+    const header = headers[key];
+    loadPngHeader(header.path, header.name, header.position, planeSize, loop, scene);
+  });
+}
+
+// Moves to the general About Me area (a bookcase with books, picture frames and a flower pot)
+function handleAboutClick(controls, loop, scene) {
+  if (isAboutAreaActive) {
+    return;
+  }
+
+  removeAreaSelectors(scene);
+  removePngHeaders(scene);
+
+  handleSocialIconHover(null, loop);
+  isBookOpen = false;
+  isSocialsAreaActive = false;
+
+  headersToRender = ["soft_skills", "hard_skills", "about", "certificates", "experience"];
+  createPngHeaders(loop, scene, headersToRender, getCurrentLocale());
+
+  // Add to loop a tick to re-render the headers if the language changes
+  loop.updatables.push({
+    tick: (delta) => {
+      if (isAboutAreaActive && getCurrentLocale() !== lang) {
+        removePngHeaders(scene);
+        createPngHeaders(loop, scene, headersToRender);
+      }
+    }
+  });
+
+
+  isAboutAreaActive = true;
 
   const to = {x: -3, y: 3.5, z: -49};
   const angles = {
@@ -344,6 +467,7 @@ function handleSocialIconHover(newHoveredObject, loop) {
 }
 
 function handleHardSkillsHover(newHoveredObject, loop, mousePosition) {
+
   if (hovHardSkill === newHoveredObject) {
     // Update tag position if already hovering the same item
     if (hovHardSkillTag) {
@@ -389,7 +513,11 @@ function handleHardSkillsHover(newHoveredObject, loop, mousePosition) {
 
     const tag = document.createElement('div');
     tag.className = 'hover-tag';
-    tag.innerHTML = hovHardSkill.name;
+    let tagName = hovHardSkill.name.replace(/_/g, ' '); // Replace underscores with spaces
+    // Some special cases
+    if (tagName == 'Nodejs') tagName = 'Node.js';
+    else if (tagName == 'More') tagName = 'More...';
+    tag.innerHTML = tagName;
     tag.style.position = 'absolute';
     tag.style.pointerEvents = 'none';
     tag.style.zIndex = '9999';
@@ -416,12 +544,15 @@ function handleHardSkillsHover(newHoveredObject, loop, mousePosition) {
   }
 }
 
-function handleHardSkillsClick(newHoveredObject, loop) {
+function handleHardSkillsClick(skillName, loop) {
   document.querySelector('.label-renderer').style.pointerEvents = "none";
   document.querySelector('.inspect-view').style.pointerEvents = "auto";
+  document.querySelector('.menu-container').style.display = 'none';
 
   const store = useMainStore();
   store.triggerShowHardSkills();
+  // Overwrite array for panel selection to hold just the index of the clicked skill
+  store.setPanelHardSkills([hardSkillIndexes[skillName]]);
 }
 
 function _removeSocialIconTick(loop) {

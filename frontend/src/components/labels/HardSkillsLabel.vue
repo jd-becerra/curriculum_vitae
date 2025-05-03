@@ -4,35 +4,64 @@
 
     <h1>{{ $t('hard-skills.title') }}</h1>
     <p v-html="$t('hard-skills.main-description')"></p>
-    <v-container class="hard-skills-list">
-      <v-list
-        v-for="(skill, index) in $tm('hard-skills.skills')"
-        :key="index">
-        <v-list-item class="skill-item">
-          <v-list-item-title class="skill-name">{{ skill.name }}</v-list-item-title>
-          {{ skill.description }}
-        </v-list-item>
-        <v-divider class="skill-divider" v-if="index < $tm('hard-skills.skills').length - 1"></v-divider>
-      </v-list>
-    </v-container>
+    <v-expansion-panels
+    v-model="panel"
+    multiple
+    class="hard-skills-list">
+      <v-expansion-panel
+        v-for="(hard_skill, index) in $tm('hard-skills.skills')"
+        :key="index"
+        :text="hard_skill.description"
+        :title="hard_skill.name"
+        :ref="el => panelRefs[index] = el as HTMLElement"
+        ></v-expansion-panel>
+    </v-expansion-panels>
     <div class="background"></div>
   </v-container>
 </template>
 
 <script setup lang="ts">
+import { ref, computed, watch, nextTick } from 'vue';
 import { useMainStore } from '../store';
 
 const mainStore = useMainStore();
-
+// Use computed to get panel for hard skills
+const panel = computed({
+  get: () => mainStore.panelHardSkills,
+  set: (val) => {
+    mainStore.setPanelHardSkills(val);
+  },
+});
 const closeHardSkills = () => {
   // @ts-ignore
   document.querySelector('.label-renderer').style.pointerEvents = "auto";
   // @ts-ignore
   document.querySelector('.inspect-view').style.pointerEvents = "none";
+  // @ts-ignore
+  document.querySelector('.menu-container').style.display = 'block';
 
   mainStore.hideHardSkills();
   mainStore.enableMouseEvents();
+
+  panelRefs.value = [];
+  mainStore.emptyPanelHardSkills();
 }
+
+// Scroll to first selected panel
+const panelRefs = ref<HTMLElement[]>([]);
+watch(panel, async (val) => {
+  if (val.length === 1) { // Will only work if only one panel is selected
+    await nextTick().then(() => {
+      const target = panelRefs.value[val[0]];
+      if (target?.$el || target?.$el?.scrollIntoView) {
+        target.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (target?.scrollIntoView) {
+        console.log('Scrolling into view');
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
+});
 
 </script>
 
@@ -48,12 +77,12 @@ const closeHardSkills = () => {
   overflow: scroll;
 }
 
-.skill-item {
+.hard-skill-item {
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
 
-.skill-name {
+.hard-skill-name {
   font-weight: bold;
 }
 

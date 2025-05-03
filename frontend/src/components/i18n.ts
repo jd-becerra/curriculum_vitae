@@ -1,6 +1,7 @@
 import { createI18n } from "vue-i18n";
 import en from "./locales/en.json";
 import es from "./locales/es.json";
+import { useMainStore } from "./store";
 
 function loadLocaleMessages() {
   const locales: { [key: string]: object }[] = [

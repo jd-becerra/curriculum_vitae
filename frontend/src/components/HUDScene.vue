@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import NavigationItem from './NavigationItem.vue'
 import { inject } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -9,62 +9,70 @@ import {
   mdiHome,
   mdiBriefcaseOutline,
   mdiAccountCircle,
-  mdiGithub
+  mdiGithub,
+  mdiMenuUp,
+  mdiMenuDown
 // @ts-ignore
 } from '@mdi/js';
-
+import type { VListGroup } from 'vuetify/components'
 
 const world = inject('world') as any
 const { t, locale } = useI18n();
 const store = useMainStore();
 
-const menuVisible = ref(false)
-
-const toggleMenu = () => {
-  menuVisible.value = !menuVisible.value;
-  if (menuVisible.value) {
-    store.disableMouseEvents();
-  } else {
-    store.enableMouseEvents();
+const isNavigationMenuVisible = computed(() => store.isNavigationMenuVisible);
+const isNavOpen = computed({
+  get() {
+    return store.isNavigationMenuVisible;
+  },
+  set(value) {
+    if (value) {
+      store.showNavigationMenu();
+      store.disableMouseEvents();
+    } else {
+      store.hideNavigationMenu();
+      store.enableMouseEvents();
+    }
   }
-}
+});
+const isAboutOpen = ref(false)
 
 const returnToMainView = () => {
-  menuVisible.value = false;
+  store.hideNavigationMenu();
   store.enableMouseEvents();
   world.value.moveToMainArea();
 }
 const moveToProjects = () => {
-  menuVisible.value = false;
+  store.hideNavigationMenu();
   store.enableMouseEvents();
   world.value.moveToProjectsArea();
 }
 const moveToSocials = () => {
-  menuVisible.value = false;
+  store.hideNavigationMenu();
   store.enableMouseEvents();
   world.value.moveToSocialsArea();
 }
 const moveToAbout = () => {
-  menuVisible.value = false;
+  store.hideNavigationMenu();
   store.enableMouseEvents();
   world.value.moveToAboutArea();
 }
 
-function toggleLanguage() {
-  locale.value = locale.value === 'en' ? 'es' : 'en'
-}
-
-function getLanguage() {
-  return locale.value
+function setLang(lang: string) {
+  locale.value = lang;
+  store.setLocale(lang);
 }
 
 // Detect clicks outside the menu and close it
 const menuRef = ref<any>(null);
+
 const handleClickOutside = (event: MouseEvent) => {
   const menuElement = menuRef.value?.$el as HTMLElement | undefined;
-  if (menuVisible.value && menuElement && !menuElement.contains(event.target as Node)) {
-    menuVisible.value = false;
+  if (store.isNavigationMenuVisible && menuElement && !menuElement.contains(event.target as Node)) {
+    store.hideNavigationMenu();
     store.enableMouseEvents();
+
+    isNavOpen.value = false;
   }
 };
 
@@ -79,144 +87,229 @@ onBeforeUnmount(() => {
 
 <template>
   <v-main>
-    <v-container ref="menuRef" class="menu-container">
-      <v-btn @click="toggleMenu" class="toggle-button">
-        {{ menuVisible ? $t('menu.close') : $t('menu.open') }}
-      </v-btn>
+    <v-list ref="menuRef" class="menu-container">
+      <v-list-item @click="isNavOpen = !isNavOpen">
+        <v-list-item-title>
+          {{ isNavOpen ? 'Close' : 'Navigation' }}
+        </v-list-item-title>
+      </v-list-item>
 
-        <v-list v-if="menuVisible" class="menu-container-buttons">
-          <!-- Main View (return to beginning) -->
+      <transition name="fade-slide">
+        <div v-show="isNavOpen">
+          <!-- Main View -->
           <v-list-item>
-            <NavigationItem :prepend-icon=mdiHome @click="returnToMainView">
+            <NavigationItem :prepend-icon="mdiHome" @click="returnToMainView">
               <template #heading>{{ $t('menu.main-view') }}</template>
             </NavigationItem>
           </v-list-item>
 
-            <v-container class="section-buttons-container">
-              <!-- Projects -->
+          <!-- Projects -->
+          <v-list-item>
+            <NavigationItem :prepend-icon="mdiBriefcaseOutline" @click="moveToProjects">
+              <template #heading>{{ $t('menu.projects') }}</template>
+            </NavigationItem>
+          </v-list-item>
+
+          <!-- About Section -->
+          <v-list-item @click="isAboutOpen = !isAboutOpen">
+            <NavigationItem :prepend-icon="mdiAccountCircle">
+              <template #heading>{{ $t('menu.about') }}</template>
+            </NavigationItem>
+          </v-list-item>
+
+          <transition name="fade-slide">
+            <div v-show="isAboutOpen" class="about-subitems">
               <v-list-item>
-                <NavigationItem :prepend-icon=mdiBriefcaseOutline @click="moveToProjects">
-                <template #heading>{{ $t('menu.projects') }}</template>
-                </NavigationItem>
+                <NavigationItem><template #heading>{{ $t('menu.summary') }}</template></NavigationItem>
               </v-list-item>
-
-              <!-- About Section (group) -->
-              <v-list-group>
-                <template v-slot:activator="{ props }">
-                <v-list-item
-                  v-bind="props"
-                >
-                  <NavigationItem :prepend-icon=mdiAccountCircle>
-                  <template #heading>{{ $t('menu.about') }}</template>
-                  </NavigationItem>
-                </v-list-item>
-                </template>
-
-                <!-- About Subitems -->
-
-                <v-list-item>
-                <NavigationItem>
-                  <template #heading>{{ $t('menu.summary') }}</template>
-                </NavigationItem>
-                </v-list-item>
-
-                <v-list-item>
-                <NavigationItem>
-                  <template #heading>{{ $t('menu.skills') }}</template>
-                </NavigationItem>
-                </v-list-item>
-
-                <v-list-item>
-                <NavigationItem>
-                  <template #heading>{{ $t('menu.experience') }}</template>
-                </NavigationItem>
-                </v-list-item>
-              </v-list-group>
-
-              <!-- Socials -->
               <v-list-item>
-                <NavigationItem :prepend-icon=mdiGithub @click="moveToSocials">
-                <template #heading>{{ $t('menu.socials') }}</template>
-                </NavigationItem>
+                <NavigationItem><template #heading>{{ $t('menu.skills') }}</template></NavigationItem>
               </v-list-item>
-            </v-container>
+              <v-list-item>
+                <NavigationItem><template #heading>{{ $t('menu.experience') }}</template></NavigationItem>
+              </v-list-item>
+            </div>
+          </transition>
+        </div>
+      </transition>
+    </v-list>
 
-        </v-list>
+    <v-container class="about-navigation">
+      <v-btn class="about-navigation-up">
+        <v-icon :icon="mdiMenuUp" class="about-nav-icon"></v-icon>
+      </v-btn>
+
+      <v-btn class="about-navigation-down">
+        <v-icon :icon="mdiMenuDown" class="about-nav-icon"></v-icon>
+      </v-btn>
     </v-container>
 
     <v-container class="menu-download-cv">
       <v-btn>Download CV</v-btn>
     </v-container>
 
-    <v-container class="menu-settings">
-      <v-btn @click="toggleLanguage">{{ getLanguage() }}</v-btn>
-    </v-container>
+    <v-list class="menu-settings">
+      <v-list-group >
+        <template v-slot:activator="{ props }">
+          <v-list-item
+            v-bind="props"
+          >
+            <v-list-item-title>Settings</v-list-item-title>
+          </v-list-item>
+        </template>
+
+        <v-list-item>
+          <v-list-group>
+            <template v-slot:activator="{ props }">
+              <v-list-item
+                v-bind="props"
+              >
+                <v-list-item-title>Change Language</v-list-item-title>
+              </v-list-item>
+            </template>
+            <v-list-item>
+              <v-btn @click="setLang('en')" class="language-button">English</v-btn>
+            </v-list-item>
+            <v-list-item>
+              <v-btn @click="setLang('es')" class="language-button">Español</v-btn>
+            </v-list-item>
+          </v-list-group>
+        </v-list-item>
+      </v-list-group>
+    </v-list>
   </v-main>
 </template>
 
 <style scoped>
-  .v-main {
-    display: flex;
-    position: fixed;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    pointer-events: none;
-    overflow: hidden;
-  }
+.fade-slide-enter-active, .fade-slide-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-slide-enter-from, .fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-5px);
+}
 
-  .toggle-button {
-    margin-bottom: 10px;
-  }
+.v-main {
+  display: flex;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
 
-  .menu-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    padding: 16px 0 0 16px;
-    z-index: 10;
-    pointer-events: auto;
-    width: auto;
-  }
+.toggle-button {
+  background-color: rgb(58, 58, 58);
+  color: white;
+}
 
-  .menu-container-buttons {
-    display: flex;
-    flex-direction: column;
-    padding-left: 1rem;
-    background-color: rgb(58, 58, 58);
-    color: white;
-    opacity: 0.9;
-  }
+.menu-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 0;
+  z-index: 10;
+  pointer-events: auto;
+  width: auto;
+  height: auto;
+  background-color: rgb(58, 58, 58);
+  color: white;
+  opacity: 0.9;
+}
 
-  .section-buttons-container {
-    margin-top: -1rem;
-    margin-left: 0.5rem;
-  }
+.menu-container-buttons {
+  display: flex;
+  flex-direction: column;
+  padding-left: 1rem;
+  background-color: rgb(58, 58, 58);
+  color: white;
+  opacity: 0.9;
+}
 
-  .menu-download-cv {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    display: flex;
-    justify-content: flex-end; /* Align buttons to the right */
-    pointer-events: all;
-    padding: 16px;
-    width: 20%;
-  }
+.section-buttons-container {
+  margin-top: -1rem;
+  margin-left: 0.5rem;
+}
 
-  .menu-settings {
-    position: absolute;
-    top: 0;
-    right: 0;
-    display: flex;
-    justify-content: flex-end;
-    padding: 16px;
-    width: 10%;
-    pointer-events: all;
-  }
+.menu-download-cv {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  pointer-events: all;
+  padding: 16px;
+  width: 20%;
+}
 
-  .about-subitems {
-    padding-left: 30px;
+.menu-settings {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 16px;
+  width: auto;
+  height: auto;
+  pointer-events: all;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  background-color: rgb(58, 58, 58);
+  color: white;
+  opacity: 0.9;
+}
+
+.language-button {
+  width: 100%;
+  background-color: rgb(58, 58, 58);
+  color: white;
+}
+
+.about-subitems {
+  padding-left: 30px;
+}
+
+.about-navigation {
+  display: none;
+}
+
+/** Set navigaton up and down in the center of the screen */
+.about-navigation-up,
+.about-navigation-down {
+  position: fixed;
+  color: black;
+  z-index: 15;
+  font-size: 2rem;
+  height: auto;
+  width: auto;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+  justify-content: center;
+  /** center objects (vertically and horizontally) */
+  display: flex;
+  align-items: center;
+  animation: bounce 1.5s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translate(-50%, -50%) translateY(0);
   }
+  50% {
+    transform: translate(-50%, -50%) translateY(-10px);
+  }
+}
+
+.about-navigation-up {
+  top: 10%;
+  left: 50%;
+}
+
+.about-navigation-down {
+  bottom: 10%;
+  left: 50%;
+
+  animation-delay: 0.75s; /* Add delay to alternate the bounce */
+}
 </style>

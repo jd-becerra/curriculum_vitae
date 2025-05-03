@@ -98,5 +98,12 @@
                 "description": "In addition to my main technical skills, I have pursued complementary learning experiences to deepen my understanding of computer science fundamentals. I completed the Nand2Tetris course series, where I built a computer system from the ground up — starting with simple logic gates and progressing through the design of an Arithmetic Logic Unit (ALU), a CPU, and a simple memory system. I also developed a basic programming language and compiler, which culminated in creating a working computer capable of running programs, including a simple chess game that I programmed myself. This project gave me practical insight into the layers of abstraction that form the foundation of modern computing. I also completed the Algorithms course offered by Princeton University on Coursera, which focused on data structures and algorithms essential for software development. Throughout the course, I worked with Java to study and implement fundamental and advanced concepts such as stacks, queues, linked lists, binary search trees, heaps, union-find structures, graph algorithms, and sorting algorithms like mergesort and quicksort. These experiences strengthened my problem-solving skills and my ability to write efficient, optimized code across different programming environments."
             }
         ]
+    },
+    "soft-skills": {
+        "title": "Soft skills:",
+        "main-description": "",
+        "skills": [
+
+        ]
     }
 }

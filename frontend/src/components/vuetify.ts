@@ -19,18 +19,15 @@ import {
   VListItem,
   VListItemTitle,
   VListGroup,
-  VForm,
-  VTextarea,
-  VTextField,
   VIcon,
-  VToolbar,
-  VToolbarTitle,
   VSlideXTransition,
   VDialog,
   VProgressCircular,
   VCarousel,
   VCarouselItem,
-  VDivider
+  VDivider,
+  VExpansionPanel,
+  VExpansionPanels
 } from 'vuetify/components';
 import { Ripple, Intersect, Scroll, Touch } from 'vuetify/directives';
 const vuetify = createVuetify({
@@ -52,18 +49,15 @@ const vuetify = createVuetify({
     VListItem,
     VListItemTitle,
     VListGroup,
-    VForm,
-    VTextarea,
-    VTextField,
     VIcon,
-    VToolbar,
-    VToolbarTitle,
     VSlideXTransition,
     VDialog,
     VProgressCircular,
     VCarousel,
     VCarouselItem,
-    VDivider
+    VDivider,
+    VExpansionPanel,
+    VExpansionPanels,
   },
   directives: {
     Ripple,

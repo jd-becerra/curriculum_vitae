@@ -10,7 +10,22 @@ export const useMainStore = defineStore('main', {
     showCertificates: false,
     showCredits: false,
 
+    navigationMenuVisible: false,
+
+    // Navigation buttons for the About section
+    // Skills section
+    moveDownToAbout: false,
+    // About me section (main)
+    moveUpToSkills: false,
+    moveDownToExperience: false,
+    // Experience section
+    moveUpToAbout: false,
+
     shouldAllowMouseEvents: false,
+
+    panelHardSkills: [],
+
+    locale: 'en',
   }),
   actions: {
     // Show elements
@@ -92,6 +107,8 @@ export const useMainStore = defineStore('main', {
       this.showCertificates = false;
     },
     enableMouseEvents() {
+      console.log("Enabling mouse events");
+
       this.shouldAllowMouseEvents = true;
 
       const labelRenderer = document.querySelector('.label-renderer') as HTMLElement;
@@ -104,6 +121,9 @@ export const useMainStore = defineStore('main', {
       labels.forEach((label) => {
         (label as HTMLElement).style.pointerEvents = "auto";
       });
+    },
+    showNavigationMenu() {
+      this.navigationMenuVisible = true;
     },
 
     // Hide elements
@@ -129,6 +149,7 @@ export const useMainStore = defineStore('main', {
       this.showCredits = false;
     },
     disableMouseEvents() {
+      console.log("Disabling mouse events");
       this.shouldAllowMouseEvents = false;
 
       const labelRenderer = document.querySelector('.label-renderer') as HTMLElement;
@@ -141,6 +162,19 @@ export const useMainStore = defineStore('main', {
       labels.forEach((label) => {
         (label as HTMLElement).style.pointerEvents = "none";
       });
+    },
+    hideNavigationMenu() {
+      this.navigationMenuVisible = false;
+    },
+    emptyPanelHardSkills() {
+      this.panelHardSkills = [];
+    },
+
+    setLocale(locale: string) {
+      this.locale = locale;
+    },
+    setPanelHardSkills(panelHardSkills: any) {
+      this.panelHardSkills = panelHardSkills;
     }
   },
   getters: {
@@ -151,6 +185,9 @@ export const useMainStore = defineStore('main', {
     isExperienceVisible: (state) => state.showExperience,
     isCertificatesVisible: (state) => state.showCertificates,
     isCreditsVisible: (state) => state.showCredits,
-    isMouseEventsAllowed: (state) => state.shouldAllowMouseEvents
+    isMouseEventsAllowed: (state) => state.shouldAllowMouseEvents,
+    isNavigationMenuVisible: (state) => state.navigationMenuVisible,
+    getLocale: (state) => state.locale,
+    getPanelHardSkills: (state) => state.panelHardSkills,
   }
 });

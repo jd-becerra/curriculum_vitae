@@ -10,14 +10,18 @@
 .item {
   display: flex;
   position: relative;
-  place-content: center;
-  place-items: center;
-  background-color: #000000;
+  place-content: left;
+  place-items: left;
+  background-color: transparent;
+  color: white;
+  width: 100%;
+  justify-content: left;
 }
 
 .header {
   font-size: 1rem;
   font-weight: 300;
-  color: #fff;
+  color: white;
 }
+
 </style>

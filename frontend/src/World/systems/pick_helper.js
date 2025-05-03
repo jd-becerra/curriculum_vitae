@@ -9,16 +9,8 @@ class PickHelper {
     this.pickedObjectSavedColor = 0;
     this.hoveredObject = null;
 
-    this.hardSkills = [
-      'C++',
-      'Python',
-      'JavaScript',
-      'HTML',
-      'Node',
-      'React',
-      'Vue',
-      'SQL',
-    ]
+    this.hoverListener = null;
+    this.clickListener = null;
 
     // Since we use Pinia, we also read the store to detect if we should force the state of the mouse events
     this.store = useMainStore();
@@ -77,12 +69,18 @@ class PickHelper {
         this.store.disableMouseEvents();
         this._removeHoverEffects(loop, normalizedPosition);
         // For now, we assume that hard skill books will be shown first (will be changed later)
-        mouseEvents.handleHardSkillsClick(this.pickedObject.name, loop);
+        mouseEvents.handleHardSkillsClick(this.pickedObject.parent.name, loop);
       }
     }
   }
 
   hover(normalizedPosition, scene, camera, loop, screenPosition, outlinePass) {
+    if (!this.store.isMouseEventsAllowed) {
+      mouseEvents.handleSocialIconHover(null, loop);
+      mouseEvents.handleHardSkillsHover(null, loop, screenPosition);
+      return;
+    }
+
     this.raycaster.setFromCamera(normalizedPosition, camera);
     const intersectedObjects = this.raycaster.intersectObjects(scene.children);
 
@@ -134,24 +132,33 @@ class PickHelper {
   }
 
   // Private methods
-  _activateHover(scene, camera, loop) {
-    window.addEventListener("mousemove", (event) => {
+  _activateMouseEvents(scene, camera, loop) {
+    this.clickListener = (event) => {
+      const normalizedPosition = {
+        x: (event.clientX / window.innerWidth) * 2 - 1,
+        y: -(event.clientY / window.innerHeight) * 2 + 1,
+      };
+      this.click(normalizedPosition, scene, camera, loop);
+    }
+
+    this.hoverListener = (event) => {
       const normalizedPosition = {
         x: (event.clientX / window.innerWidth) * 2 - 1,
         y: -(event.clientY / window.innerHeight) * 2 + 1,
       };
       this.hover(normalizedPosition, scene, camera, loop);
-    });
+    }
+
+    window.addEventListener("click", this.clickListener);
+    window.addEventListener("mousemove", this.hoverListener);
   }
 
-  _deactivateHover(scene, camera, loop) {
-    window.removeEventListener("mousemove", (event) => {
-      const normalizedPosition = {
-        x: (event.clientX / window.innerWidth) * 2 - 1,
-        y: -(event.clientY / window.innerHeight) * 2 + 1,
-      };
-      this.hover(normalizedPosition, scene, camera, loop);
-    });
+  _deactivateMouseEvents() {
+    window.removeEventListener("click", this.clickListener);
+    window.removeEventListener("mousemove", this.hoverListener);
+
+    this.clickListener = null;
+    this.hoverListener = null;
   }
 
   _removeHoverEffects(loop, screenPosition) {

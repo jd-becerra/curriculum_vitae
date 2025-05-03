@@ -14,7 +14,6 @@
         v-for="(project, index) in $tm('projects-vue.projects')"
         :key="index"
         cover
-        @click="sendTo(project.link)"
       >
         <v-card class="project-card">
           <v-card-title>{{ project.title }}</v-card-title>

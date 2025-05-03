@@ -34,7 +34,7 @@
     <div ref="sceneSectionHeaders" class="scene-section-headers"></div>
 
     <div ref="inspectView" class="inspect-view">
-      <HardSkillsLabel v-if="showHardSkills" />
+      <HardSkillsLabel v-show="showHardSkills" />
     </div>
 
     <div ref="sceneContainer" class="three-scene">

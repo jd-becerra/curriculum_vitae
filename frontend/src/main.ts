@@ -12,8 +12,8 @@ const pinia = createPinia();
 // Create Vue app
 const app = createApp(App);
 
-app.use(router);
 app.use(pinia);
+app.use(router);
 app.use(vuetify);
 app.use(i18n);
 

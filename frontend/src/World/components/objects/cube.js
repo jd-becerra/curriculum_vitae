@@ -8,7 +8,7 @@ import {
   TextureLoader,
 } from "three";
 
-export default function createCube(props) {
+function createCube(props) {
   const scale = props.scale || [1, 1, 1];
   const position = props.position || [0, 0, 0];
   const geometry = new BoxGeometry(scale[0], scale[1], scale[2]);
@@ -43,4 +43,46 @@ export default function createCube(props) {
   return cube;
 }
 
-export { createCube };
+function removeAreaSelectors(scene) {
+  const projectsArea = scene.getObjectByName("projectsArea");
+  if (projectsArea) {
+    scene.remove(projectsArea);
+  }
+
+  const socialsArea = scene.getObjectByName("socialsArea");
+  if (socialsArea) {
+    scene.remove(socialsArea);
+  }
+
+  const aboutArea = scene.getObjectByName("aboutArea");
+  if (aboutArea) {
+    scene.remove(aboutArea);
+  }
+}
+
+function createAreaSelectors(scene) {
+  // create cubes that will be used as click areas for the labels
+  const cubeComputer = createCube({
+    color: "blue",
+    scale: [15,10,20],
+    position: [-15, -3, -5],
+    name: "projectsArea",
+  });
+  scene.add(cubeComputer);
+  const cubeSocials = createCube({
+    color: "red",
+    scale: [14,12,10],
+    position: [14, 4, -30],
+    name: "socialsArea",
+  });
+  scene.add(cubeSocials);
+  const cubeBookcase = createCube({
+    color: "yellow",
+    scale: [14,22,10],
+    position: [-5, 0, -30],
+    name: "aboutArea",
+  });
+  scene.add(cubeBookcase);
+}
+
+export { createAreaSelectors, removeAreaSelectors };
