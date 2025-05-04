@@ -22,6 +22,8 @@ export const useMainStore = defineStore('main', {
     moveUpToAbout: false,
 
     shouldAllowMouseEvents: false,
+    // Since the mouse events don't wait for the click to be released, we need an aditional variable to delay the click
+    delayClick: false,
 
     panelHardSkills: [],
 
@@ -175,6 +177,9 @@ export const useMainStore = defineStore('main', {
     },
     setPanelHardSkills(panelHardSkills: any) {
       this.panelHardSkills = panelHardSkills;
+    },
+    setClickDelay(delay: boolean) {
+      this.delayClick = delay;
     }
   },
   getters: {
@@ -189,5 +194,6 @@ export const useMainStore = defineStore('main', {
     isNavigationMenuVisible: (state) => state.navigationMenuVisible,
     getLocale: (state) => state.locale,
     getPanelHardSkills: (state) => state.panelHardSkills,
+    shouldDelayClick: (state) => state.delayClick
   }
 });

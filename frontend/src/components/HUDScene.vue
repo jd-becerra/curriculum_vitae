@@ -65,12 +65,12 @@ function setLang(lang: string) {
 
 // Detect clicks outside the menu and close it
 const menuRef = ref<any>(null);
-
 const handleClickOutside = (event: MouseEvent) => {
   const menuElement = menuRef.value?.$el as HTMLElement | undefined;
   if (store.isNavigationMenuVisible && menuElement && !menuElement.contains(event.target as Node)) {
     store.hideNavigationMenu();
     store.enableMouseEvents();
+    store.setClickDelay(true);
 
     isNavOpen.value = false;
   }

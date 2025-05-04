@@ -18,6 +18,12 @@ class PickHelper {
 
   // Public methods
   click(normalizedPosition, scene, camera, controls, loop) {
+    // Block click one time if we are trying to reactivate it, to wait for the click to be released
+    if (this.store.shouldDelayClick) {
+      this.store.setClickDelay(false);
+      return;
+    }
+
     if (!this.store.isMouseEventsAllowed) {
       return;
     }
