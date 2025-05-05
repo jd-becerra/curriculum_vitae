@@ -314,10 +314,10 @@
         const objectsPos = [-20, -10, -10];
 
         // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/room.glb", objectsPos, 0.7, "room"));
-        loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/trophies.glb", objectsPos, 0.7, "trophies", "socials")); // For socials and credits
-        loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/desk.glb", objectsPos, 0.7, "desk", "projects"));
+        // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/trophies.glb", objectsPos, 0.7, "trophies", "socials")); // For socials and credits
+        // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/desk.glb", objectsPos, 0.7, "desk", "projects"));
         loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/bookcase.glb", objectsPos, 0.7, "bookcase", "about"));
-        // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/notebook.glb", objectsPos, 0.7, "notebook"));
+        loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/notebook.glb", objectsPos, 0.7, "notebook"));
         // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/butterfly.glb", objectsPos, 0.7, "butterfly"));
         // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/fireplace.glb", objectsPos, 0.7, "fireplace"));
         // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/fire.glb", objectsPos, 0.7, "fire"));

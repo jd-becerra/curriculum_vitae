@@ -6,7 +6,6 @@ function createAnimationMixer(gltf, loop) {
   if (clips.length === 0) {
     return null;
   }
-
   const model = gltf.scene;
   const skeleton = model.getObjectByProperty('type', 'Bone');
 

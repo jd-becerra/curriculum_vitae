@@ -64,18 +64,18 @@ class PickHelper {
         mouseEvents.handleAboutClick(controls, loop, scene);
         this.pickedObject = null;
       }
-      else if (objectName == 'Notebook') {
-        mouseEvents.handleOpenBook(this.pickedObject);
-      }
       // If clicked object is a social media icon, open the corresponding link
       else if (mouseEvents.getIsAreaActive("socials")) {
         mouseEvents.handleSocialIconClick(this.pickedObject.name, loop);
       }
       else if (mouseEvents.getIsAreaActive("about")) {
-        this.store.disableMouseEvents();
-        this._removeHoverEffects(loop, normalizedPosition);
-        // For now, we assume that hard skill books will be shown first (will be changed later)
-        mouseEvents.handleHardSkillsClick(this.pickedObject.parent.name, loop);
+        if (mouseEvents.getActiveAboutSubarea() == "skills") {
+          this.store.disableMouseEvents();
+          this._removeHoverEffects(loop, normalizedPosition);
+          mouseEvents.handleSkillsClick(this.pickedObject.name, loop);
+        } else if (mouseEvents.getActiveAboutSubarea() == "main" && objectName == 'About_Me' && !mouseEvents.isBookOpen) {
+          mouseEvents.handleOpenBook(this.pickedObject);
+        }
       }
     }
   }
@@ -95,6 +95,8 @@ class PickHelper {
     if (intersectedObjects.length > 0) {
       let candidate = intersectedObjects[0].object;
 
+      // console.log("Hovered object: ", candidate);
+
       if (candidate != this.hoveredObject) {
         outlinePass.selectedObjects = [];
         this.hoveredObject = candidate;
@@ -109,23 +111,28 @@ class PickHelper {
         mouseEvents.handleSocialIconHover(candidate, loop);
       }
       else if (mouseEvents.getIsAreaActive("about") && candidate.clickable) {
-        // Change cursor to pointer
-        document.body.style.cursor = 'pointer';
-        newHoveredObject = candidate;
+        if (mouseEvents.getActiveAboutSubarea() === "skills") {
+          // Change cursor to pointer
+          document.body.style.cursor = 'pointer';
+          newHoveredObject = candidate;
 
-        mouseEvents.handleHardSkillsHover(candidate.parent, loop, screenPosition);
+          if (candidate.name !== 'Soft_Skills')
+            mouseEvents.handleHardSkillsHover(candidate, loop, screenPosition);
+        }
       }
       else {
         // Remove hover effects
         mouseEvents.handleSocialIconHover(null, loop);
         mouseEvents.handleHardSkillsHover(null, loop, screenPosition);
+        mouseEvents.setHoveredObjectTag(null);
 
         document.body.style.cursor = 'default';
       }
 
       // Add hovered object to outline pass
-      if (this.hoveredObject.clickable) {
+      if (this.hoveredObject.clickable && mouseEvents.canSetHoveredObject(this.hoveredObject.area)) {
         outlinePass.selectedObjects.push(this.hoveredObject);
+        mouseEvents.setHoveredObjectTag(this.hoveredObject.name, screenPosition, this.hoveredObject.area);
         document.body.style.cursor = 'pointer';
       }
     } else {
@@ -133,6 +140,7 @@ class PickHelper {
       this._removeHoverEffects(loop, screenPosition);
       document.body.style.cursor = 'default';
 
+      mouseEvents.setHoveredObjectTag(null);
       outlinePass.selectedObjects = [];
     }
   }

@@ -4,11 +4,11 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { createAnimationMixer } from './animation.js';
 import { LoopRepeat, LoopPingPong, Color } from 'three';
 
-const clickableObjects = [
-  'notebook',
+const trophies = [
   'LinkedIn',
   'Github',
   'Gmail',
+
 ];
 
 function loadGLTF(
@@ -51,18 +51,24 @@ function loadGLTF(
         // Set clickable property for all objects inside the model if applicable
         if (name == 'trophies') {
           model.traverse((child) => {
-            if (clickableObjects.includes(child.name)) {
+            if (trophies.includes(child.name)) {
               child.clickable = true;
+              child.area = 'socials';
             }
           });
         }
         if (name == 'notebook') {
           model.clickable = true;
+          model.area = 'about_main';
+
+          model.traverse((child) => {
+            child.clickable = true;
+            child.area = 'about_main';
+          });
         }
 
         // These models have animations that should be played automatically
         if (name === 'fire'  || name === 'candle_flame' || name === 'butterfly') {
-
           if (model.mixer && model.mixer.animations.length > 0) {
             const mixer = model.mixer;
             const clip = mixer.animations[0]; // Get the first animation clip
@@ -74,26 +80,25 @@ function loadGLTF(
             console.error('No animation found for fireplace model');
           }
         }
-
+        
         if (name == 'bookcase') {
           const hardSkills = model.getObjectByName('hard_skills');
-          // set all children as clickable
+          // set all children of hard skills as clickable
           hardSkills.traverse((child) => {
             child.clickable = true;
+            child.area = 'about_skills';
+          });
+          const flower = model.getObjectByName('flower');
+          flower.traverse((child) => {
+            child.clickable = true;
+            child.area = 'about_skills';
+
           });
         }
 
         // If we have an lod, add model to the corresponding lod level
         if (lod && lod_level !== null && lod_level >= 0) {
           lod.addLevel(model, lod_level);
-        }
-
-        // If we give an area, mark all children for the area
-        if (area != "") {
-          model.selectableArea = area;
-          model.traverse((child) => {
-            child.selectableArea = area;
-          });
         }
 
         scene.add(model);

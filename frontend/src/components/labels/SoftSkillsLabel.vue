@@ -24,14 +24,8 @@ import { ref } from 'vue';
 import { useMainStore } from '../store';
 
 const mainStore = useMainStore();
-
-const panel = ref([] as string[]);
-function all () {
-  panel.value = ['foo', 'bar', 'baz']
-}
-function none () {
-  panel.value = [];
-}
+// Use computed to get panel for soft skills
+const panel = ref<number[]>([]);
 const closeSoftSkills = () => {
   // @ts-ignore
   document.querySelector('.label-renderer').style.pointerEvents = "auto";
@@ -43,7 +37,7 @@ const closeSoftSkills = () => {
   mainStore.hideSoftSkills();
   mainStore.enableMouseEvents();
 
-  none();
+  panel.value = [];
 }
 
 </script>

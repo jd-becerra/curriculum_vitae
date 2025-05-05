@@ -15,6 +15,10 @@ import { createAreaSelectors, removeAreaSelectors } from '../components/objects/
 let isBookOpen = false;
 let isSocialsAreaActive = false;
 let isAboutAreaActive = false;
+let isAboutSkillsSubareaActive = false;
+let isAboutMainSubareaActive = false;
+let isAboutExperienceSubareaActive = false;
+let hoveredObjectTag = null;
 
 // For social icons
 const gmailLink = "jbecerraofficial@gmail.com";
@@ -25,11 +29,10 @@ let hovSocialIconInitialY = null;
 let hovSocialIconInitialRotation = null;
 let hovSocialIconTick = null;
 
-// For hard skills
+// For About area (skills, about me, experience)
 let hovHardSkill = null;
 let hovHardSkillInitialX = null;
 let hovHardSkillTick = null;
-let hovHardSkillTag = null;
 const hardSkillIndexes = {
   "C++": 0,
   "Python": 1,
@@ -44,7 +47,9 @@ const hardSkillIndexes = {
   "Chinese": 10,
   "More": 11
 }
-
+const skillsPos = {x: -3, y: 3.5, z: -49};
+const aboutMePos = {x: -3, y: 0.5, z: -49};
+const experiencePos = {x: -3, y: 1.5, z: -49};
 // Headers that can be rendered
 let headersToRender = [];
 let lang = 'en';
@@ -64,7 +69,7 @@ function getHeadersByLang(locale) {
     "about": {
       path: `${basePath}/about_me.png`,
       name: "About Me Section",
-      position: {x: -1.6, y: 1, z: -26},
+      position: {x: -1.6, y: 2, z: -26},
     },
     "certificates": {
       path: `${basePath}/certificates.png`,
@@ -79,7 +84,7 @@ function getHeadersByLang(locale) {
     "soft_skills": {
       path: `${basePath}/soft_skills.png`,
       name: "Soft Skills Section",
-      position: {x: -1.6, y: 4.9, z: -26},
+      position: {x: -1.6, y: 5.2, z: -26},
     },
     "hard_skills": {
       path: `${basePath}/hard_skills.png`,
@@ -298,7 +303,7 @@ function createPngHeaders(loop, scene, headersToRender) {
 }
 
 // Moves to the general About Me area (a bookcase with books, picture frames and a flower pot)
-function handleAboutClick(controls, loop, scene) {
+function handleAboutSubarea(controls, loop, scene, subarea = "main") {
   if (isAboutAreaActive) {
     return;
   }
@@ -309,10 +314,23 @@ function handleAboutClick(controls, loop, scene) {
   handleSocialIconHover(null, loop);
   isBookOpen = false;
   isSocialsAreaActive = false;
-
-  headersToRender = ["soft_skills", "hard_skills", "about", "certificates", "experience"];
+  let targetPos = aboutMePos;
+  if (subarea === "main") {
+    headersToRender = ["about"];
+  }
+  else if (subarea === "skills") {
+    headersToRender = ["soft_skills", "hard_skills"];
+    targetPos = skillsPos;
+  }
+  else if (subarea === "experience") {
+    targetPos = experiencePos;
+    headersToRender = ["certificates", "experience"];
+  }
+  else {
+    console.error("Invalid subarea to navigate:", subarea);
+    return;
+  }
   createPngHeaders(loop, scene, headersToRender, getCurrentLocale());
-
   // Add to loop a tick to re-render the headers if the language changes
   loop.updatables.push({
     tick: (delta) => {
@@ -322,11 +340,10 @@ function handleAboutClick(controls, loop, scene) {
       }
     }
   });
-
-
   isAboutAreaActive = true;
+  setAboutSubareaActive(subarea);
 
-  const to = {x: -3, y: 3.5, z: -49};
+  const to = targetPos;
   const angles = {
     yDown: MathUtils.degToRad(90),
     yUp: MathUtils.degToRad(90),
@@ -334,6 +351,11 @@ function handleAboutClick(controls, loop, scene) {
     xRight: MathUtils.degToRad(1)
   }
   moveToArea(controls, loop, to, angles, 31, 32);
+}
+
+function handleAboutClick(controls, loop, scene) {
+  // The first subarea we navigate to is the main one
+  handleAboutSubarea(controls, loop, scene, "main");
 }
 
 function toggleIsSocialsActive() {
@@ -344,6 +366,29 @@ function toggleIsSocialsActive() {
 function toggleIsAboutActive() {
   isAboutAreaActive = !isAboutAreaActive;
   return isAboutAreaActive;
+}
+
+function getActiveAboutSubarea() {
+  if (isAboutMainSubareaActive) return "main";
+  if (isAboutSkillsSubareaActive) return "skills";
+  if (isAboutExperienceSubareaActive) return "experience";
+  return "";
+}
+
+function setAboutSubareaActive(subarea) {
+  if (subarea === "main") {
+    isAboutMainSubareaActive = true;
+    isAboutSkillsSubareaActive = false;
+    isAboutExperienceSubareaActive = false;
+  } else if (subarea === "skills") {
+    isAboutMainSubareaActive = false;
+    isAboutSkillsSubareaActive = true;
+    isAboutExperienceSubareaActive = false;
+  } else if (subarea === "experience") {
+    isAboutMainSubareaActive = false;
+    isAboutSkillsSubareaActive = false;
+    isAboutExperienceSubareaActive = true;
+  }
 }
 
 function getIsAreaActive(area, subArea = "") {
@@ -358,6 +403,10 @@ function getIsAreaActive(area, subArea = "") {
 }
 
 function handleOpenBook(object) {
+  if (isBookOpen) {
+    return;
+  }
+
   let parent = object.parent;
   while (parent && !parent.mixer) {
     parent = parent.parent;
@@ -379,7 +428,11 @@ function handleOpenBook(object) {
   }
 
   // Determine which animation to play
-  let bookAnimation = isBookOpen ? getAnimation(mixer.animations, "Close") : getAnimation(mixer.animations, "Open");
+  let bookAnimation = getAnimation(mixer.animations, "Open");
+  if (!bookAnimation) {
+    console.error('No animation found for object:', object.name);
+    return;
+  }
   isBookOpen = !isBookOpen;
 
   if (!bookAnimation) {
@@ -470,11 +523,11 @@ function handleHardSkillsHover(newHoveredObject, loop, mousePosition) {
 
   if (hovHardSkill === newHoveredObject) {
     // Update tag position if already hovering the same item
-    if (hovHardSkillTag) {
+    if (hoveredObjectTag) {
       const offsetX = 40;
       const offsetY = 30;
-      hovHardSkillTag.style.left = `${mousePosition.x + offsetX}px`;
-      hovHardSkillTag.style.top = `${mousePosition.y + offsetY}px`;
+      hoveredObjectTag.style.left = `${mousePosition.x + offsetX}px`;
+      hoveredObjectTag.style.top = `${mousePosition.y + offsetY}px`;
     }
     return;
   }
@@ -491,9 +544,9 @@ function handleHardSkillsHover(newHoveredObject, loop, mousePosition) {
     }
   }
 
-  if (hovHardSkillTag) {
-    hovHardSkillTag.remove();
-    hovHardSkillTag = null;
+  if (hoveredObjectTag) {
+    hoveredObjectTag.remove();
+    hoveredObjectTag = null;
   }
 
   hovHardSkill = newHoveredObject;
@@ -511,48 +564,82 @@ function handleHardSkillsHover(newHoveredObject, loop, mousePosition) {
     };
     loop.updatables.push(hovHardSkillTick);
 
-    const tag = document.createElement('div');
-    tag.className = 'hover-tag';
-    let tagName = hovHardSkill.name.replace(/_/g, ' '); // Replace underscores with spaces
-    // Some special cases
-    if (tagName == 'Nodejs') tagName = 'Node.js';
-    else if (tagName == 'More') tagName = 'More...';
-    tag.innerHTML = tagName;
-    tag.style.position = 'absolute';
-    tag.style.pointerEvents = 'none';
-    tag.style.zIndex = '9999';
-    tag.style.transition = 'opacity 0.3s ease-in-out';
-    tag.style.opacity = '1';
-    tag.style.fontSize = '16px';
-    tag.style.color = 'white';
-    tag.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-    tag.style.padding = '5px 10px';
-    tag.style.borderRadius = '5px';
-    tag.style.whiteSpace = 'nowrap';
-    tag.style.transform = 'translate(-50%, -50%)';
-
-    const offsetX = 40;
-    const offsetY = 30;
-    tag.style.left = `${mousePosition.x + offsetX}px`;
-    tag.style.top = `${mousePosition.y + offsetY}px`;
-
-    document.body.appendChild(tag);
-    hovHardSkillTag = tag;
+    hoveredObjectTag = setHoveredObjectTag(hovHardSkill.name, mousePosition = { x: 0, y: 0 });
   } else {
     hovHardSkillInitialX = null;
     hovHardSkillTick = null;
   }
 }
 
-function handleHardSkillsClick(skillName, loop) {
+function canSetHoveredObject(objectArea) {
+   if ((objectArea == 'about_skills' && !isAboutSkillsSubareaActive)
+    || (objectArea == 'about_main' && !isAboutMainSubareaActive)
+    || (objectArea == 'about_experiences' && !isAboutExperienceSubareaActive)
+    || (objectArea == 'socials' && !isSocialsAreaActive)) {
+    return false;
+  }
+
+  return true;
+}
+
+function setHoveredObjectTag(name, mousePosition, objectArea = "") {
+  // Remove all tags in class hover-tag
+  const tags = document.getElementsByClassName('hover-tag');
+  for (let i = 0; i < tags.length; i++) {
+    tags[i].remove();
+  }
+
+  // If name is null, return
+  if ( !name || !canSetHoveredObject(objectArea) ) {
+    return null;
+  }
+
+  const tag = document.createElement('div');
+  tag.className = 'hover-tag';
+  let tagName = name.replace(/_/g, ' '); // Replace underscores with spaces
+  // Some special cases
+  if (tagName == 'Nodejs') tagName = 'Node.js';
+  else if (tagName == 'More') tagName = 'More...';
+  tag.innerHTML = tagName;
+  tag.style.position = 'absolute';
+  tag.style.pointerEvents = 'none';
+  tag.style.zIndex = '9999';
+  tag.style.transition = 'opacity 0.3s ease-in-out';
+  tag.style.opacity = '1';
+  tag.style.fontSize = '16px';
+  tag.style.color = 'white';
+  tag.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+  tag.style.padding = '5px 10px';
+  tag.style.borderRadius = '5px';
+  tag.style.whiteSpace = 'nowrap';
+  tag.style.transform = 'translate(-50%, -50%)';
+
+  const offsetX = 40;
+  const offsetY = 30;
+  tag.style.left = `${mousePosition.x + offsetX}px`;
+  tag.style.top = `${mousePosition.y + offsetY}px`;
+
+  document.body.appendChild(tag);
+  return tag;
+}
+
+function handleSkillsClick(skillName, loop) {
+  setHoveredObjectTag(null);
+
   document.querySelector('.label-renderer').style.pointerEvents = "none";
   document.querySelector('.inspect-view').style.pointerEvents = "auto";
   document.querySelector('.menu-container').style.display = 'none';
 
   const store = useMainStore();
-  store.triggerShowHardSkills();
+
   // Overwrite array for panel selection to hold just the index of the clicked skill
-  store.setPanelHardSkills([hardSkillIndexes[skillName]]);
+  if (skillName === 'Soft_Skills') {
+    store.triggerShowSoftSkills();
+  }
+  else {
+    store.triggerShowHardSkills();
+    store.setPanelHardSkills([hardSkillIndexes[skillName]]);
+  }
 }
 
 function _removeSocialIconTick(loop) {
@@ -571,9 +658,12 @@ export {
   handleSocialIconClick,
   handleSocialIconHover,
   handleHardSkillsHover,
-  handleHardSkillsClick,
+  handleSkillsClick,
   toggleIsSocialsActive,
   toggleIsAboutActive,
   getIsAreaActive,
   handleOpenBook,
+  getActiveAboutSubarea,
+  setHoveredObjectTag,
+  canSetHoveredObject
 };

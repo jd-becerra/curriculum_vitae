@@ -109,8 +109,6 @@ export const useMainStore = defineStore('main', {
       this.showCertificates = false;
     },
     enableMouseEvents() {
-      console.log("Enabling mouse events");
-
       this.shouldAllowMouseEvents = true;
 
       const labelRenderer = document.querySelector('.label-renderer') as HTMLElement;
@@ -151,7 +149,6 @@ export const useMainStore = defineStore('main', {
       this.showCredits = false;
     },
     disableMouseEvents() {
-      console.log("Disabling mouse events");
       this.shouldAllowMouseEvents = false;
 
       const labelRenderer = document.querySelector('.label-renderer') as HTMLElement;

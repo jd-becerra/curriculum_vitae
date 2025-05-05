@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { ref, onMounted, defineExpose, computed } from 'vue';
   import HardSkillsLabel from "./labels/HardSkillsLabel.vue"
+  import SoftSkillsLabel from "./labels/SoftSkillsLabel.vue"
   import { useMainStore } from './store';
 
   const mainContainer = ref<HTMLDivElement | null>(null);
@@ -12,6 +13,7 @@
   // Store state variables
   const store = useMainStore();
   const showHardSkills = computed(() => store.showHardSkills);
+  const showSoftSkills = computed(() => store.showSoftSkills);
 
   // Expose the scene container to the parent component
   const getContainer = () => {
@@ -35,6 +37,7 @@
 
     <div ref="inspectView" class="inspect-view">
       <HardSkillsLabel v-show="showHardSkills" />
+      <SoftSkillsLabel v-show="showSoftSkills" />
     </div>
 
     <div ref="sceneContainer" class="three-scene">
