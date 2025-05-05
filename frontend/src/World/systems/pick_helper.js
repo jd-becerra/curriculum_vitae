@@ -44,7 +44,15 @@ class PickHelper {
 
     if (intersectedObjects.length > 0) {
       // Pick the first (closest) intersected object
-      this.pickedObject = intersectedObjects[0].object;
+      let candidate = intersectedObjects[0].object;
+      if (candidate.area == 'headers' && intersectedObjects.length > 1) {
+        // Let click pass through if the object is a PNG header
+        candidate = intersectedObjects[1].object;
+      }
+
+      if (!candidate) return;
+
+      this.pickedObject = candidate;
 
       if (!this.pickedObject.clickable) {
         return;
@@ -52,15 +60,15 @@ class PickHelper {
 
       // Handle clicks on selected objects
       const objectName = this.pickedObject.name;
-      if (objectName == 'projectsArea') {
+      if (objectName == "Projects Area") {
         mouseEvents.handleProjectsClick(controls, loop, scene);
         this.pickedObject = null;
       }
-      else if (objectName == 'socialsArea') {
+      else if (objectName == "Socials Area") {
         mouseEvents.handleSocialsClick(controls, loop, scene);
         this.pickedObject = null;
       }
-      else if (objectName == 'aboutArea') {
+      else if (objectName == "About Area") {
         mouseEvents.handleAboutClick(controls, loop, scene);
         this.pickedObject = null;
       }
@@ -70,7 +78,6 @@ class PickHelper {
       }
       else if (mouseEvents.getIsAreaActive("about")) {
         if (mouseEvents.getActiveAboutSubarea() == "skills") {
-          this.store.disableMouseEvents();
           this._removeHoverEffects(loop, normalizedPosition);
           mouseEvents.handleSkillsClick(this.pickedObject.name, loop);
         } else if (mouseEvents.getActiveAboutSubarea() == "main" && objectName == 'About_Me' && !mouseEvents.isBookOpen) {
@@ -94,8 +101,12 @@ class PickHelper {
     let newHoveredObject = null;
     if (intersectedObjects.length > 0) {
       let candidate = intersectedObjects[0].object;
+      if (candidate.area == 'headers' && intersectedObjects.length > 1) {
+        // Let hover pass through if the object is a PNG header
+        candidate = intersectedObjects[1].object;
+      }
 
-      // console.log("Hovered object: ", candidate);
+      if (!candidate) return;
 
       if (candidate != this.hoveredObject) {
         outlinePass.selectedObjects = [];

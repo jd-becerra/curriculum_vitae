@@ -50,6 +50,7 @@ const hardSkillIndexes = {
 const skillsPos = {x: -3, y: 3.5, z: -49};
 const aboutMePos = {x: -3, y: 0.5, z: -49};
 const experiencePos = {x: -3, y: 1.5, z: -49};
+let bookObject = null;
 // Headers that can be rendered
 let headersToRender = [];
 let lang = 'en';
@@ -154,6 +155,7 @@ function loadPngHeader(url, name, pos, scale, loop, scene) {
   const material = new MeshBasicMaterial({ color: 0xffffff, transparent: true });
   const header = new Mesh(geometry, material);
   header.name = name;
+  header.area = "headers";
 
   header.position.set(pos.x, pos.y, pos.z);
 
@@ -222,7 +224,7 @@ function handleReturnToMainView(controls, loop, scene) {
   moveToArea(controls, loop, to, angles, 5, 10);
 }
 
-// Moves to the general Projects area (the desk with computer)
+// Moves to the general projectsArea (the desk with computer)
 function handleProjectsClick(controls, loop, scene) {
   removeAreaSelectors(scene);
 
@@ -443,11 +445,31 @@ function handleOpenBook(object) {
   // Stop all other animations to prevent conflicts
   mixer.stopAllAction();
 
+  const store = useMainStore();
+  store.disableMouseEvents();
+  setHoveredObjectTag(null);
+
   // Play the new animation
   const animation = mixer.clipAction(bookAnimation, mixer.target);
   animation.setLoop(LoopOnce);
   animation.clampWhenFinished = true;
   animation.reset().play(); // Ensure animation starts fresh
+
+  if (bookObject === null) {
+    bookObject = object;
+  }
+
+  // Wait for the animation to finish
+  mixer.addEventListener('finished', () => {
+    // Stop the animation to reset to the original state
+    animation.stop();
+
+    isBookOpen = !isBookOpen;
+    document.querySelector('.label-renderer').style.pointerEvents = "none";
+    document.querySelector('.inspect-view').style.pointerEvents = "auto";
+    document.querySelector('.menu-container').style.display = 'none';
+    store.triggerShowAbout();
+  });
 }
 
 function handleSocialIconClick(iconName, loop) {
@@ -591,6 +613,7 @@ function setHoveredObjectTag(name, mousePosition, objectArea = "") {
 
   // If name is null, return
   if ( !name || !canSetHoveredObject(objectArea) ) {
+    document.body.style.cursor = 'default';
     return null;
   }
 
@@ -624,13 +647,14 @@ function setHoveredObjectTag(name, mousePosition, objectArea = "") {
 }
 
 function handleSkillsClick(skillName, loop) {
+  const store = useMainStore();
+  store.disableMouseEvents();
+
   setHoveredObjectTag(null);
 
   document.querySelector('.label-renderer').style.pointerEvents = "none";
   document.querySelector('.inspect-view').style.pointerEvents = "auto";
   document.querySelector('.menu-container').style.display = 'none';
-
-  const store = useMainStore();
 
   // Overwrite array for panel selection to hold just the index of the clicked skill
   if (skillName === 'Soft_Skills') {

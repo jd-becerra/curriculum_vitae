@@ -42,7 +42,6 @@
 
   // Vue components
   import ProjectLabel from "../components/labels/ProjectLabel.vue";
-  import CertificatesLabel from "../components/labels/CertificatesLabel.vue";
 
   // Vue imports
   import { createApp } from "vue";

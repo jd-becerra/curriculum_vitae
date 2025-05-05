@@ -16,6 +16,7 @@
         :ref="el => panelRefs[index] = el as HTMLElement"
         ></v-expansion-panel>
     </v-expansion-panels>
+    
     <div class="background"></div>
   </v-container>
 </template>

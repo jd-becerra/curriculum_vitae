@@ -44,17 +44,17 @@ function createCube(props) {
 }
 
 function removeAreaSelectors(scene) {
-  const projectsArea = scene.getObjectByName("projectsArea");
+  const projectsArea = scene.getObjectByName("Projects Area");
   if (projectsArea) {
     scene.remove(projectsArea);
   }
 
-  const socialsArea = scene.getObjectByName("socialsArea");
+  const socialsArea = scene.getObjectByName("Socials Area");
   if (socialsArea) {
     scene.remove(socialsArea);
   }
 
-  const aboutArea = scene.getObjectByName("aboutArea");
+  const aboutArea = scene.getObjectByName("About Area");
   if (aboutArea) {
     scene.remove(aboutArea);
   }
@@ -66,21 +66,21 @@ function createAreaSelectors(scene) {
     color: "blue",
     scale: [15,10,20],
     position: [-15, -3, -5],
-    name: "projectsArea",
+    name: "Projects Area",
   });
   scene.add(cubeComputer);
   const cubeSocials = createCube({
     color: "red",
     scale: [14,12,10],
     position: [14, 4, -30],
-    name: "socialsArea",
+    name: "Socials Area",
   });
   scene.add(cubeSocials);
   const cubeBookcase = createCube({
     color: "yellow",
     scale: [14,22,10],
     position: [-5, 0, -30],
-    name: "aboutArea",
+    name: "About Area",
   });
   scene.add(cubeBookcase);
 }
