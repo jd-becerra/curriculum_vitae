@@ -13,6 +13,7 @@ export const useMainStore = defineStore('main', {
     navigationMenuVisible: false,
 
     // Navigation buttons for the About section
+    aboutNavigationVisible: false,
     // Skills section
     moveDownToAbout: false,
     // About me section (main)
@@ -63,6 +64,7 @@ export const useMainStore = defineStore('main', {
       this.showExperience = false;
       this.showCertificates = false;
       this.showCredits = false;
+      this.aboutNavigationVisible = false;
     },
     triggerShowAbout() {
       this.showAbout = true;
@@ -107,6 +109,7 @@ export const useMainStore = defineStore('main', {
       this.showAbout = false;
       this.showExperience = false;
       this.showCertificates = false;
+      this.aboutNavigationVisible = false;
     },
     enableMouseEvents() {
       this.shouldAllowMouseEvents = true;
@@ -124,6 +127,29 @@ export const useMainStore = defineStore('main', {
     },
     showNavigationMenu() {
       this.navigationMenuVisible = true;
+    },
+    showAboutNavigation(subarea = "main") {
+      this.aboutNavigationVisible = true;
+
+      if (subarea === "main") {
+        this.moveUpToSkills = true;
+        this.moveDownToExperience = true;
+
+        this.moveDownToAbout = false;
+        this.moveUpToAbout = false;
+      } else if (subarea === "skills") {
+        this.moveDownToAbout = true;
+
+        this.moveUpToSkills = false;
+        this.moveDownToExperience = false;
+        this.moveUpToAbout = false;
+      } else if (subarea === "experience") {
+        this.moveUpToAbout = true;
+
+        this.moveDownToAbout = false;
+        this.moveUpToSkills = false;
+        this.moveDownToExperience = false;
+      }
     },
 
     // Hide elements
@@ -165,10 +191,17 @@ export const useMainStore = defineStore('main', {
     hideNavigationMenu() {
       this.navigationMenuVisible = false;
     },
+    hideAboutNavigation() {
+      this.aboutNavigationVisible = false;
+
+      this.moveDownToAbout = false;
+      this.moveUpToSkills = false;
+      this.moveDownToExperience = false;
+      this.moveUpToAbout = false;
+    },
     emptyPanelHardSkills() {
       this.panelHardSkills = [];
     },
-
     setLocale(locale: string) {
       this.locale = locale;
     },
@@ -191,6 +224,7 @@ export const useMainStore = defineStore('main', {
     isNavigationMenuVisible: (state) => state.navigationMenuVisible,
     getLocale: (state) => state.locale,
     getPanelHardSkills: (state) => state.panelHardSkills,
-    shouldDelayClick: (state) => state.delayClick
+    shouldDelayClick: (state) => state.delayClick,
+    isAboutNavigationVisible: (state) => state.aboutNavigationVisible
   }
 });

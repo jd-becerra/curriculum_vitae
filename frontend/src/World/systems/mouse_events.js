@@ -47,9 +47,10 @@ const hardSkillIndexes = {
   "Chinese": 10,
   "More": 11
 }
-const skillsPos = {x: -3, y: 3.5, z: -49};
-const aboutMePos = {x: -3, y: 0.5, z: -49};
-const experiencePos = {x: -3, y: 1.5, z: -49};
+const aboutX = -3, aboutZ = -50;
+const skillsPos = {x: aboutX, y: 3.5, z: aboutZ};
+const aboutMePos = {x: aboutX, y: 0.5, z: aboutZ};
+const experiencePos = {x: aboutX, y: -2.5, z: aboutZ};
 let bookObject = null;
 // Headers that can be rendered
 let headersToRender = [];
@@ -75,12 +76,12 @@ function getHeadersByLang(locale) {
     "certificates": {
       path: `${basePath}/certificates.png`,
       name: "Certificates Section",
-      position: {x: -5.1, y: -5, z: -26},
+      position: {x: -4.6, y: -1.5, z: -26},
     },
     "experience": {
       path: `${basePath}/experience.png`,
       name: "Experience Section",
-      position: {x: -1.6, y: -5, z: -26},
+      position: {x: -1.6, y: -1.5, z: -26},
     },
     "soft_skills": {
       path: `${basePath}/soft_skills.png`,
@@ -306,9 +307,10 @@ function createPngHeaders(loop, scene, headersToRender) {
 
 // Moves to the general About Me area (a bookcase with books, picture frames and a flower pot)
 function handleAboutSubarea(controls, loop, scene, subarea = "main") {
-  if (isAboutAreaActive) {
-    return;
-  }
+  const store = useMainStore();
+  store.showAboutNavigation(subarea);
+
+  isAboutAreaActive = true;
 
   removeAreaSelectors(scene);
   removePngHeaders(scene);
@@ -582,6 +584,7 @@ function handleHardSkillsHover(newHoveredObject, loop, mousePosition) {
         if (hovHardSkill.position.x > hovHardSkillInitialX - threshold) {
           hovHardSkill.position.x -= delta * 2;
         }
+        console.log("Object position: ", hovHardSkill.position);
       },
     };
     loop.updatables.push(hovHardSkillTick);
@@ -678,6 +681,7 @@ export {
   handleProjectsClick,
   handleSocialsClick,
   handleAboutClick,
+  handleAboutSubarea,
   handleSocialsHover,
   handleSocialIconClick,
   handleSocialIconHover,

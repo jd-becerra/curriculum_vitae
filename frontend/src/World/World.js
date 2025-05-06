@@ -19,6 +19,7 @@
     handleProjectsClick,
     handleSocialsClick,
     handleAboutClick,
+    handleAboutSubarea,
   } from "./systems/mouse_events.js";
 
   // Three.js imports
@@ -459,6 +460,18 @@
 
       moveToAboutArea() {
         handleAboutClick(controls, loop, scene);
+      }
+
+      moveToAboutMainSubarea() {
+        handleAboutSubarea(controls, loop, scene, "main");
+      }
+
+      moveToAboutSkillsSubarea() {
+        handleAboutSubarea(controls, loop, scene, "skills");
+      }
+
+      moveToAboutExperienceSubarea() {
+        handleAboutSubarea(controls, loop, scene, "experience");
       }
 
       // Animation handlers

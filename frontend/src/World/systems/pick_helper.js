@@ -128,7 +128,7 @@ class PickHelper {
           newHoveredObject = candidate;
 
           if (candidate.name !== 'Soft_Skills')
-            mouseEvents.handleHardSkillsHover(candidate, loop, screenPosition);
+            mouseEvents.handleHardSkillsHover(candidate.parent, loop, screenPosition);
         }
       }
       else {

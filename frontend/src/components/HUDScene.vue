@@ -16,11 +16,12 @@ import {
 } from '@mdi/js';
 import type { VListGroup } from 'vuetify/components'
 
-const world = inject('world') as any
+const world = inject('world') as any;
 const { t, locale } = useI18n();
 const store = useMainStore();
 
-const isNavigationMenuVisible = computed(() => store.isNavigationMenuVisible);
+const showAboutNavigationBtns = computed(() => store.aboutNavigationVisible);
+
 const isNavOpen = computed({
   get() {
     return store.isNavigationMenuVisible;
@@ -39,23 +40,55 @@ const isAboutOpen = ref(false)
 
 const returnToMainView = () => {
   store.hideNavigationMenu();
+  store.hideAboutNavigation();
   store.enableMouseEvents();
   world.value.moveToMainArea();
 }
 const moveToProjects = () => {
   store.hideNavigationMenu();
   store.enableMouseEvents();
+  store.hideAboutNavigation();
   world.value.moveToProjectsArea();
 }
 const moveToSocials = () => {
   store.hideNavigationMenu();
   store.enableMouseEvents();
+  store.hideAboutNavigation();
   world.value.moveToSocialsArea();
 }
-const moveToAbout = () => {
+const moveToAboutMain = () => {
   store.hideNavigationMenu();
   store.enableMouseEvents();
-  world.value.moveToAboutArea();
+  world.value.moveToAboutMainSubarea();
+}
+
+const moveToAboutSkills = () => {
+  store.hideNavigationMenu();
+  store.enableMouseEvents();
+  world.value.moveToAboutSkillsSubarea();
+}
+
+const moveToAboutExperience = () => {
+  store.hideNavigationMenu();
+  store.enableMouseEvents();
+  world.value.moveToAboutExperienceSubarea();
+}
+
+const moveAboutUp = () => {
+  if (store.moveUpToSkills) {
+    moveToAboutSkills();
+  } else if (store.moveUpToAbout) {
+    moveToAboutMain();
+  }
+}
+
+const moveAboutDown = () => {
+  if (store.moveDownToExperience) {
+    moveToAboutExperience();
+  } else if (store.moveDownToAbout) {
+    moveToAboutMain();
+  }
+
 }
 
 function setLang(lang: string) {
@@ -110,6 +143,13 @@ onBeforeUnmount(() => {
             </NavigationItem>
           </v-list-item>
 
+          <!-- Socials -->
+          <v-list-item>
+            <NavigationItem :prepend-icon="mdiGithub" @click="moveToSocials">
+              <template #heading>{{ $t('menu.socials') }}</template>
+            </NavigationItem>
+          </v-list-item>
+
           <!-- About Section -->
           <v-list-item @click="isAboutOpen = !isAboutOpen">
             <NavigationItem :prepend-icon="mdiAccountCircle">
@@ -120,13 +160,13 @@ onBeforeUnmount(() => {
           <transition name="fade-slide">
             <div v-show="isAboutOpen" class="about-subitems">
               <v-list-item>
-                <NavigationItem><template #heading>{{ $t('menu.summary') }}</template></NavigationItem>
+                <NavigationItem @click="moveToAboutSkills"><template #heading>{{ $t('menu.skills') }}</template></NavigationItem>
               </v-list-item>
               <v-list-item>
-                <NavigationItem><template #heading>{{ $t('menu.skills') }}</template></NavigationItem>
+                <NavigationItem @click="moveToAboutMain"><template #heading>{{ $t('menu.summary') }}</template></NavigationItem>
               </v-list-item>
               <v-list-item>
-                <NavigationItem><template #heading>{{ $t('menu.experience') }}</template></NavigationItem>
+                <NavigationItem @click="moveToAboutExperience"><template #heading>{{ $t('menu.experience') }}</template></NavigationItem>
               </v-list-item>
             </div>
           </transition>
@@ -134,12 +174,18 @@ onBeforeUnmount(() => {
       </transition>
     </v-list>
 
-    <v-container class="about-navigation">
-      <v-btn class="about-navigation-up">
+    <v-container class="about-navigation" v-show="store.isAboutNavigationVisible">
+      <v-btn
+        v-show="store.moveUpToSkills || store.moveUpToAbout"
+        @click="moveAboutUp"
+        class="about-navigation-up">
         <v-icon :icon="mdiMenuUp" class="about-nav-icon"></v-icon>
       </v-btn>
 
-      <v-btn class="about-navigation-down">
+      <v-btn
+        v-show="store.moveDownToExperience || store.moveDownToAbout"
+        @click="moveAboutDown"
+        class="about-navigation-down">
         <v-icon :icon="mdiMenuDown" class="about-nav-icon"></v-icon>
       </v-btn>
     </v-container>
@@ -268,10 +314,6 @@ onBeforeUnmount(() => {
 
 .about-subitems {
   padding-left: 30px;
-}
-
-.about-navigation {
-  display: none;
 }
 
 /** Set navigaton up and down in the center of the screen */
