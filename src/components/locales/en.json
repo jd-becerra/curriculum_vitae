@@ -1,0 +1,125 @@
+{
+    "menu": {
+        "open": "Navegation",
+        "close": "Close",
+        "main-view": "Return to Main View",
+        "about": "About Me",
+            "summary": "Summary",
+            "skills": "My Skills",
+            "experience": "Certificates, Education and Experience",
+        "socials": "Contact and Credits",
+        "projects": "My Projects"
+    },
+
+    "scene-renderer": {
+        "loading-text": "Loading scene...",
+        "progress": "files loaded."
+    },
+
+    "about": {
+        "title": "About me",
+        "description": "Being a 6th grade Software Engineering student, I am always eager to learn and improve my skills in order to use them in a competitive and exciting environment. With this in mind, I'm currently seeking for entry level jobs to begin my career in software development.<br> The programming languages I have most experience with are Python, C/C++ and Javascript. I am also proficient working with Linux systems, which I regularly use for personal and academic purposes. I have a continuous pursuit for learning about new technologies and concepts, and I always strive to stay up-to-date with the latest tech news.<br> I am excited to connect with your organization in order to apply my skills in real scenarios, continue learning, and ultimately bring value to your projects' vision to the best of my abilities."
+    },
+
+    "projects-vue": {
+        "title": "Projects",
+        "description": "Here you can find some of the projects I have worked on. You can find more on my GitHub profile.",
+        "projects" : [
+            {
+                "title": "Alicia - Demo for a Time Bending Game",
+                "description": "This is a description of the first project.",
+                "image": "img\\projects_scr\\p1.png",
+                "link": "https://github.com/jd-becerra/alicia"
+            },
+            {
+                "title": "Chess Game for Nand2Tetris ",
+                "description": "This is a description of the second project.",
+                "image": "img\\projects_scr\\p2.png",
+                "link": "https://github.com/jd-becerra/nand2tetris-Chess"
+            },
+            {
+                "title": "Interpolation Calculator",
+                "description": "This is a description of the third project.",
+                "image": "img\\projects_scr\\p3.png",
+                "link": "https://github.com/jd-becerra/interpolationCalculator"
+            }
+        ]
+    },
+    "hard-skills": {
+        "title": "Main technical skills:",
+        "main-description": "Throughout my academic journey and personal projects, I have developed a set of technical skills that form the foundation of my work in software development, web technologies, backend systems, and computer science fundamentals. I strongly believe these skills reflect not only the tools and languages I have learned, but also the way I approach learning itself: with a focus on practical application, problem-solving, and a deep curiosity for understanding how systems work at every level.",
+        "skills": [
+            {
+                "name": "C++",
+                "description": " I have worked with C++ mainly for graphics programming projects using OpenGL, which helped me gain a deeper understanding of rendering pipelines and low-level graphics concepts. Additionally, I used C++ to strengthen my knowledge of algorithms, data structures, and manual memory management, both in academic coursework and through personal projects, where efficiency and control over system resources were important. I further developed these skills through courses like Harvard’s CS50 and the LearnOpenGL.com tutorial series, where I worked on practical implementations of computer science fundamentals and real-time rendering."
+            },
+            {
+                "name": "Python",
+                "description": " I primarily use Python for learning about machine learning and data analysis. I have worked with libraries such as TensorFlow, NumPy, pandas, and Matplotlib to explore neural networks and basic AI concepts. I have also used Python for smaller projects involving speech recognition, as well as graphical applications built with Tkinter and Pygame, allowing me to apply it both in research-oriented tasks and practical software development. Currently, I am further developing my skills by following the Machine Learning Specialization offered through Coursera."
+            },
+            {
+                "name": "JavaScript",
+                "description": " JavaScript has been a key part of my web development work. I have used it both on the frontend and backend to build interactive and dynamic web applications. My projects often combine JavaScript with frameworks like Vue and React, as well as backend technologies like Node.js, giving me a practical understanding of how client-server architectures operate."
+            },
+            {
+                "name": "HTML + CSS",
+                "description": " I use HTML and CSS in my web development projects to create structured, accessible, and responsive layouts. I have combined them with styling frameworks such as Tailwind and Bootstrap to speed up development and ensure consistency across designs. This has helped me to focus not just on functionality, but also on delivering a better user experience."
+            },
+            {
+                "name": "SQL",
+                "description": " I have used SQL (through MySQL) to design and manage databases for personal projects and during my Social Service program at school. My experience includes not only creating and connecting databases with backend technologies like PHP and Node.js but also designing the database architecture and implementing advanced features such as stored procedures, functions, and triggers to improve performance and maintain data integrity."
+            },
+            {
+                "name": "Node.js",
+                "description": " I have used Node.js for backend development, particularly during my Social Service program, where I designed and implemented custom APIs to connect SQL databases with frontend applications. I worked with libraries like JWT for authentication, JOI for data validation, and Swagger for API documentation. These experiences helped me understand how to build backend systems that are secure, maintainable, and easy for frontend teams to integrate with."
+            },
+            {
+                "name": "Linux",
+                "description": " Linux has been my main operating environment for personal use and academic work. I have experience with distributions like Arch, Ubuntu, Fedora, and Lubuntu. My regular use of Linux involves working extensively through the terminal, handling software installations, scripting tasks, and basic server management. I also have moderate experience with networking concepts, which I strengthened through Cisco Academy courses focused on the fundamentals of networking and system administration."
+            },
+            {
+                "name": "Git",
+                "description": " I regularly use Git for version control in both personal and team projects. My experience includes managing repositories, creating and merging branches, handling permissions, resolving merge conflicts, and organizing issues and pull requests to track project progress. Using Git has helped me maintain clean development workflows, collaborate efficiently with others, and keep codebases organized and maintainable over time."
+            },
+            {
+                "name": "Frontend Frameworks",
+                "description": "I have worked with modern frontend frameworks such as Vue and React to build interactive and responsive applications. With Vue, I developed projects like an interactive 3D representation of my curriculum vitae, where I integrated Vue with Three.js to explore the combination of graphical programming with frontend development. This experience allowed me to deepen my understanding of component-based architecture, state management, and efficient user interface design. Alongside Vue, I have also worked extensively with React, using it for both web and mobile development through React Native. I combined React with styling frameworks like Tailwind and Bootstrap to build responsive, maintainable interfaces. Throughout these projects, I focused on creating reusable components, managing application state effectively, and ensuring that the applications remained scalable and easy to maintain as they grew."
+            },
+            {
+                "name": "English",
+                "description": " I have a TOEFL ITP certification at the C1 level, which reflects a strong ability in reading, writing, listening, and speaking English. This has allowed me to comfortably work with technical documentation, communicate effectively in academic and professional contexts, and engage with a wide range of learning resources in the field of software development."
+            }, 
+            {
+                "name": "Chinese",
+                "description": " I have studied Chinese up to HSK 4 level, which corresponds to an intermediate ability (around A2-B1 level). My skills are mainly focused on reading and listening comprehension. Although I do not use Chinese professionally, studying a complex language has helped me strengthen my learning discipline, persistence, and ability to approach challenging subjects systematically — qualities that I bring into my work and ongoing technical education."
+            },
+            {
+                "name": "More...",
+                "description": "In addition to my main technical skills, I have pursued complementary learning experiences to deepen my understanding of computer science fundamentals. I completed the Nand2Tetris course series, where I built a computer system from the ground up — starting with simple logic gates and progressing through the design of an Arithmetic Logic Unit (ALU), a CPU, and a simple memory system. I also developed a basic programming language and compiler, which culminated in creating a working computer capable of running programs, including a simple chess game that I programmed myself. This project gave me practical insight into the layers of abstraction that form the foundation of modern computing. I also completed the Algorithms course offered by Princeton University on Coursera, which focused on data structures and algorithms essential for software development. Throughout the course, I worked with Java to study and implement fundamental and advanced concepts such as stacks, queues, linked lists, binary search trees, heaps, union-find structures, graph algorithms, and sorting algorithms like mergesort and quicksort. These experiences strengthened my problem-solving skills and my ability to write efficient, optimized code across different programming environments."
+            }
+        ]
+    },
+    "soft-skills": {
+        "title": "Soft skills:",
+        "main-description": "While I consider it important to have a strong technical background, having a good set of soft skills is even more crucial to succeed in any work setting. These are what I consider to be my stronger qualities, developed through academic work, personal development, and collaborative efforts:",
+        "skills": [
+            {
+                "name": "Communication, collaboration, and effective listening",
+                "description": "Throughout my journey as a software developer, I have always prioritized effective communication with my team members and peers, as I believe it to be the most important aspect for any collaborative effort. I always strive to be open and clear when giving feedback, actively listening to other people's perspectives and needs, and to always keep in mind the goal of the project and how it will benefit the client. My C1 English score also enables me to communicate effectively with people from other countries."
+            },
+            {
+                "name": "Self-motivation and discipline",
+                "description": "Many of the technical skills I've developed came from self-initiated projects or online courses outside of formal schoolwork. Staying consistent and pushing through complex topics has taught me how to manage my time, structure learning goals, and follow through even when the material is difficult."
+            },
+            {
+                "name": "Adaptability and willingness to learn",
+                "description": "I always keep in mind that the most important thing is the result, not the technology I use. I believe that having a strong understanding of the project and its requirements will enable me to choose the best tool for the job and to adapt to the unavoidable challenges that will arise. I don't mind being outside my comfort zone, and I actively look for ways to bridge gaps in my knowledge when confronting new problems."
+            },
+            {
+                "name": "Curiosity, Analytical Thinking, and Problem Solving",
+                "description": "It's not enough for me to use AI tools and frameworks to solve problems, I always need to understand how things work beneath the surface — aspects like how a neural network learns, how memory is managed in C++, how graphics are rendered or how machine code is parsed and executed. This curiosity pushes me to go beyond surface-level solutions and to explore the 'why' behind technical behaviors. I approach problems systematically: breaking them down into smaller components, identifying potential causes, and testing potential solutions. As I've said previously, it's not about having the right answer immediately, but about being persistent in understanding the problem well enough to find the solution that works best."
+              }
+              
+        ]
+    }
+}
