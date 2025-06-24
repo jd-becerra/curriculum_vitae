@@ -1,9 +1,14 @@
 <script setup lang="ts">
-  import { ref, onMounted, defineExpose, computed } from 'vue';
+  import { ref, defineExpose, computed } from 'vue';
+  import { useMainStore } from './store';
+
+  // Controllable containers
   import HardSkillsLabel from "./labels/HardSkillsLabel.vue"
   import SoftSkillsLabel from "./labels/SoftSkillsLabel.vue"
   import AboutLabel from './labels/AboutLabel.vue';
-  import { useMainStore } from './store';
+  import CertificatesLabel from './labels/CertificatesLabel.vue';
+  import ExperienceLabel from './labels/ExperienceLabel.vue';
+  import CreditsLabel from './labels/CreditsLabel.vue';
 
   const mainContainer = ref<HTMLDivElement | null>(null);
   const sceneContainer = ref<HTMLDivElement | null>(null);
@@ -16,6 +21,9 @@
   const showHardSkills = computed(() => store.showHardSkills);
   const showSoftSkills = computed(() => store.showSoftSkills);
   const showAbout = computed(() => store.showAbout);
+  const showCertificates = computed(() => store.showCertificates);
+  const showExperience = computed(() => store.showExperience);
+  const showCredits = computed(() => store.showCredits);
 
   // Expose the scene container to the parent component
   const getContainer = () => {
@@ -41,6 +49,9 @@
       <HardSkillsLabel v-show="showHardSkills" />
       <SoftSkillsLabel v-show="showSoftSkills" />
       <AboutLabel v-show="showAbout" />
+      <CertificatesLabel v-show="showCertificates" />
+      <ExperienceLabel v-show="showExperience" />
+      <CreditsLabel v-show="showCredits" />
     </div>
 
     <div ref="sceneContainer" class="three-scene">

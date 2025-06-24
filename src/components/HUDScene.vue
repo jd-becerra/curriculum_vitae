@@ -1,3 +1,5 @@
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
+<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import NavigationItem from './NavigationItem.vue'
@@ -12,7 +14,6 @@ import {
   mdiGithub,
   mdiMenuUp,
   mdiMenuDown
-// @ts-ignore
 } from '@mdi/js';
 import type { VListGroup } from 'vuetify/components'
 
@@ -20,7 +21,7 @@ const world = inject('world') as any;
 const { t, locale } = useI18n();
 const store = useMainStore();
 
-const showAboutNavigationBtns = computed(() => store.aboutNavigationVisible);
+const showAboutNavigationBtns = computed(() => store.isAboutNavigationVisible);
 
 const isNavOpen = computed({
   get() {
@@ -130,43 +131,44 @@ onBeforeUnmount(() => {
       <transition name="fade-slide">
         <div v-show="isNavOpen">
           <!-- Main View -->
-          <v-list-item>
-            <NavigationItem :prepend-icon="mdiHome" @click="returnToMainView">
+            <v-list-item>
+            <NavigationItem :prepend-icon="mdiHome" @click.stop.prevent="returnToMainView">
               <template #heading>{{ $t('menu.main-view') }}</template>
             </NavigationItem>
-          </v-list-item>
+            </v-list-item>
 
-          <!-- Projects -->
-          <v-list-item>
-            <NavigationItem :prepend-icon="mdiBriefcaseOutline" @click="moveToProjects">
+            <!-- Projects -->
+            <v-list-item>
+            <NavigationItem :prepend-icon="mdiBriefcaseOutline" @click.stop.prevent="moveToProjects">
               <template #heading>{{ $t('menu.projects') }}</template>
             </NavigationItem>
-          </v-list-item>
+            </v-list-item>
 
-          <!-- Socials -->
-          <v-list-item>
-            <NavigationItem :prepend-icon="mdiGithub" @click="moveToSocials">
+            <!-- Socials -->
+            <v-list-item>
+            <NavigationItem :prepend-icon="mdiGithub" @click.stop.prevent="moveToSocials">
               <template #heading>{{ $t('menu.socials') }}</template>
             </NavigationItem>
-          </v-list-item>
+            </v-list-item>
 
-          <!-- About Section -->
-          <v-list-item @click="isAboutOpen = !isAboutOpen">
+            <!-- About Section -->
+            <v-list-item @click.stop.prevent="isAboutOpen = !isAboutOpen">
             <NavigationItem :prepend-icon="mdiAccountCircle">
               <template #heading>{{ $t('menu.about') }}</template>
             </NavigationItem>
-          </v-list-item>
+            </v-list-item>
 
-          <transition name="fade-slide">
+            <transition name="fade-slide">
             <div v-show="isAboutOpen" class="about-subitems">
               <v-list-item>
-                <NavigationItem @click="moveToAboutSkills"><template #heading>{{ $t('menu.skills') }}</template></NavigationItem>
+              <NavigationItem
+                @click.stop.prevent="moveToAboutSkills"><template #heading>{{ $t('menu.skills') }}</template></NavigationItem>
               </v-list-item>
               <v-list-item>
-                <NavigationItem @click="moveToAboutMain"><template #heading>{{ $t('menu.summary') }}</template></NavigationItem>
+              <NavigationItem @click.stop.prevent="moveToAboutMain"><template #heading>{{ $t('menu.summary') }}</template></NavigationItem>
               </v-list-item>
               <v-list-item>
-                <NavigationItem @click="moveToAboutExperience"><template #heading>{{ $t('menu.experience') }}</template></NavigationItem>
+              <NavigationItem @click.stop.prevent="moveToAboutExperience"><template #heading>{{ $t('menu.experience') }}</template></NavigationItem>
               </v-list-item>
             </div>
           </transition>
@@ -174,17 +176,17 @@ onBeforeUnmount(() => {
       </transition>
     </v-list>
 
-    <v-container class="about-navigation" v-show="store.isAboutNavigationVisible">
+    <v-container class="about-navigation" v-show="showAboutNavigationBtns">
       <v-btn
         v-show="store.moveUpToSkills || store.moveUpToAbout"
-        @click="moveAboutUp"
+        @click.stop.prevent="moveAboutUp"
         class="about-navigation-up">
         <v-icon :icon="mdiMenuUp" class="about-nav-icon"></v-icon>
       </v-btn>
 
       <v-btn
         v-show="store.moveDownToExperience || store.moveDownToAbout"
-        @click="moveAboutDown"
+        @click.stop.prevent="moveAboutDown"
         class="about-navigation-down">
         <v-icon :icon="mdiMenuDown" class="about-nav-icon"></v-icon>
       </v-btn>
@@ -214,10 +216,16 @@ onBeforeUnmount(() => {
               </v-list-item>
             </template>
             <v-list-item>
-              <v-btn @click="setLang('en')" class="language-button">English</v-btn>
+              <v-btn
+                  @click.stop.prevent="setLang('en')"
+                  class="language-button"
+                >English</v-btn>
             </v-list-item>
             <v-list-item>
-              <v-btn @click="setLang('es')" class="language-button">Español</v-btn>
+              <v-btn
+                @click.stop.prevent="setLang('es')"
+                class="language-button"
+              >Español</v-btn>
             </v-list-item>
           </v-list-group>
         </v-list-item>

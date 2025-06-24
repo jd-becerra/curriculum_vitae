@@ -9,14 +9,14 @@
     multiple
     class="hard-skills-list">
       <v-expansion-panel
-        v-for="(hard_skill, index) in $tm('hard-skills.skills')"
+        v-for="(hard_skill, index) in getHardSkills"
         :key="index"
         :text="hard_skill.description"
         :title="hard_skill.name"
         :ref="el => panelRefs[index] = el as HTMLElement"
         ></v-expansion-panel>
     </v-expansion-panels>
-    
+
     <div class="background"></div>
   </v-container>
 </template>
@@ -24,6 +24,10 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick } from 'vue';
 import { useMainStore } from '../store';
+import { useI18n } from 'vue-i18n';
+
+const { tm } = useI18n();
+const getHardSkills = tm('hard-skills.skills') as Array<{ name: string, description: string }>;
 
 const mainStore = useMainStore();
 // Use computed to get panel for hard skills
@@ -34,12 +38,10 @@ const panel = computed({
   },
 });
 const closeHardSkills = () => {
-  // @ts-ignore
-  document.querySelector('.label-renderer').style.pointerEvents = "auto";
-  // @ts-ignore
-  document.querySelector('.inspect-view').style.pointerEvents = "none";
-  // @ts-ignore
-  document.querySelector('.menu-container').style.display = 'block';
+
+  (document.querySelector('.label-renderer') as HTMLElement).style.pointerEvents = "auto";
+  (document.querySelector('.inspect-view') as HTMLElement).style.pointerEvents = "none";
+  (document.querySelector('.menu-container') as HTMLElement).style.display = 'block';
 
   mainStore.hideHardSkills();
   mainStore.enableMouseEvents();

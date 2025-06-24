@@ -34,6 +34,7 @@ export const useMainStore = defineStore('main', {
     // Show elements
     triggerShowHardSkills() {
       this.showHardSkills = true;
+      this.aboutNavigationVisible = false;
 
       // Set all other elements to false
       this.showSoftSkills = false;
@@ -45,6 +46,7 @@ export const useMainStore = defineStore('main', {
     },
     triggerShowSoftSkills() {
       this.showSoftSkills = true;
+      this.aboutNavigationVisible = false;
 
       // Set all other elements to false
       this.showHardSkills = false;
@@ -56,6 +58,7 @@ export const useMainStore = defineStore('main', {
     },
     triggerShowProjects() {
       this.showProjects = true;
+      this.aboutNavigationVisible = false;
 
       // Set all other elements to false
       this.showHardSkills = false;
@@ -64,10 +67,10 @@ export const useMainStore = defineStore('main', {
       this.showExperience = false;
       this.showCertificates = false;
       this.showCredits = false;
-      this.aboutNavigationVisible = false;
     },
     triggerShowAbout() {
       this.showAbout = true;
+      this.aboutNavigationVisible = false;
 
       // Set all other elements to false
       this.showHardSkills = false;
@@ -79,6 +82,7 @@ export const useMainStore = defineStore('main', {
     },
     triggerShowExperience() {
       this.showExperience = true;
+      this.aboutNavigationVisible = false;
 
       // Set all other elements to false
       this.showHardSkills = false;
@@ -90,6 +94,7 @@ export const useMainStore = defineStore('main', {
     },
     triggerShowCertificates() {
       this.showCertificates = true;
+      this.aboutNavigationVisible = false;
 
       // Set all other elements to false
       this.showHardSkills = false;
@@ -155,21 +160,27 @@ export const useMainStore = defineStore('main', {
     // Hide elements
     hideHardSkills() {
       this.showHardSkills = false;
+      this.aboutNavigationVisible = true;
     },
     hideSoftSkills() {
       this.showSoftSkills = false;
+      this.aboutNavigationVisible = true;
     },
     hideProjects() {
       this.showProjects = false;
+      this.aboutNavigationVisible = true;
     },
     hideAbout() {
       this.showAbout = false;
+      this.aboutNavigationVisible = true;
     },
     hideExperience() {
       this.showExperience = false;
+      this.aboutNavigationVisible = true;
     },
     hideCertificates() {
       this.showCertificates = false;
+      this.aboutNavigationVisible = true;
     },
     hideCredits() {
       this.showCredits = false;
@@ -205,6 +216,7 @@ export const useMainStore = defineStore('main', {
     setLocale(locale: string) {
       this.locale = locale;
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setPanelHardSkills(panelHardSkills: any) {
       this.panelHardSkills = panelHardSkills;
     },

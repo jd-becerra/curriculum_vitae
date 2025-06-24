@@ -9,7 +9,7 @@
     multiple
     class="soft-skills-list">
       <v-expansion-panel
-        v-for="(soft_skill, index) in $tm('soft-skills.skills')"
+        v-for="(soft_skill, index) in softSkills"
         :key="index"
         :text="soft_skill.description"
         :title="soft_skill.name"
@@ -23,16 +23,18 @@
 import { ref } from 'vue';
 import { useMainStore } from '../store';
 
+import { useI18n } from 'vue-i18n';
+
+const { tm } = useI18n();
+const softSkills = tm('soft-skills.skills') as Array<{ name: string, description: string }>;
+
 const mainStore = useMainStore();
 // Use computed to get panel for soft skills
 const panel = ref<number[]>([]);
 const closeSoftSkills = () => {
-  // @ts-ignore
-  document.querySelector('.label-renderer').style.pointerEvents = "auto";
-  // @ts-ignore
-  document.querySelector('.inspect-view').style.pointerEvents = "none";
-  // @ts-ignore
-  document.querySelector('.menu-container').style.display = 'block';
+  (document.querySelector('.label-renderer') as HTMLElement).style.pointerEvents = "auto";
+  (document.querySelector('.inspect-view') as HTMLElement).style.pointerEvents = "none";
+  (document.querySelector('.menu-container') as HTMLElement).style.display = 'block';
 
   mainStore.hideSoftSkills();
   mainStore.enableMouseEvents();

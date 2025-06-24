@@ -2,12 +2,13 @@
 import HUDScene from '@/components/HUDScene.vue';
 import ThreeScene from '@/components/ThreeScene.vue';
 import { onMounted, provide, ref } from 'vue';
-// @ts-ignore
+// @ts-expect-error world is a js module
 import { World } from '@/World/World.js';
 
 const world = ref<World | null>(null);
 provide('world', world);
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const threeSceneRef = ref<any>(null);
 
 onMounted(() => {

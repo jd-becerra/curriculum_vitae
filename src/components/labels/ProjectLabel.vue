@@ -27,11 +27,11 @@
   </v-container>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "ProjectCarousel",
   methods: {
-    sendTo(link) {
+    sendTo(link: string) {
       if (!link) return;
 
       window.open(link, "_blank");

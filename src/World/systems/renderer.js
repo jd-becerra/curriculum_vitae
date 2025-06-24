@@ -1,4 +1,4 @@
-import { WebGLRenderer } from "three";
+import { WebGLRenderer, PCFSoftShadowMap } from "three";
 
 function createRenderer() {
  const renderer = new WebGLRenderer({ antialias: false});
@@ -9,7 +9,18 @@ function createRenderer() {
  // AS LAST RESORT FOR PERFORMANCE
  // renderer.setPixelRatio( window.devicePixelRatio * 0.5 );
 
- return renderer;
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setClearColor( 0x000000, 0 );
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = PCFSoftShadowMap;
+  renderer.domElement.style.position = "absolute";
+  renderer.domElement.style.top = "0px";
+  renderer.domElement.style.width = "100%";
+  renderer.domElement.style.height = "100%";
+  renderer.domElement.style.zIndex = "2";
+  renderer.domElement.style.pointerEvents = "none";
+
+  return renderer;
 }
 
 export { createRenderer };

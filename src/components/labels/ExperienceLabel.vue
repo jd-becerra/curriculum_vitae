@@ -1,9 +1,14 @@
 <template>
-  <v-container class="about_me">
-    <v-btn @click="closeAboutMe">X</v-btn>
+  <v-container class="experience-label">
+    <v-btn @click="closeView">X</v-btn>
 
-    <h1>{{ $t('about.title') }}</h1>
-    <p v-html="$t('about.description')"></p>
+    <h1>{{ $t('experience.title') }}</h1>
+    <h2>{{ $t('experience.education') }}</h2>
+    <p>{{ $t('experience.education-description') }}</p>
+    <h2>{{ $t('experience.exchange') }}</h2>
+    <p>{{ $t('experience.exchange-description') }}</p>
+    <h2>{{ $t('experience.social-service') }}</h2>
+    <p>{{ $t('experience.social-service-description') }}</p>
 
     <div class="background"></div>
   </v-container>
@@ -13,26 +18,23 @@
 import { useMainStore } from '../store';
 const mainStore = useMainStore();
 
-const closeAboutMe = () => {
+const closeView = () => {
   (document.querySelector('.label-renderer') as HTMLElement).style.pointerEvents = "auto";
   (document.querySelector('.inspect-view') as HTMLElement).style.pointerEvents = "none";
   (document.querySelector('.menu-container') as HTMLElement).style.display = 'block';
 
-  mainStore.hideAbout();
+  mainStore.hideExperience();
   mainStore.enableMouseEvents();
-};
+
+}
 </script>
 
 <style scoped>
-.about_me {
-  background-color: white;
-  padding: 2rem;
-  margin: 2rem;
-  text-align: justify;
-  font-family: Arial, sans-serif;
-  width: 90%;
+.experience-label {
+  width: 80%;
   height: 80%;
-  overflow: scroll;
+  background-color: rgba(255, 255, 255, 0.9);
+  overflow-y: scroll;
 }
 
 .background {
@@ -44,4 +46,5 @@ const closeAboutMe = () => {
   background-color: rgba(0, 0, 0, 0.5);
   z-index: -1;
 }
+
 </style>
