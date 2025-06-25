@@ -3,6 +3,7 @@ import i18n from '../../components/i18n.ts'
 import vuetify from '../../components/vuetify.ts'
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js'
 import { Object3D, Vector2, Color, MeshBasicMaterial, PlaneGeometry, Mesh, NoBlending } from 'three'
+import ProjectLabel from '../../components/labels/ProjectLabel.vue'
 
 let labels = []
 
@@ -36,6 +37,10 @@ const heights = {
   400: 460,
   300: 450,
   200: 440,
+}
+
+function degToRad(degrees) {
+  return degrees * (Math.PI / 180)
 }
 
 function getClosestSize(width, height) {
@@ -138,6 +143,16 @@ function createVueLabel(Component, clientWidth, clientHeight, size = new Vector2
   return obj
 }
 
+function createComputerLabel(clientWidth, clientHeight) {
+  const size = new Vector2(7.1, 4.0)
+  const label = createVueLabel(ProjectLabel, clientWidth, clientHeight, size)
+  label.position.set(-26.2, -0.7, -9.5)
+  label.updateMatrix()
+  label.rotateY(degToRad(90))
+  label.rotateX(degToRad(0))
+  return label
+}
+
 function updateLabels(clientWidth, clientHeight) {
   // Resize labels
   labels.forEach((label) => {
@@ -155,4 +170,9 @@ function updateLabels(clientWidth, clientHeight) {
   })
 }
 
-export { createVueRenderer, createVueLabel, updateLabels }
+export {
+  createVueRenderer,
+  createVueLabel,
+  createComputerLabel,
+  updateLabels
+}

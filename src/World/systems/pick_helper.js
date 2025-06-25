@@ -3,7 +3,7 @@ import * as mouseEvents from './mouse_events.js'
 import { useMainStore } from '../../components/store'
 
 class PickHelper {
-  constructor() {
+  constructor(outlinePass) {
     this.raycaster = new Raycaster()
     this.pickedObject = null
     this.pickedObjectSavedColor = 0
@@ -14,6 +14,7 @@ class PickHelper {
 
     // Since we use Pinia, we also read the store to detect if we should force the state of the mouse events
     this.store = useMainStore()
+    this.outlinePass = outlinePass
   }
 
   // Public methods
@@ -89,7 +90,7 @@ class PickHelper {
     }
   }
 
-  hover(normalizedPosition, scene, camera, loop, screenPosition, outlinePass) {
+  hover(normalizedPosition, scene, camera, loop, screenPosition) {
     if (!this.store.isMouseEventsAllowed) {
       mouseEvents.handleSocialIconHover(null, loop, scene)
       mouseEvents.handleHardSkillsHover(null, loop, screenPosition)
@@ -109,7 +110,7 @@ class PickHelper {
       if (!candidate) return
 
       if (candidate != this.hoveredObject) {
-        outlinePass.selectedObjects = []
+        this.outlinePass.selectedObjects = []
         this.hoveredObject = candidate
       }
       if (candidate?.clickable) {
@@ -139,22 +140,34 @@ class PickHelper {
         this.hoveredObject.clickable &&
         mouseEvents.canSetHoveredObject(this.hoveredObject.area)
       ) {
-        outlinePass.selectedObjects.push(this.hoveredObject)
-        mouseEvents.setHoveredObjectTag(
-          this.hoveredObject.name,
-          screenPosition,
-          this.hoveredObject.area,
-        )
-        document.body.style.cursor = 'pointer'
+        this.outlineObject(this.hoveredObject, screenPosition, this.hoveredObject.name, this.hoveredObject.area)
       }
     } else {
       // Remove hover effects
       this._removeHoverEffects(loop, screenPosition, scene)
-      document.body.style.cursor = 'default'
-
-      mouseEvents.setHoveredObjectTag(null)
-      outlinePass.selectedObjects = []
+      this.clearOutline()
     }
+  }
+
+  outlineObject(object, mousePos, name, area = '') {
+    this.outlinePass.selectedObjects = []; // Clear previous selection
+
+    if (!object) return;
+
+    this.outlinePass.selectedObjects.push(object)
+    mouseEvents.setHoveredObjectTag(
+      name,
+      mousePos,
+      area,
+    )
+    document.body.style.cursor = 'pointer'
+  }
+
+  clearOutline() {
+    this.outlinePass.selectedObjects = []
+    this.hoveredObject = null
+    mouseEvents.setHoveredObjectTag(null)
+    document.body.style.cursor = 'default'
   }
 
   // Private methods

@@ -8,7 +8,6 @@ import {
   Mesh,
   MeshBasicMaterial,
 } from 'three';
-import { useI18n } from 'vue-i18n';
 import { useMainStore } from '../../components/store';
 import { createAreaSelectors, removeAreaSelectors } from '../components/objects/cube';
 
@@ -218,6 +217,7 @@ function handleReturnToMainView(controls, loop, scene) {
   isBookOpen = false;
   isSocialsAreaActive = false;
   isAboutAreaActive = false;
+  useMainStore().disableComputerVisible();
 
   // Return area selectors
   createAreaSelectors(scene);
@@ -252,6 +252,9 @@ function handleProjectsClick(controls, loop, scene) {
     xRight: MathUtils.degToRad(100)
   }
   moveToArea(controls, loop, to, angles);
+
+  const store = useMainStore();
+  store.enableComputerVisible();
 }
 
 // Moves to the general Socials area (over the fireplace, with trophies (contact icons) and a plaque with credits)
@@ -261,8 +264,8 @@ function handleSocialsClick(controls, loop, scene) {
   handleHardSkillsHover(null, loop, null);
   isBookOpen = false;
   isAboutAreaActive = false;
-
   isSocialsAreaActive = true;
+  useMainStore().disableComputerVisible();
 
   // Render header
   headersToRender = ["credits"];
@@ -337,6 +340,7 @@ function handleAboutSubarea(controls, loop, scene, subarea = "main") {
   store.showAboutNavigation(subarea);
 
   isAboutAreaActive = true;
+  store.disableComputerVisible();
 
   removeAreaSelectors(scene);
   removePngHeaders(scene);
@@ -575,7 +579,6 @@ function handleSocialIconHover(newHoveredObject, loop, scene) {
     document.body.style.cursor = 'default';
   }
 }
-
 
 function handleHardSkillsHover(newHoveredObject, loop, mousePosition) {
 

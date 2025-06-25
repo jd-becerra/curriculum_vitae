@@ -1,6 +1,8 @@
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
+import { useMainStore } from '../../components/store'
+
 import {
   Vector2,
 } from "three";
@@ -24,10 +26,11 @@ export function createOutlineComposer(renderer, scene, camera, container) {
   outlinePass.hiddenEdgeColor.set("#190a05");
   composer.addPass(outlinePass);
 
+  const store = useMainStore();
+  store.setOutlinePass(outlinePass);
+
   return {
     composer,
-    outlinePass,
-
     // we need to update outlinePass on container resize
     onResize: (width, height) => {
       composer.setSize(width, height);

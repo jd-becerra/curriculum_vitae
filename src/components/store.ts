@@ -28,6 +28,13 @@ export const useMainStore = defineStore('main', {
 
     panelHardSkills: [],
 
+    // PickHelper handles mouse evenets on Three.js scene
+    pickHelper: null as unknown,
+    outlinePass: null as unknown, // so the pickHelper can highlight outlines of objects
+    scene: null as unknown, // to access the scene in the pickHelper
+
+    computerVisible: false, // To outline the computer in the scene if visible
+
     locale: 'en',
   }),
   actions: {
@@ -156,6 +163,9 @@ export const useMainStore = defineStore('main', {
         this.moveDownToExperience = false;
       }
     },
+    enableComputerVisible() {
+      this.computerVisible = true;
+    },
 
     // Hide elements
     hideHardSkills() {
@@ -213,6 +223,11 @@ export const useMainStore = defineStore('main', {
     emptyPanelHardSkills() {
       this.panelHardSkills = [];
     },
+    disableComputerVisible() {
+      this.computerVisible = false;
+    },
+
+    // Setters
     setLocale(locale: string) {
       this.locale = locale;
     },
@@ -222,7 +237,16 @@ export const useMainStore = defineStore('main', {
     },
     setClickDelay(delay: boolean) {
       this.delayClick = delay;
-    }
+    },
+    initializePickHelper(pickHelper: unknown) {
+      this.pickHelper = pickHelper;
+    },
+    setOutlinePass(outlinePass: unknown) {
+      this.outlinePass = outlinePass;
+    },
+    set3DScene(scene: unknown) {
+      this.scene = scene;
+    },
   },
   getters: {
     isHardSkillsVisible: (state) => state.showHardSkills,
@@ -234,9 +258,13 @@ export const useMainStore = defineStore('main', {
     isCreditsVisible: (state) => state.showCredits,
     isMouseEventsAllowed: (state) => state.shouldAllowMouseEvents,
     isNavigationMenuVisible: (state) => state.navigationMenuVisible,
+    isComputerVisible: (state) => state.computerVisible,
     getLocale: (state) => state.locale,
     getPanelHardSkills: (state) => state.panelHardSkills,
     shouldDelayClick: (state) => state.delayClick,
-    isAboutNavigationVisible: (state) => state.aboutNavigationVisible
+    isAboutNavigationVisible: (state) => state.aboutNavigationVisible,
+    getPickHelper: (state) => state.pickHelper,
+    getOutlinePass: (state) => state.outlinePass,
+    get3DScene: (state) => state.scene,
   }
 });

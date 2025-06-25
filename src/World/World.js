@@ -34,8 +34,8 @@ import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import { EXRLoader } from 'three/addons/loaders/EXRLoader.js'
 
 // Vue components
-import ProjectLabel from '../components/labels/ProjectLabel.vue'
-import { createVueRenderer, createVueLabel, updateLabels } from './systems/vue_renderer.js'
+import {
+  createVueRenderer, createComputerLabel, updateLabels } from './systems/vue_renderer.js'
 
 import Stats from 'stats.js'
 
@@ -94,10 +94,6 @@ function loadHDR(path, loadingManager) {
   })
 }
 
-function degToRad(degrees) {
-  return degrees * (Math.PI / 180)
-}
-
 class World {
   constructor(container) {
     const manager = createLoadingManager()
@@ -136,7 +132,7 @@ class World {
       scene.add(light)
     })
 
-    // If we want to see the lights in the scene, we can add the light helpers
+    // If we want to see the light position in the scene, we can add the light helpers
     /* lightHelpers.forEach(lightHelper => {
           scene.add(lightHelper);
         });
@@ -182,17 +178,7 @@ class World {
     })
     scene.add(snowShaderPlane)
 
-    let labelComputer = createVueLabel(
-      ProjectLabel,
-      container.clientWidth,
-      container.clientHeight,
-      new Vector2(7.1, 4.0),
-    )
-    labelComputer.position.set(-26.2, -0.7, -9.5)
-    labelComputer.updateMatrix()
-    labelComputer.rotateY(degToRad(90))
-    labelComputer.rotateX(degToRad(0))
-    scene.add(labelComputer)
+    scene.add(createComputerLabel(container.clientWidth, container.clientHeight))
 
     // Create selectors to move through the scene
     createAreaSelectors(scene)
@@ -204,14 +190,15 @@ class World {
     // Create composer for outline
     const {
       composer,
-      outlinePass,
       onResize: resizeComposer,
     } = createOutlineComposer(renderer, scene, camera, container)
     outlineComposer = composer
 
     const store = useMainStore()
-    // Add the pick helper
-    const pickHelper = new PickHelper()
+    // Add the pick helper (needs the outline pass to highlight objects)
+    const pickHelper = new PickHelper(store.getOutlinePass)
+    store.initializePickHelper(pickHelper)
+
     // Listeners
     window.addEventListener('click', (event) => {
       const normalizedPosition = {
@@ -229,7 +216,7 @@ class World {
         y: -(event.clientY / window.innerHeight) * 2 + 1,
       }
       const screenPosition = new Vector2(event.clientX, event.clientY)
-      pickHelper.hover(normalizedPosition, scene, camera, loop, screenPosition, outlinePass)
+      pickHelper.hover(normalizedPosition, scene, camera, loop, screenPosition)
     })
     store.disableMouseEvents()
 
