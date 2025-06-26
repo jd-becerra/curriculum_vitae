@@ -140,7 +140,12 @@ class PickHelper {
         this.hoveredObject.clickable &&
         mouseEvents.canSetHoveredObject(this.hoveredObject.area)
       ) {
-        this.outlineObject(this.hoveredObject, screenPosition, this.hoveredObject.name, this.hoveredObject.area)
+        this.outlineObject(this.hoveredObject)
+        mouseEvents.setHoveredObjectTag(
+          this.hoveredObject.name,
+          screenPosition,
+          this.hoveredObject.area,
+        )
       }
     } else {
       // Remove hover effects
@@ -149,17 +154,12 @@ class PickHelper {
     }
   }
 
-  outlineObject(object, mousePos, name, area = '') {
-    this.outlinePass.selectedObjects = []; // Clear previous selection
+  outlineObject(object) {
+    this.outlinePass.selectedObjects = [] // Clear previous selection
 
-    if (!object) return;
+    if (!object) return
 
     this.outlinePass.selectedObjects.push(object)
-    mouseEvents.setHoveredObjectTag(
-      name,
-      mousePos,
-      area,
-    )
     document.body.style.cursor = 'pointer'
   }
 

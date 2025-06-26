@@ -1,741 +1,727 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {Tween, Easing} from '@tweenjs/tween.js';
-import {
-  LoopOnce,
-  TextureLoader,
-  PlaneGeometry,
-  MathUtils,
-  Mesh,
-  MeshBasicMaterial,
-} from 'three';
-import { useMainStore } from '../../components/store';
-import { createAreaSelectors, removeAreaSelectors } from '../components/objects/cube';
+import { Tween, Easing } from '@tweenjs/tween.js'
+import { LoopOnce, TextureLoader, PlaneGeometry, MathUtils, Mesh, MeshBasicMaterial } from 'three'
+import { useMainStore } from '../../components/store'
+import { createAreaSelectors, removeAreaSelectors } from '../components/objects/cube'
 
 // State variables
-let isBookOpen = false;
-let isSocialsAreaActive = false;
-let isAboutAreaActive = false;
-let isAboutSkillsSubareaActive = false;
-let isAboutMainSubareaActive = false;
-let isAboutExperienceSubareaActive = false;
-let hoveredObjectTag = null;
+let isBookOpen = false
+let isSocialsAreaActive = false
+let isAboutAreaActive = false
+let isAboutSkillsSubareaActive = false
+let isAboutMainSubareaActive = false
+let isAboutExperienceSubareaActive = false
+let hoveredObjectTag = null
 
 // For social icons
-const gmailLink = "mailto:jbecerraofficial@gmail.com";
-const linkedinLink = "https://www.linkedin.com/in/jd-becerra";
-const githubLink = "https://github.com/jd-becerra";
-let hovSocialIcon = null;
-let hovSocialIconInitialY = null;
-let hovSocialIconInitialRotation = null;
-let hovSocialIconTick = null;
+const gmailLink = 'mailto:jbecerraofficial@gmail.com'
+const linkedinLink = 'https://www.linkedin.com/in/jd-becerra'
+const githubLink = 'https://github.com/jd-becerra'
+let hovSocialIcon = null
+let hovSocialIconInitialY = null
+let hovSocialIconInitialRotation = null
+let hovSocialIconTick = null
 
 // For About area (skills, about me, experience)
-let hovHardSkill = null;
-let hovHardSkillInitialX = null;
-let hovHardSkillTick = null;
+let hovHardSkill = null
+let hovHardSkillInitialX = null
+let hovHardSkillTick = null
 const hardSkillIndexes = {
-  "C++": 0,
-  "Python": 1,
-  "Javascript": 2,
-  "HTML_+_CSS": 3,
-  "MySQL": 4,
-  "Nodejs": 5,
-  "Linux": 6,
-  "Git": 7,
-  "Frontend_Frameworks": 8,
-  "English": 9,
-  "Chinese": 10,
-  "More": 11
+  'C++': 0,
+  Python: 1,
+  Javascript: 2,
+  'HTML_+_CSS': 3,
+  MySQL: 4,
+  Nodejs: 5,
+  Linux: 6,
+  Git: 7,
+  Frontend_Frameworks: 8,
+  English: 9,
+  Chinese: 10,
+  More: 11,
 }
-const aboutX = -3, aboutZ = -50;
-const skillsPos = {x: aboutX, y: 3.5, z: aboutZ};
-const aboutMePos = {x: aboutX, y: 0.5, z: aboutZ};
-const experiencePos = {x: aboutX, y: -2.5, z: aboutZ};
-let bookObject = null;
+const aboutX = -3,
+  aboutZ = -50
+const skillsPos = { x: aboutX, y: 3.5, z: aboutZ }
+const aboutMePos = { x: aboutX, y: 0.5, z: aboutZ }
+const experiencePos = { x: aboutX, y: -2.5, z: aboutZ }
+let bookObject = null
 // Headers that can be rendered
-let headersToRender = [];
-let lang = 'en';
+let headersToRender = []
+let lang = 'en'
 
 // Three.js helpers
-const textureLoader = new TextureLoader();
+const textureLoader = new TextureLoader()
 
 function getCurrentLocale() {
-  const mainStore = useMainStore();
-  return mainStore.getLocale;
+  const mainStore = useMainStore()
+  return mainStore.getLocale
 }
 
 function getHeadersByLang(locale) {
-  const basePath = `img/section_headers/${locale}`;
+  const basePath = `img/section_headers/${locale}`
 
   return {
-    "about": {
+    about: {
       path: `${basePath}/about_me.png`,
-      name: "About Me Section",
-      position: {x: -1.6, y: 2, z: -26},
+      name: 'About Me Section',
+      position: { x: -1.6, y: 2, z: -26 },
     },
-    "certificates": {
+    certificates: {
       path: `${basePath}/certificates.png`,
-      name: "Certificates Section",
-      position: {x: -4.6, y: -1.5, z: -26},
+      name: 'Certificates Section',
+      position: { x: -4.6, y: -1.5, z: -26 },
     },
-    "experience": {
+    experience: {
       path: `${basePath}/experience.png`,
-      name: "Experience Section",
-      position: {x: -1.6, y: -1.5, z: -26},
+      name: 'Experience Section',
+      position: { x: -1.6, y: -1.5, z: -26 },
     },
-    "soft_skills": {
+    soft_skills: {
       path: `${basePath}/soft_skills.png`,
-      name: "Soft Skills Section",
-      position: {x: -1.6, y: 5.2, z: -26},
+      name: 'Soft Skills Section',
+      position: { x: -1.6, y: 5.2, z: -26 },
     },
-    "hard_skills": {
+    hard_skills: {
       path: `${basePath}/hard_skills.png`,
-      name: "Hard Skills Section",
-      position: {x: -5.1, y: 5.2, z: -26},
+      name: 'Hard Skills Section',
+      position: { x: -5.1, y: 5.2, z: -26 },
     },
-    "credits": {
+    credits: {
       path: `${basePath}/credits.png`,
-      name: "Credits Section",
-      position: {x: 14.7, y: 6.3, z: -29},
-    }
-  };
+      name: 'Credits Section',
+      position: { x: 14.7, y: 6.3, z: -29 },
+    },
+  }
 }
 
 function reloadHeadersOnLangChange(loop, scene, headersToRender, locale) {
-  removePngHeaders(scene); // Ensure old headers are removed
-  createPngHeaders(loop, scene, headersToRender, locale); // Load new ones
+  removePngHeaders(scene) // Ensure old headers are removed
+  createPngHeaders(loop, scene, headersToRender, locale) // Load new ones
 }
 
 function moveToArea(controls, loop, to, angles, minDist = 20, maxDist = 32) {
-  controls.minDistance = minDist;
-  controls.maxDistance = maxDist;
+  controls.minDistance = minDist
+  controls.maxDistance = maxDist
 
   const from = {
     x: controls.target.x,
     y: controls.target.y,
-    z: controls.target.z
-  };
+    z: controls.target.z,
+  }
 
   const t = new Tween(from)
     .to(to, 1000)
     .easing(Easing.Quadratic.Out)
     .onUpdate(() => {
-      controls.target.set(from.x, from.y, from.z);
-      controls.update();
+      controls.target.set(from.x, from.y, from.z)
+      controls.update()
     })
-    .start();
+    .start()
 
   // Make second tween for polar and azimuth angles
   const fromAngles = {
     polar: [controls.minPolarAngle, controls.maxPolarAngle],
-    azimuth: [controls.minAzimuthAngle, controls.maxAzimuthAngle]
-  };
+    azimuth: [controls.minAzimuthAngle, controls.maxAzimuthAngle],
+  }
   const toAngles = {
     polar: [angles.yDown, angles.yUp], // Y axis
-    azimuth: [angles.xLeft, angles.xRight] // X axis
-  };
+    azimuth: [angles.xLeft, angles.xRight], // X axis
+  }
 
   const t2 = new Tween(fromAngles)
     .to(toAngles, 1000)
     .easing(Easing.Quadratic.Out)
     .onUpdate(() => {
-      controls.minPolarAngle = fromAngles.polar[0];
-      controls.maxPolarAngle = fromAngles.polar[1];
-      controls.minAzimuthAngle = fromAngles.azimuth[0];
-      controls.maxAzimuthAngle = fromAngles.azimuth[1];
-      controls.update();
+      controls.minPolarAngle = fromAngles.polar[0]
+      controls.maxPolarAngle = fromAngles.polar[1]
+      controls.minAzimuthAngle = fromAngles.azimuth[0]
+      controls.maxAzimuthAngle = fromAngles.azimuth[1]
+      controls.update()
     })
-    .start();
-
+    .start()
 
   loop.updatables.push({
     tick: (delta) => {
-      t.update();
-      t2.update();
-    }
-  });
+      t.update()
+      t2.update()
+    },
+  })
 }
 
 function loadPngHeader(url, name, pos, scale, loop, scene) {
-  const geometry = new PlaneGeometry(scale.x, scale.y);
-  const material = new MeshBasicMaterial({ color: 0xffffff, transparent: true });
-  const header = new Mesh(geometry, material);
-  header.name = name;
-  header.area = "headers";
+  const geometry = new PlaneGeometry(scale.x, scale.y)
+  const material = new MeshBasicMaterial({ color: 0xffffff, transparent: true })
+  const header = new Mesh(geometry, material)
+  header.name = name
+  header.area = 'headers'
 
-  header.position.set(pos.x, pos.y, pos.z);
+  header.position.set(pos.x, pos.y, pos.z)
 
   textureLoader.load(url, (texture) => {
-    header.material.map = texture;
-    header.material.needsUpdate = true;
-  });
+    header.material.map = texture
+    header.material.needsUpdate = true
+  })
 
   // Add tick to make it bounce
-  if (name !== "Credits Section") { // Credits must be static for the plaque
-      let elapsed = 0;
-    const bounceHeight = 0.1;
-    const bounceSpeed = 3;
-    const initialY = header.position.y;
+  if (name !== 'Credits Section') {
+    // Credits must be static for the plaque
+    let elapsed = 0
+    const bounceHeight = 0.1
+    const bounceSpeed = 3
+    const initialY = header.position.y
     loop.updatables.push({
       tick: (delta) => {
-        elapsed += delta;
-        const y = initialY + Math.sin(elapsed * bounceSpeed) * bounceHeight;
-        header.position.set(pos.x, y, pos.z);
-      }
-    });
+        elapsed += delta
+        const y = initialY + Math.sin(elapsed * bounceSpeed) * bounceHeight
+        header.position.set(pos.x, y, pos.z)
+      },
+    })
   }
 
-  scene.add(header);
+  scene.add(header)
 }
 
 function getAnimation(animations, name) {
   for (let i = 0; i < animations.length; i++) {
-    const animation = animations[i];
+    const animation = animations[i]
     if (animation.name === name) {
-      return animation;
+      return animation
     }
   }
-  return null;
+  return null
 }
 
 function handleSocialsHover(object, loop, picker) {
   // Make the object bounce
   loop.updatables.push({
     tick: (delta) => {
-      object.rotateY(delta * 0.5);
-    }
-  });
-
+      object.rotateY(delta * 0.5)
+    },
+  })
 }
 
 // Returns to the initial state of the scene
 function handleReturnToMainView(controls, loop, scene) {
-  removeAreaSelectors(scene);
+  removeAreaSelectors(scene)
 
-  handleSocialIconHover(null, loop, scene);
-  handleHardSkillsHover(null, loop, null);
-  isBookOpen = false;
-  isSocialsAreaActive = false;
-  isAboutAreaActive = false;
-  useMainStore().disableComputerVisible();
+  handleSocialIconHover(null, loop, scene)
+  handleHardSkillsHover(null, loop, null)
+  isBookOpen = false
+  isSocialsAreaActive = false
+  isAboutAreaActive = false
+  useMainStore().disableComputerVisible()
 
   // Return area selectors
-  createAreaSelectors(scene);
+  createAreaSelectors(scene)
 
-  const to = {x: 17, y: 4, z: 17};
+  const to = { x: 17, y: 4, z: 17 }
   const angles = {
     yDown: MathUtils.degToRad(80),
     yUp: MathUtils.degToRad(85),
     xLeft: MathUtils.degToRad(30),
-    xRight: MathUtils.degToRad(35)
+    xRight: MathUtils.degToRad(35),
   }
 
-  moveToArea(controls, loop, to, angles, 5, 10);
+  moveToArea(controls, loop, to, angles, 5, 10)
 }
 
 // Moves to the general projectsArea (the desk with computer)
 function handleProjectsClick(controls, loop, scene) {
-  removeAreaSelectors(scene);
+  removeAreaSelectors(scene)
 
-  handleSocialIconHover(null, loop, scene);
-  handleHardSkillsHover(null, loop, null);
-  isBookOpen = false;
-  isSocialsAreaActive = false;
-  isAboutAreaActive = false;
+  handleSocialIconHover(null, loop, scene)
+  handleHardSkillsHover(null, loop, null)
+  isBookOpen = false
+  isSocialsAreaActive = false
+  isAboutAreaActive = false
 
-  const to = {x: -40, y: 0, z: -10};
+  const to = { x: -40, y: 0, z: -10 }
 
   const angles = {
     yUp: MathUtils.degToRad(95),
     yDown: MathUtils.degToRad(90),
     xLeft: MathUtils.degToRad(80),
-    xRight: MathUtils.degToRad(100)
+    xRight: MathUtils.degToRad(100),
   }
-  moveToArea(controls, loop, to, angles);
+  moveToArea(controls, loop, to, angles)
 
-  const store = useMainStore();
-  store.enableComputerVisible();
+  const store = useMainStore()
+  store.enableComputerVisible()
 }
 
 // Moves to the general Socials area (over the fireplace, with trophies (contact icons) and a plaque with credits)
 function handleSocialsClick(controls, loop, scene) {
-  removeAreaSelectors(scene);
+  removeAreaSelectors(scene)
 
-  handleHardSkillsHover(null, loop, null);
-  isBookOpen = false;
-  isAboutAreaActive = false;
-  isSocialsAreaActive = true;
-  useMainStore().disableComputerVisible();
+  handleHardSkillsHover(null, loop, null)
+  isBookOpen = false
+  isAboutAreaActive = false
+  isSocialsAreaActive = true
+  useMainStore().disableComputerVisible()
 
   // Render header
-  headersToRender = ["credits"];
-  createPngHeaders(loop, scene, headersToRender, getCurrentLocale());
+  headersToRender = ['credits']
+  createPngHeaders(loop, scene, headersToRender, getCurrentLocale())
   // Add to loop a tick to re-render the headers if the language changes
   loop.updatables.push({
     tick: (delta) => {
       if (isSocialsAreaActive && getCurrentLocale() !== lang) {
-        removePngHeaders(scene);
-        createPngHeaders(loop, scene, headersToRender);
+        removePngHeaders(scene)
+        createPngHeaders(loop, scene, headersToRender)
       }
-    }
-  });
+    },
+  })
 
-  const to = {x: 15, y: 4, z: -42};
+  const to = { x: 15, y: 4, z: -42 }
   const angles = {
     yDown: MathUtils.degToRad(90),
     yUp: MathUtils.degToRad(92),
     xLeft: MathUtils.degToRad(-5),
-    xRight: MathUtils.degToRad(5)
+    xRight: MathUtils.degToRad(5),
   }
-  moveToArea(controls, loop, to, angles);
+  moveToArea(controls, loop, to, angles)
 }
 
 function removePngHeaders(scene) {
-  const hardSkillsHeader = scene.getObjectByName("Hard Skills Section");
+  const hardSkillsHeader = scene.getObjectByName('Hard Skills Section')
   if (hardSkillsHeader) {
-    scene.remove(hardSkillsHeader);
+    scene.remove(hardSkillsHeader)
   }
 
-  const softSkillsHeader = scene.getObjectByName("Soft Skills Section");
+  const softSkillsHeader = scene.getObjectByName('Soft Skills Section')
   if (softSkillsHeader) {
-    scene.remove(softSkillsHeader);
+    scene.remove(softSkillsHeader)
   }
 
-  const aboutHeader = scene.getObjectByName("About Me Section");
+  const aboutHeader = scene.getObjectByName('About Me Section')
   if (aboutHeader) {
-    scene.remove(aboutHeader);
+    scene.remove(aboutHeader)
   }
 
-  const experienceHeader = scene.getObjectByName("Experience Section");
+  const experienceHeader = scene.getObjectByName('Experience Section')
   if (experienceHeader) {
-    scene.remove(experienceHeader);
+    scene.remove(experienceHeader)
   }
 
-  const certificatesHeader = scene.getObjectByName("Certificates Section");
+  const certificatesHeader = scene.getObjectByName('Certificates Section')
   if (certificatesHeader) {
-    scene.remove(certificatesHeader);
+    scene.remove(certificatesHeader)
   }
 
-  const creditsHeader = scene.getObjectByName("Credits Section");
+  const creditsHeader = scene.getObjectByName('Credits Section')
   if (creditsHeader) {
-    scene.remove(creditsHeader);
+    scene.remove(creditsHeader)
   }
 }
 
 function createPngHeaders(loop, scene, headersToRender) {
-  lang = getCurrentLocale();
+  lang = getCurrentLocale()
 
-  const planeSize = {x: 3, y: 1.5};
-  const headers = getHeadersByLang(lang);
+  const planeSize = { x: 3, y: 1.5 }
+  const headers = getHeadersByLang(lang)
 
-  headersToRender.forEach(key => {
-    const header = headers[key];
-    loadPngHeader(header.path, header.name, header.position, planeSize, loop, scene);
-  });
+  headersToRender.forEach((key) => {
+    const header = headers[key]
+    loadPngHeader(header.path, header.name, header.position, planeSize, loop, scene)
+  })
 }
 
 // Moves to the general About Me area (a bookcase with books, picture frames and a flower pot)
-function handleAboutSubarea(controls, loop, scene, subarea = "main") {
-  const store = useMainStore();
-  store.showAboutNavigation(subarea);
+function handleAboutSubarea(controls, loop, scene, subarea = 'main') {
+  const store = useMainStore()
+  store.showAboutNavigation(subarea)
 
-  isAboutAreaActive = true;
-  store.disableComputerVisible();
+  isAboutAreaActive = true
+  store.disableComputerVisible()
 
-  removeAreaSelectors(scene);
-  removePngHeaders(scene);
+  removeAreaSelectors(scene)
+  removePngHeaders(scene)
 
-  handleSocialIconHover(null, loop, scene);
-  isBookOpen = false;
-  isSocialsAreaActive = false;
-  let targetPos = aboutMePos;
-  if (subarea === "main") {
-    headersToRender = ["about"];
+  handleSocialIconHover(null, loop, scene)
+  isBookOpen = false
+  isSocialsAreaActive = false
+  let targetPos = aboutMePos
+  if (subarea === 'main') {
+    headersToRender = ['about']
+  } else if (subarea === 'skills') {
+    headersToRender = ['soft_skills', 'hard_skills']
+    targetPos = skillsPos
+  } else if (subarea === 'experience') {
+    targetPos = experiencePos
+    headersToRender = ['certificates', 'experience']
+  } else {
+    console.error('Invalid subarea to navigate:', subarea)
+    return
   }
-  else if (subarea === "skills") {
-    headersToRender = ["soft_skills", "hard_skills"];
-    targetPos = skillsPos;
-  }
-  else if (subarea === "experience") {
-    targetPos = experiencePos;
-    headersToRender = ["certificates", "experience"];
-  }
-  else {
-    console.error("Invalid subarea to navigate:", subarea);
-    return;
-  }
-  createPngHeaders(loop, scene, headersToRender, getCurrentLocale());
+  createPngHeaders(loop, scene, headersToRender, getCurrentLocale())
   // Add to loop a tick to re-render the headers if the language changes
   loop.updatables.push({
     tick: (delta) => {
       if (isAboutAreaActive && getCurrentLocale() !== lang) {
-        removePngHeaders(scene);
-        createPngHeaders(loop, scene, headersToRender);
+        removePngHeaders(scene)
+        createPngHeaders(loop, scene, headersToRender)
       }
-    }
-  });
-  isAboutAreaActive = true;
-  setAboutSubareaActive(subarea);
+    },
+  })
+  isAboutAreaActive = true
+  setAboutSubareaActive(subarea)
 
-  const to = targetPos;
+  const to = targetPos
   const angles = {
     yDown: MathUtils.degToRad(90),
     yUp: MathUtils.degToRad(90),
     xLeft: MathUtils.degToRad(-2),
-    xRight: MathUtils.degToRad(1)
+    xRight: MathUtils.degToRad(1),
   }
-  moveToArea(controls, loop, to, angles, 31, 32);
+  moveToArea(controls, loop, to, angles, 31, 32)
 }
 
 function handleAboutClick(controls, loop, scene) {
   // The first subarea we navigate to is the main one
-  handleAboutSubarea(controls, loop, scene, "main");
+  handleAboutSubarea(controls, loop, scene, 'main')
 }
 
 function toggleIsSocialsActive() {
-  isSocialsAreaActive = !isSocialsAreaActive;
-  return isSocialsAreaActive;
+  isSocialsAreaActive = !isSocialsAreaActive
+  return isSocialsAreaActive
 }
 
 function toggleIsAboutActive() {
-  isAboutAreaActive = !isAboutAreaActive;
-  return isAboutAreaActive;
+  isAboutAreaActive = !isAboutAreaActive
+  return isAboutAreaActive
 }
 
 function getActiveAboutSubarea() {
-  if (isAboutMainSubareaActive) return "main";
-  if (isAboutSkillsSubareaActive) return "skills";
-  if (isAboutExperienceSubareaActive) return "experience";
-  return "";
+  if (isAboutMainSubareaActive) return 'main'
+  if (isAboutSkillsSubareaActive) return 'skills'
+  if (isAboutExperienceSubareaActive) return 'experience'
+  return ''
 }
 
 function setAboutSubareaActive(subarea) {
-  if (subarea === "main") {
-    isAboutMainSubareaActive = true;
-    isAboutSkillsSubareaActive = false;
-    isAboutExperienceSubareaActive = false;
-  } else if (subarea === "skills") {
-    isAboutMainSubareaActive = false;
-    isAboutSkillsSubareaActive = true;
-    isAboutExperienceSubareaActive = false;
-  } else if (subarea === "experience") {
-    isAboutMainSubareaActive = false;
-    isAboutSkillsSubareaActive = false;
-    isAboutExperienceSubareaActive = true;
+  if (subarea === 'main') {
+    isAboutMainSubareaActive = true
+    isAboutSkillsSubareaActive = false
+    isAboutExperienceSubareaActive = false
+  } else if (subarea === 'skills') {
+    isAboutMainSubareaActive = false
+    isAboutSkillsSubareaActive = true
+    isAboutExperienceSubareaActive = false
+  } else if (subarea === 'experience') {
+    isAboutMainSubareaActive = false
+    isAboutSkillsSubareaActive = false
+    isAboutExperienceSubareaActive = true
   }
 }
 
-function getIsAreaActive(area, subArea = "") {
+function getIsAreaActive(area, subArea = '') {
   if (area === 'socials') {
-    return isSocialsAreaActive;
+    return isSocialsAreaActive
   } else if (area === 'about') {
     if (subArea === '') {
-      return isAboutAreaActive;
+      return isAboutAreaActive
     }
   }
-  return false;
+  return false
 }
 
 function handleOpenBook(object) {
   if (isBookOpen) {
-    return;
+    return
   }
 
-  let parent = object.parent;
+  let parent = object.parent
   while (parent && !parent.mixer) {
-    parent = parent.parent;
+    parent = parent.parent
   }
   if (!parent) {
-    console.error('No parent with mixer found for object:', object.name);
-    return;
+    console.error('No parent with mixer found for object:', object.name)
+    return
   }
 
-  const mixer = parent.mixer;
+  const mixer = parent.mixer
 
   if (!mixer || mixer == undefined) {
-    console.error('No mixer found for object:', object.name);
-    return;
+    console.error('No mixer found for object:', object.name)
+    return
   }
   if (!mixer.animations || mixer.animations.length === 0) {
-    console.error('No animations found for object:', object.name);
-    return;
+    console.error('No animations found for object:', object.name)
+    return
   }
 
   // Determine which animation to play
-  let bookAnimation = getAnimation(mixer.animations, "Open");
+  let bookAnimation = getAnimation(mixer.animations, 'Open')
   if (!bookAnimation) {
-    console.error('No animation found for object:', object.name);
-    return;
+    console.error('No animation found for object:', object.name)
+    return
   }
-  isBookOpen = !isBookOpen;
+  isBookOpen = !isBookOpen
 
   if (!bookAnimation) {
-    console.error('No animation found for object:', object.name);
-    return;
+    console.error('No animation found for object:', object.name)
+    return
   }
 
   // Stop all other animations to prevent conflicts
-  mixer.stopAllAction();
+  mixer.stopAllAction()
 
-  const store = useMainStore();
-  store.disableMouseEvents();
-  setHoveredObjectTag(null);
+  const store = useMainStore()
+  store.disableMouseEvents()
+  setHoveredObjectTag(null)
 
   // Play the new animation
-  const animation = mixer.clipAction(bookAnimation, mixer.target);
-  animation.setLoop(LoopOnce);
-  animation.clampWhenFinished = true;
-  animation.reset().play(); // Ensure animation starts fresh
+  const animation = mixer.clipAction(bookAnimation, mixer.target)
+  animation.setLoop(LoopOnce)
+  animation.clampWhenFinished = true
+  animation.reset().play() // Ensure animation starts fresh
 
   if (bookObject === null) {
-    bookObject = object;
+    bookObject = object
   }
 
   // Wait for the animation to finish
   mixer.addEventListener('finished', () => {
     // Stop the animation to reset to the original state
-    animation.stop();
+    animation.stop()
 
-    isBookOpen = !isBookOpen;
-    document.querySelector('.label-renderer').style.pointerEvents = "none";
-    document.querySelector('.inspect-view').style.pointerEvents = "auto";
-    document.querySelector('.menu-container').style.display = 'none';
-    store.triggerShowAbout();
-  });
+    isBookOpen = !isBookOpen
+    document.querySelector('.label-renderer').style.pointerEvents = 'none'
+    document.querySelector('.inspect-view').style.pointerEvents = 'auto'
+    document.querySelector('.menu-container').style.display = 'none'
+    store.triggerShowAbout()
+  })
 }
 
 function handleSocialIconClick(iconName, loop) {
   if (iconName == 'Gmail') {
-    _removeSocialIconTick(loop);
-    window.open(`mailto:${gmailLink}`, '_blank');
-  }
-  else if (iconName == 'LinkedIn') {
-    _removeSocialIconTick(loop);
-    window.open(linkedinLink, '_blank');
-
-  }
-  else if (iconName == 'Github') {
-    _removeSocialIconTick(loop);
-    window.open(githubLink, '_blank');
+    _removeSocialIconTick(loop)
+    window.open(`mailto:${gmailLink}`, '_blank')
+  } else if (iconName == 'LinkedIn') {
+    _removeSocialIconTick(loop)
+    window.open(linkedinLink, '_blank')
+  } else if (iconName == 'Github') {
+    _removeSocialIconTick(loop)
+    window.open(githubLink, '_blank')
   }
 }
 
 function handleSocialIconHover(newHoveredObject, loop, scene) {
   // If already hovering the same object, return early
-  if (hovSocialIcon === newHoveredObject) return;
+  if (hovSocialIcon === newHoveredObject) return
 
   // Reset previous hovered child
   if (hovSocialIcon && hovSocialIconInitialY !== null) {
-    const prevChild = scene.getObjectByName(hovSocialIcon.name + "-Icon");
+    const prevChild = scene.getObjectByName(hovSocialIcon.name + '-Icon')
     if (prevChild) {
-      prevChild.position.y = hovSocialIconInitialY;
-      prevChild.rotation.y = hovSocialIconInitialRotation;
+      prevChild.position.y = hovSocialIconInitialY
+      prevChild.rotation.y = hovSocialIconInitialRotation
     }
   }
 
   // Remove previous animation
   if (hovSocialIconTick) {
-    const index = loop.updatables.indexOf(hovSocialIconTick);
-    if (index > -1) loop.updatables.splice(index, 1);
-    hovSocialIconTick = null;
+    const index = loop.updatables.indexOf(hovSocialIconTick)
+    if (index > -1) loop.updatables.splice(index, 1)
+    hovSocialIconTick = null
   }
 
-  hovSocialIcon = newHoveredObject;
+  hovSocialIcon = newHoveredObject
 
   // If hovering a valid object in the socials area
-  if (hovSocialIcon && hovSocialIcon.area === "socials") {
-    const childToRotate = scene.getObjectByName(hovSocialIcon.name + "-Icon");
-    if (!childToRotate) return;
+  if (hovSocialIcon && hovSocialIcon.area === 'socials') {
+    const childToRotate = scene.getObjectByName(hovSocialIcon.name + '-Icon')
+    if (!childToRotate) return
 
-    hovSocialIconInitialY = childToRotate.position.y;
-    hovSocialIconInitialRotation = childToRotate.rotation.y;
+    hovSocialIconInitialY = childToRotate.position.y
+    hovSocialIconInitialRotation = childToRotate.rotation.y
 
-    let time = 0;
-    const threshold = 0.5;
+    let time = 0
+    const threshold = 0.5
 
     hovSocialIconTick = {
       tick: (delta) => {
-        if (!childToRotate) return; // Defensive check
+        if (!childToRotate) return // Defensive check
 
-        time += delta;
-        const distance = delta * 3;
+        time += delta
+        const distance = delta * 3
 
         // Bounce then rotate
         if (childToRotate.position.y < hovSocialIconInitialY + threshold) {
-          childToRotate.position.y += distance;
+          childToRotate.position.y += distance
         } else {
-          childToRotate.rotation.y += delta;
+          childToRotate.rotation.y += delta
         }
       },
-    };
+    }
 
-    loop.updatables.push(hovSocialIconTick);
-    document.body.style.cursor = 'pointer';
+    loop.updatables.push(hovSocialIconTick)
+    document.body.style.cursor = 'pointer'
   } else {
     // Reset all references
-    hovSocialIcon = null;
-    hovSocialIconInitialY = null;
-    hovSocialIconInitialRotation = null;
-    document.body.style.cursor = 'default';
+    hovSocialIcon = null
+    hovSocialIconInitialY = null
+    hovSocialIconInitialRotation = null
+    document.body.style.cursor = 'default'
   }
 }
 
 function handleHardSkillsHover(newHoveredObject, loop, mousePosition) {
-
   if (hovHardSkill === newHoveredObject) {
     // Update tag position if already hovering the same item
     if (hoveredObjectTag) {
-      const offsetX = 40;
-      const offsetY = 30;
-      hoveredObjectTag.style.left = `${mousePosition.x + offsetX}px`;
-      hoveredObjectTag.style.top = `${mousePosition.y + offsetY}px`;
+      const offsetX = 40
+      const offsetY = 30
+      hoveredObjectTag.style.left = `${mousePosition.x + offsetX}px`
+      hoveredObjectTag.style.top = `${mousePosition.y + offsetY}px`
     }
-    return;
+    return
   }
 
   // Reset previous
   if (hovHardSkill && hovHardSkillInitialX != null) {
-    hovHardSkill.position.x = hovHardSkillInitialX;
+    hovHardSkill.position.x = hovHardSkillInitialX
   }
 
   if (hovHardSkillTick) {
-    const index = loop.updatables.indexOf(hovHardSkillTick);
+    const index = loop.updatables.indexOf(hovHardSkillTick)
     if (index > -1) {
-      loop.updatables.splice(index, 1);
+      loop.updatables.splice(index, 1)
     }
   }
 
   if (hoveredObjectTag) {
-    hoveredObjectTag.remove();
-    hoveredObjectTag = null;
+    hoveredObjectTag.remove()
+    hoveredObjectTag = null
   }
 
-  hovHardSkill = newHoveredObject;
+  hovHardSkill = newHoveredObject
 
   if (hovHardSkill) {
-    hovHardSkillInitialX = hovHardSkill.position.x;
-    const threshold = 0.3;
+    hovHardSkillInitialX = hovHardSkill.position.x
+    const threshold = 0.3
 
     hovHardSkillTick = {
       tick: (delta) => {
         if (hovHardSkill.position.x > hovHardSkillInitialX - threshold) {
-          hovHardSkill.position.x -= delta * 2;
+          hovHardSkill.position.x -= delta * 2
         }
       },
-    };
-    loop.updatables.push(hovHardSkillTick);
+    }
+    loop.updatables.push(hovHardSkillTick)
 
-    hoveredObjectTag = setHoveredObjectTag(hovHardSkill.name, mousePosition = { x: 0, y: 0 });
+    hoveredObjectTag = setHoveredObjectTag(hovHardSkill.name, (mousePosition = { x: 0, y: 0 }))
   } else {
-    hovHardSkillInitialX = null;
-    hovHardSkillTick = null;
+    hovHardSkillInitialX = null
+    hovHardSkillTick = null
   }
 }
 
 function canSetHoveredObject(objectArea) {
   // These conditions must be false to allow setting a hovered object tag
-   return !((objectArea == 'about_skills' && !isAboutSkillsSubareaActive)
-    || (objectArea == 'about_main' && !isAboutMainSubareaActive)
-    || (objectArea == 'about_experiences' && !isAboutExperienceSubareaActive)
-    || (objectArea == 'socials' && !isSocialsAreaActive)
-    || (objectArea == 'credits' && !isSocialsAreaActive)
-    );
+  return !(
+    (objectArea == 'about_skills' && !isAboutSkillsSubareaActive) ||
+    (objectArea == 'about_main' && !isAboutMainSubareaActive) ||
+    (objectArea == 'about_experiences' && !isAboutExperienceSubareaActive) ||
+    (objectArea == 'socials' && !isSocialsAreaActive) ||
+    (objectArea == 'credits' && !isSocialsAreaActive)
+  )
 }
 
-function setHoveredObjectTag(name, mousePosition, objectArea = "") {
+function setHoveredObjectTag(name, mousePosition, objectArea = '') {
   // Remove all tags in class hover-tag
-  const tags = document.getElementsByClassName('hover-tag');
+  const tags = document.getElementsByClassName('hover-tag')
   for (let i = 0; i < tags.length; i++) {
-    tags[i].remove();
+    tags[i].remove()
   }
 
   // If name is null, return
-  if ( !name || !canSetHoveredObject(objectArea) ) {
-    document.body.style.cursor = 'default';
-    return null;
+  if (!name || !canSetHoveredObject(objectArea)) {
+    document.body.style.cursor = 'default'
+    return null
   }
 
-  const tag = document.createElement('div');
-  tag.className = 'hover-tag';
-  let tagName = name.replace(/_/g, ' '); // Replace underscores with spaces
+  const tag = document.createElement('div')
+  tag.className = 'hover-tag'
+  let tagName = name.replace(/_/g, ' ') // Replace underscores with spaces
   // Some special cases
-  if (tagName == 'Nodejs') tagName = 'Node.js';
-  else if (tagName == 'More') tagName = 'More...';
-  tag.innerHTML = tagName;
-  tag.style.position = 'absolute';
-  tag.style.pointerEvents = 'none';
-  tag.style.zIndex = '9999';
-  tag.style.transition = 'opacity 0.3s ease-in-out';
-  tag.style.opacity = '1';
-  tag.style.fontSize = '16px';
-  tag.style.color = 'white';
-  tag.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-  tag.style.padding = '5px 10px';
-  tag.style.borderRadius = '5px';
-  tag.style.whiteSpace = 'nowrap';
-  tag.style.transform = 'translate(-50%, -50%)';
+  if (tagName == 'Nodejs') tagName = 'Node.js'
+  else if (tagName == 'More') tagName = 'More...'
+  tag.innerHTML = tagName
+  tag.style.position = 'absolute'
+  tag.style.pointerEvents = 'none'
+  tag.style.zIndex = '9999'
+  tag.style.transition = 'opacity 0.3s ease-in-out'
+  tag.style.opacity = '1'
+  tag.style.fontSize = '16px'
+  tag.style.color = 'white'
+  tag.style.backgroundColor = 'rgba(0, 0, 0, 0.7)'
+  tag.style.padding = '5px 10px'
+  tag.style.borderRadius = '5px'
+  tag.style.whiteSpace = 'nowrap'
+  tag.style.transform = 'translate(-50%, -50%)'
 
-  const offsetX = 40;
-  const offsetY = 30;
-  tag.style.left = `${mousePosition.x + offsetX}px`;
-  tag.style.top = `${mousePosition.y + offsetY}px`;
+  const offsetX = 40
+  const offsetY = 30
+  tag.style.left = `${mousePosition.x + offsetX}px`
+  tag.style.top = `${mousePosition.y + offsetY}px`
 
-  document.body.appendChild(tag);
-  return tag;
+  document.body.appendChild(tag)
+  return tag
 }
 
 function setupVueInspectView() {
-  const store = useMainStore();
-  store.disableMouseEvents();
-  setHoveredObjectTag(null);
+  const store = useMainStore()
+  store.disableMouseEvents()
+  setHoveredObjectTag(null)
 
-  document.querySelector('.label-renderer').style.pointerEvents = "none";
-  document.querySelector('.inspect-view').style.pointerEvents = "auto";
-  document.querySelector('.menu-container').style.display = 'none';
+  document.querySelector('.label-renderer').style.pointerEvents = 'none'
+  document.querySelector('.inspect-view').style.pointerEvents = 'auto'
+  document.querySelector('.menu-container').style.display = 'none'
 
-  return store;
+  return store
 }
 
 function handleSkillsClick(skillName, loop) {
-  const store = setupVueInspectView();
+  const store = setupVueInspectView()
 
   // Overwrite array for panel selection to hold just the index of the clicked skill
   if (skillName === 'Soft_Skills') {
-    store.triggerShowSoftSkills();
-  }
-  else {
-    store.triggerShowHardSkills();
-    store.setPanelHardSkills([hardSkillIndexes[skillName]]);
+    store.triggerShowSoftSkills()
+  } else {
+    store.triggerShowHardSkills()
+    store.setPanelHardSkills([hardSkillIndexes[skillName]])
   }
 }
 
 function handleExperienceClick(object) {
-  const store = setupVueInspectView();
+  const store = setupVueInspectView()
 
   if (object.name === 'Certificates') {
-    store.triggerShowCertificates();
+    store.triggerShowCertificates()
   } else if (object.name === 'Experience') {
-    store.triggerShowExperience();
+    store.triggerShowExperience()
   } else {
-    console.error('Unknown experience object clicked');
+    console.error('Unknown experience object clicked')
   }
 }
 
 function handleCreditsClick(loop) {
-  const store = setupVueInspectView();
+  const store = setupVueInspectView()
 
-  if (!store.isCreditsVisible) store.triggerShowCredits();
+  if (!store.isCreditsVisible) store.triggerShowCredits()
 }
 
-function handleProjectsExpandClick(loop) {
-  const store = setupVueInspectView();
-  store.triggerShowProjects();
+function handleProjectsExpandClick(index) {
+  const store = setupVueInspectView()
+  store.triggerShowProjects(index)
 }
 
 function _removeSocialIconTick(loop) {
   if (hovSocialIconTick && loop.updatables.includes(hovSocialIconTick)) {
-    const index = loop.updatables.indexOf(hovSocialIconTick);
-    if (index > -1) loop.updatables.splice(index, 1);
+    const index = loop.updatables.indexOf(hovSocialIconTick)
+    if (index > -1) loop.updatables.splice(index, 1)
   }
 }
 
@@ -752,11 +738,12 @@ export {
   handleSkillsClick,
   handleExperienceClick,
   handleCreditsClick,
+  handleProjectsExpandClick,
   toggleIsSocialsActive,
   toggleIsAboutActive,
   getIsAreaActive,
   handleOpenBook,
   getActiveAboutSubarea,
   setHoveredObjectTag,
-  canSetHoveredObject
-};
+  canSetHoveredObject,
+}

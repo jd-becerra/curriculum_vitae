@@ -4,22 +4,25 @@
     @mouseenter="handleMouseEnter($event)"
     @mouseleave="handleMouseLeave"
   >
-    <v-carousel cycle>
+    <v-carousel cycle show-arrows="hover">
+      <template v-slot:prev="{ props }">
+        <v-btn class="prev" v-bind="props" variant="plain" :ripple="false">&lt;</v-btn>
+      </template>
+      <template v-slot:next="{ props }">
+        <v-btn class="next" v-bind="props" variant="plain" :ripple="false">&gt;</v-btn>
+      </template>
+
       <v-carousel-item>
         <v-card class="project-card">
-          <v-card-title>{{$t('projects-vue.title')}}</v-card-title>
+          <v-card-title>{{ $t('projects.title') }}</v-card-title>
           <v-card-text>
-            <p v-html="$t('projects-vue.description')"></p>
+            <p v-html="$t('projects.description')"></p>
           </v-card-text>
         </v-card>
       </v-carousel-item>
 
-      <v-carousel-item
-        v-for="(project, index) in $tm('projects-vue.projects')"
-        :key="index"
-        cover
-      >
-        <v-card class="project-card">
+      <v-carousel-item v-for="(project, index) in projects" :key="index" cover>
+        <v-card class="project-card" @click="openProjectFull(index)">
           <v-card-title>{{ project.title }}</v-card-title>
           <v-card-text>
             <p v-html="project.description"></p>
@@ -33,60 +36,66 @@
 
 <script setup lang="ts">
 import { useMainStore } from '../store'
-import { Vector2 } from 'three';
-import { ref } from 'vue';
+import { Vector2 } from 'three'
+import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { handleProjectsExpandClick } from '../../World/systems/mouse_events.js'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const sendTo = (link: string) => {
-  if (!link) return;
-  window.open(link, "_blank");
-};
+interface Project {
+  title: string
+  description: string
+  image: string
+}
 
-const computerObject = ref(null);
+const { tm } = useI18n()
+const projects = tm('projects.cards') as Project[]
+
+const openProjectFull = (index: number) => {
+  handleProjectsExpandClick(index)
+}
+
+const computerObject = ref(null)
 
 const handleMouseEnter = (event: MouseEvent) => {
-  setTimeout(() => {  // Delay to ensure the event is processed
-    const store = useMainStore();
-    if (!store.isComputerVisible) {
-      console.warn("Projects are not visible or store is not initialized.");
-      return;
-    }
+  setTimeout(() => {
+    // Delay to ensure the event is processed
+    const store = useMainStore()
+    if (!store.isComputerVisible) return
 
-    const pick_helper = store.getPickHelper;
-    const scene = store.get3DScene;
+    const pick_helper = store.getPickHelper
+    const scene = store.get3DScene
 
-    if (!pick_helper || !scene) return;
+    if (!pick_helper || !scene) return
 
     if (!computerObject.value) {
-      computerObject.value = scene.getObjectByName("computer") || scene.getObjectByName("Computer");
+      computerObject.value = scene.getObjectByName('computer') || scene.getObjectByName('Computer')
     }
 
-    if (!computerObject.value) return;
+    if (!computerObject.value) return
 
-    const mouse = new Vector2();
-    const rect = document.body.getBoundingClientRect();
-    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    const mouse = new Vector2()
+    const rect = document.body.getBoundingClientRect()
+    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
+    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
 
-    pick_helper.outlineObject(computerObject.value, mouse, "My Projects");
-  }, 20);
-};
+    pick_helper.outlineObject(computerObject.value)
+  }, 20)
+}
 
 const handleMouseLeave = () => {
-  const store = useMainStore();
-  const pick_helper = store.getPickHelper;
+  const store = useMainStore()
+  const pick_helper = store.getPickHelper
 
-  if (!pick_helper) return;
+  if (!pick_helper) return
 
-  pick_helper.clearOutline();
-};
+  pick_helper.clearOutline()
+}
 </script>
 
 <style scoped>
 .projects {
   width: 100%;
   height: 100%;
-  position: fixed;
   top: 0;
   left: 0;
   margin-top: 0;
@@ -124,7 +133,10 @@ const handleMouseLeave = () => {
   overflow-wrap: break-word;
 }
 
-.next, .prev {
-  color: black;
+.next,
+.prev {
+  background-color: white;
+  opacity: 1;
+  font-weight: bold;
 }
 </style>

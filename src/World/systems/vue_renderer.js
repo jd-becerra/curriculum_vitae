@@ -85,7 +85,7 @@ function createVueRenderer(clientWidth, clientHeight) {
 }
 
 function createVueLabel(Component, clientWidth, clientHeight, size = new Vector2(10, 4)) {
-  const container = document.createElement('v-app')
+  const container = document.createElement('div')
   const app = createApp(Component)
 
   app.use(i18n) // Add locale feature
@@ -170,9 +170,4 @@ function updateLabels(clientWidth, clientHeight) {
   })
 }
 
-export {
-  createVueRenderer,
-  createVueLabel,
-  createComputerLabel,
-  updateLabels
-}
+export { createVueRenderer, createVueLabel, createComputerLabel, updateLabels }

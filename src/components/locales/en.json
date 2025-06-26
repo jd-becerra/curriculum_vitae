@@ -18,10 +18,10 @@
     "title": "About me",
     "description": "Being a 6th grade Software Engineering student, I am always eager to learn and improve my skills in order to use them in a competitive and exciting environment. With this in mind, I'm currently seeking for entry level jobs to begin my career in software development.<br> The programming languages I have most experience with are Python, C/C++ and Javascript. I am also proficient working with Linux systems, which I regularly use for personal and academic purposes. I have a continuous pursuit for learning about new technologies and concepts, and I always strive to stay up-to-date with the latest tech news.<br> I am excited to connect with your organization in order to apply my skills in real scenarios, continue learning, and ultimately bring value to your projects' vision to the best of my abilities."
   },
-  "projects-vue": {
+  "projects": {
     "title": "Projects",
     "description": "Here you can find some of the projects I have worked on. You can find more on my GitHub profile.",
-    "projects": [
+    "cards": [
       {
         "title": "Alicia - Demo for a Time Bending Game",
         "description": "This is a description of the first project.",

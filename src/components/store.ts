@@ -33,6 +33,7 @@ export const useMainStore = defineStore('main', {
     outlinePass: null as unknown, // so the pickHelper can highlight outlines of objects
     scene: null as unknown, // to access the scene in the pickHelper
 
+    selectedProjectIndex: 0,
     computerVisible: false, // To outline the computer in the scene if visible
 
     locale: 'en',
@@ -63,11 +64,12 @@ export const useMainStore = defineStore('main', {
       this.showCertificates = false;
       this.showCredits = false;
     },
-    triggerShowProjects() {
+    triggerShowProjects(index = 0) {
       this.showProjects = true;
-      this.aboutNavigationVisible = false;
+      this.selectedProjectIndex = index;
 
       // Set all other elements to false
+      this.aboutNavigationVisible = false;
       this.showHardSkills = false;
       this.showSoftSkills = false;
       this.showAbout = false;
@@ -266,5 +268,6 @@ export const useMainStore = defineStore('main', {
     getPickHelper: (state) => state.pickHelper,
     getOutlinePass: (state) => state.outlinePass,
     get3DScene: (state) => state.scene,
+    getSelectedProjectIndex: (state) => state.selectedProjectIndex,
   }
 });

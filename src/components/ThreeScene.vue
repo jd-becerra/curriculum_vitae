@@ -9,6 +9,7 @@
   import CertificatesLabel from './labels/CertificatesLabel.vue';
   import ExperienceLabel from './labels/ExperienceLabel.vue';
   import CreditsLabel from './labels/CreditsLabel.vue';
+  import ProjectsLabelFull from './labels/ProjectsLabelFull.vue';
 
   const mainContainer = ref<HTMLDivElement | null>(null);
   const sceneContainer = ref<HTMLDivElement | null>(null);
@@ -24,6 +25,7 @@
   const showCertificates = computed(() => store.showCertificates);
   const showExperience = computed(() => store.showExperience);
   const showCredits = computed(() => store.showCredits);
+  const showProjects = computed(() => store.showProjects);
 
   // Expose the scene container to the parent component
   const getContainer = () => {
@@ -52,6 +54,7 @@
       <CertificatesLabel v-show="showCertificates" />
       <ExperienceLabel v-show="showExperience" />
       <CreditsLabel v-show="showCredits" />
+      <ProjectsLabelFull v-show="showProjects" />
     </div>
 
     <div ref="sceneContainer" class="three-scene">
