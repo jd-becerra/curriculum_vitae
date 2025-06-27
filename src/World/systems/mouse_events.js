@@ -179,6 +179,9 @@ function loadPngHeader(url, name, pos, scale, loop, scene) {
     })
   }
 
+  header.cickable = false
+  header.layers.set(1) // Set to layer 1 to avoid picking by raycaster
+
   scene.add(header)
 }
 
@@ -421,12 +424,20 @@ function getIsAreaActive(area, subArea = '') {
   } else if (area === 'about') {
     if (subArea === '') {
       return isAboutAreaActive
+    } else if (subArea === 'main') {
+      return isAboutMainSubareaActive
+    } else if (subArea === 'skills') {
+      return isAboutSkillsSubareaActive
+    } else if (subArea === 'experience') {
+      return isAboutExperienceSubareaActive
     }
   }
   return false
 }
 
 function handleOpenBook(object) {
+  if (isAboutExperienceSubareaActive || isAboutSkillsSubareaActive) return
+
   if (isBookOpen) {
     return
   }
@@ -470,6 +481,7 @@ function handleOpenBook(object) {
   const store = useMainStore()
   store.disableMouseEvents()
   setHoveredObjectTag(null)
+  store.hideAboutNavigation()
 
   // Play the new animation
   const animation = mixer.clipAction(bookAnimation, mixer.target)
@@ -684,6 +696,8 @@ function setupVueInspectView() {
 }
 
 function handleSkillsClick(skillName, loop) {
+  if (isAboutMainSubareaActive || isAboutExperienceSubareaActive) return
+
   const store = setupVueInspectView()
 
   // Overwrite array for panel selection to hold just the index of the clicked skill
@@ -696,6 +710,8 @@ function handleSkillsClick(skillName, loop) {
 }
 
 function handleExperienceClick(object) {
+  if (isAboutMainSubareaActive || isAboutSkillsSubareaActive) return
+
   const store = setupVueInspectView()
 
   if (object.name === 'Certificates') {

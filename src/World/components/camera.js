@@ -14,10 +14,11 @@ function createCamera(position = { x: 0, y: 0, z: 0 }, rotation = { x: 0, y: 0, 
   camera.rotateX(rotation.x);
   camera.rotateY(rotation.y);
   camera.rotateZ(rotation.z);
-  camera.tick = (delta) => {
+  camera.tick = (delta) => {};
 
- };
-
+  // Enable camera for layers 0 a
+  camera.layers.enable(0);
+  camera.layers.enable(1); // Enable layer 1 for the header
  return camera;
 }
 

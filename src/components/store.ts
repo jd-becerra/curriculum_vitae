@@ -36,6 +36,9 @@ export const useMainStore = defineStore('main', {
     selectedProjectIndex: 0,
     computerVisible: false, // To outline the computer in the scene if visible
 
+    // Cursor
+    cursorCircleVisible: false,
+
     locale: 'en',
   }),
   actions: {
@@ -79,6 +82,7 @@ export const useMainStore = defineStore('main', {
     },
     triggerShowAbout() {
       this.showAbout = true;
+
       this.aboutNavigationVisible = false;
 
       // Set all other elements to false
@@ -127,6 +131,7 @@ export const useMainStore = defineStore('main', {
     },
     enableMouseEvents() {
       this.shouldAllowMouseEvents = true;
+      this.cursorCircleVisible = true;
 
       const labelRenderer = document.querySelector('.label-renderer') as HTMLElement;
       if (labelRenderer){
@@ -168,6 +173,9 @@ export const useMainStore = defineStore('main', {
     enableComputerVisible() {
       this.computerVisible = true;
     },
+    showCursorCircle() {
+      this.cursorCircleVisible = true;
+    },
 
     // Hide elements
     hideHardSkills() {
@@ -199,6 +207,7 @@ export const useMainStore = defineStore('main', {
     },
     disableMouseEvents() {
       this.shouldAllowMouseEvents = false;
+      this.cursorCircleVisible = false;
 
       const labelRenderer = document.querySelector('.label-renderer') as HTMLElement;
       if (labelRenderer){
@@ -227,6 +236,9 @@ export const useMainStore = defineStore('main', {
     },
     disableComputerVisible() {
       this.computerVisible = false;
+    },
+    hideCursorCircle() {
+      this.cursorCircleVisible = false;
     },
 
     // Setters

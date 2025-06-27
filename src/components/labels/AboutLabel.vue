@@ -19,6 +19,7 @@ const closeAboutMe = () => {
   (document.querySelector('.menu-container') as HTMLElement).style.display = 'block';
 
   mainStore.hideAbout();
+  mainStore.showAboutNavigation("main");
   mainStore.enableMouseEvents();
 };
 </script>

@@ -83,7 +83,10 @@ class PickHelper {
           !mouseEvents.isBookOpen
         ) {
           mouseEvents.handleOpenBook(this.pickedObject)
-        } else if (mouseEvents.getActiveAboutSubarea() == 'experience') {
+        } else if (mouseEvents.getActiveAboutSubarea() == 'experience' &&
+          objectName == 'Experience' ||
+          objectName == 'Certificates'
+        ) {
           mouseEvents.handleExperienceClick(this.pickedObject)
         }
       }
@@ -113,9 +116,7 @@ class PickHelper {
         this.outlinePass.selectedObjects = []
         this.hoveredObject = candidate
       }
-      if (candidate?.clickable) {
-        document.body.style.cursor = 'pointer'
-      }
+
 
       if (mouseEvents.getIsAreaActive('socials') && candidate.clickable) {
         // We should instead use mouseEvents to handle the hover
@@ -140,6 +141,7 @@ class PickHelper {
         this.hoveredObject.clickable &&
         mouseEvents.canSetHoveredObject(this.hoveredObject.area)
       ) {
+        document.body.style.cursor = 'pointer'
         this.outlineObject(this.hoveredObject)
         mouseEvents.setHoveredObjectTag(
           this.hoveredObject.name,
