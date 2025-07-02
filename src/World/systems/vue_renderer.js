@@ -77,7 +77,7 @@ function createVueRenderer(clientWidth, clientHeight) {
   labelRenderer.domElement.style.transform = `scale(${window.devicePixelRatio})`
   labelRenderer.domElement.style.transformOrigin = 'top left'
   // Allow pointer events to pass through the label while still receiving them
-  labelRenderer.domElement.style.pointerEvents = 'none'
+  labelRenderer.domElement.style.pointerEvents = 'auto'
   labelRenderer.domElement.style.backgroundColor = 'transparent'
   labelRenderer.domElement.style.zIndex = '1'
 
@@ -96,7 +96,6 @@ function createVueLabel(Component, clientWidth, clientHeight, size = new Vector2
   const cssObj = new CSS3DObject(container)
   cssObj.element.style.pointerEvents = 'auto'
   cssObj.element.className = 'vue-label-3d'
-
   // const aspectRatio = clientWidth / clientHeight;
 
   // Calculate base width dynamically
@@ -109,14 +108,6 @@ function createVueLabel(Component, clientWidth, clientHeight, size = new Vector2
   cssObj.element.style.height = `${height}px`
   cssObj.element.style.overflow = 'hidden' // Prevent unwanted stretching
 
-  // Choose allowed pointer events
-  /*   const allowedPointerEvents = ["a", "button", "v-carousel-item"];
-  // Get all elements that are allowed to receive pointer events
-  allowedPointerEvents.forEach(el => {
-    cssObj.element.querySelectorAll(el).forEach(el => {
-      el.style.pointerEvents = "auto";
-    });
-  }); */
   cssObj.name = Component.name
   // scale the labels to fit the plane
   const scale = 0.000016
@@ -138,6 +129,13 @@ function createVueLabel(Component, clientWidth, clientHeight, size = new Vector2
   obj.add(mesh)
 
   obj.cssObj = cssObj // For later reference
+
+  // Couldn't work out click functionality with Vue (not working well on Chrome),
+  //  so we ignore mouse events on the label by setting object to another layer,
+  // and we handle clicks on pick_helper.js instead
+  obj.layers.set(1)
+  mesh.layers.set(1)
+  cssObj.layers.set(1)
 
   labels.push(obj)
   return obj

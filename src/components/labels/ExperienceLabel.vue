@@ -25,7 +25,8 @@ const closeView = () => {
 
   mainStore.hideExperience();
   mainStore.enableMouseEvents();
-
+  mainStore.showNavigationMenu();
+  mainStore.showAboutNavigation('experience');
 }
 </script>
 

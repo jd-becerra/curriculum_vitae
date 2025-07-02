@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { defineStore } from 'pinia'
 
 export const useMainStore = defineStore('main', {
   state: () => ({
@@ -11,6 +11,10 @@ export const useMainStore = defineStore('main', {
     showCredits: false,
 
     navigationMenuVisible: false,
+    shouldOpenNavigationMenu: false,
+    infoPanelVisible: false,
+    showSettingsMenu: false,
+    showDowloadCV: false,
 
     // Navigation buttons for the About section
     aboutNavigationVisible: false,
@@ -33,8 +37,9 @@ export const useMainStore = defineStore('main', {
     outlinePass: null as unknown, // so the pickHelper can highlight outlines of objects
     scene: null as unknown, // to access the scene in the pickHelper
 
-    selectedProjectIndex: 0,
-    computerVisible: false, // To outline the computer in the scene if visible
+    computerVisible: false,
+    currentProjectIndex: 0,
+
 
     // Cursor
     cursorCircleVisible: false,
@@ -44,223 +49,263 @@ export const useMainStore = defineStore('main', {
   actions: {
     // Show elements
     triggerShowHardSkills() {
-      this.showHardSkills = true;
-      this.aboutNavigationVisible = false;
+      this.showHardSkills = true
+      this.aboutNavigationVisible = false
 
       // Set all other elements to false
-      this.showSoftSkills = false;
-      this.showProjects = false;
-      this.showAbout = false;
-      this.showExperience = false;
-      this.showCertificates = false;
-      this.showCredits = false;
+      this.showSoftSkills = false
+      this.showProjects = false
+      this.showAbout = false
+      this.showExperience = false
+      this.showCertificates = false
+      this.showCredits = false
     },
     triggerShowSoftSkills() {
-      this.showSoftSkills = true;
-      this.aboutNavigationVisible = false;
+      this.showSoftSkills = true
+      this.aboutNavigationVisible = false
 
       // Set all other elements to false
-      this.showHardSkills = false;
-      this.showProjects = false;
-      this.showAbout = false;
-      this.showExperience = false;
-      this.showCertificates = false;
-      this.showCredits = false;
+      this.showHardSkills = false
+      this.showProjects = false
+      this.showAbout = false
+      this.showExperience = false
+      this.showCertificates = false
+      this.showCredits = false
     },
-    triggerShowProjects(index = 0) {
-      this.showProjects = true;
-      this.selectedProjectIndex = index;
+    triggerShowProjects() {
+      this.showProjects = true
 
       // Set all other elements to false
-      this.aboutNavigationVisible = false;
-      this.showHardSkills = false;
-      this.showSoftSkills = false;
-      this.showAbout = false;
-      this.showExperience = false;
-      this.showCertificates = false;
-      this.showCredits = false;
+      this.aboutNavigationVisible = false
+      this.showHardSkills = false
+      this.showSoftSkills = false
+      this.showAbout = false
+      this.showExperience = false
+      this.showCertificates = false
+      this.showCredits = false
     },
     triggerShowAbout() {
-      this.showAbout = true;
+      this.showAbout = true
 
-      this.aboutNavigationVisible = false;
+      this.aboutNavigationVisible = false
 
       // Set all other elements to false
-      this.showHardSkills = false;
-      this.showSoftSkills = false;
-      this.showProjects = false;
-      this.showExperience = false;
-      this.showCertificates = false;
-      this.showCredits = false;
+      this.showHardSkills = false
+      this.showSoftSkills = false
+      this.showProjects = false
+      this.showExperience = false
+      this.showCertificates = false
+      this.showCredits = false
     },
     triggerShowExperience() {
-      this.showExperience = true;
-      this.aboutNavigationVisible = false;
+      this.showExperience = true
+      this.aboutNavigationVisible = false
 
       // Set all other elements to false
-      this.showHardSkills = false;
-      this.showSoftSkills = false;
-      this.showProjects = false;
-      this.showAbout = false;
-      this.showCertificates = false;
-      this.showCredits = false;
+      this.showHardSkills = false
+      this.showSoftSkills = false
+      this.showProjects = false
+      this.showAbout = false
+      this.showCertificates = false
+      this.showCredits = false
     },
     triggerShowCertificates() {
-      this.showCertificates = true;
-      this.aboutNavigationVisible = false;
+      this.showCertificates = true
+      this.aboutNavigationVisible = false
 
       // Set all other elements to false
-      this.showHardSkills = false;
-      this.showSoftSkills = false;
-      this.showProjects = false;
-      this.showAbout = false;
-      this.showExperience = false;
-      this.showCredits = false;
+      this.showHardSkills = false
+      this.showSoftSkills = false
+      this.showProjects = false
+      this.showAbout = false
+      this.showExperience = false
+      this.showCredits = false
     },
     triggerShowCredits() {
-      this.showCredits = true;
+      this.showCredits = true
 
       // Set all other elements to false
-      this.showHardSkills = false;
-      this.showSoftSkills = false;
-      this.showProjects = false;
-      this.showAbout = false;
-      this.showExperience = false;
-      this.showCertificates = false;
-      this.aboutNavigationVisible = false;
+      this.showHardSkills = false
+      this.showSoftSkills = false
+      this.showProjects = false
+      this.showAbout = false
+      this.showExperience = false
+      this.showCertificates = false
+      this.aboutNavigationVisible = false
     },
     enableMouseEvents() {
-      this.shouldAllowMouseEvents = true;
-      this.cursorCircleVisible = true;
+      this.shouldAllowMouseEvents = true
+      this.cursorCircleVisible = true
 
-      const labelRenderer = document.querySelector('.label-renderer') as HTMLElement;
-      if (labelRenderer){
-        labelRenderer.style.pointerEvents = "auto";
+      const labelRenderer = document.querySelector('.label-renderer') as HTMLElement
+      if (labelRenderer) {
+        labelRenderer.style.pointerEvents = 'auto'
       }
 
       // Set all elements in class "vue-label-3d" to pointer-events: auto
-      const labels = document.querySelectorAll('.vue-label-3d');
+      const labels = document.querySelectorAll('.vue-label-3d')
       labels.forEach((label) => {
-        (label as HTMLElement).style.pointerEvents = "auto";
-      });
+        ;(label as HTMLElement).style.pointerEvents = 'auto'
+      })
     },
     showNavigationMenu() {
-      this.navigationMenuVisible = true;
+      this.navigationMenuVisible = true
     },
-    showAboutNavigation(subarea = "main") {
-      this.aboutNavigationVisible = true;
+    openNavigationMenu() {
+      this.shouldOpenNavigationMenu = true
+      this.delayClick = true
+    },
+    showAboutNavigation(subarea = 'main') {
+      this.aboutNavigationVisible = true
 
-      if (subarea === "main") {
-        this.moveUpToSkills = true;
-        this.moveDownToExperience = true;
+      if (subarea === 'main') {
+        this.moveUpToSkills = true
+        this.moveDownToExperience = true
 
-        this.moveDownToAbout = false;
-        this.moveUpToAbout = false;
-      } else if (subarea === "skills") {
-        this.moveDownToAbout = true;
+        this.moveDownToAbout = false
+        this.moveUpToAbout = false
+      } else if (subarea === 'skills') {
+        this.moveDownToAbout = true
 
-        this.moveUpToSkills = false;
-        this.moveDownToExperience = false;
-        this.moveUpToAbout = false;
-      } else if (subarea === "experience") {
-        this.moveUpToAbout = true;
+        this.moveUpToSkills = false
+        this.moveDownToExperience = false
+        this.moveUpToAbout = false
+      } else if (subarea === 'experience') {
+        this.moveUpToAbout = true
 
-        this.moveDownToAbout = false;
-        this.moveUpToSkills = false;
-        this.moveDownToExperience = false;
+        this.moveDownToAbout = false
+        this.moveUpToSkills = false
+        this.moveDownToExperience = false
       }
     },
     enableComputerVisible() {
-      this.computerVisible = true;
+      this.computerVisible = true
     },
     showCursorCircle() {
-      this.cursorCircleVisible = true;
+      this.cursorCircleVisible = true
+    },
+    enableInfoPanel() {
+      this.infoPanelVisible = true
+      this.disableMouseEvents()
+      this.showDowloadCV = false
+      this.showSettingsMenu = false
+      this.delayClick = true
+
+      // Remove elements in class "hover-tag" (created by mouse_events.js)
+      const hoverTags = document.querySelectorAll('.hover-tag')
+      hoverTags.forEach((tag) => {
+        tag.parentNode?.removeChild(tag)
+      })
+    },
+    enableDownloadCV() {
+      this.showDowloadCV = true
+    },
+    enableSettingsMenu() {
+      this.showSettingsMenu = true
     },
 
     // Hide elements
     hideHardSkills() {
-      this.showHardSkills = false;
-      this.aboutNavigationVisible = true;
+      this.showHardSkills = false
+      this.aboutNavigationVisible = true
     },
     hideSoftSkills() {
-      this.showSoftSkills = false;
-      this.aboutNavigationVisible = true;
+      this.showSoftSkills = false
+      this.aboutNavigationVisible = true
     },
     hideProjects() {
-      this.showProjects = false;
-      this.aboutNavigationVisible = true;
+      this.showProjects = false
+      this.aboutNavigationVisible = true
     },
     hideAbout() {
-      this.showAbout = false;
-      this.aboutNavigationVisible = true;
+      this.showAbout = false
+      this.aboutNavigationVisible = true
     },
     hideExperience() {
-      this.showExperience = false;
-      this.aboutNavigationVisible = true;
+      this.showExperience = false
+      this.aboutNavigationVisible = true
     },
     hideCertificates() {
-      this.showCertificates = false;
-      this.aboutNavigationVisible = true;
+      this.showCertificates = false
+      this.aboutNavigationVisible = true
     },
     hideCredits() {
-      this.showCredits = false;
+      this.showCredits = false
     },
     disableMouseEvents() {
-      this.shouldAllowMouseEvents = false;
-      this.cursorCircleVisible = false;
+      this.shouldAllowMouseEvents = false
+      this.cursorCircleVisible = false
 
-      const labelRenderer = document.querySelector('.label-renderer') as HTMLElement;
-      if (labelRenderer){
-        labelRenderer.style.pointerEvents = "none";
+      const labelRenderer = document.querySelector('.label-renderer') as HTMLElement
+      if (labelRenderer) {
+        labelRenderer.style.pointerEvents = 'none'
       }
 
       // Set all elements in class "3d-vue-label" to pointer-events: none
-      const labels = document.querySelectorAll('.vue-label-3d');
+      const labels = document.querySelectorAll('.vue-label-3d')
       labels.forEach((label) => {
-        (label as HTMLElement).style.pointerEvents = "none";
-      });
+        ;(label as HTMLElement).style.pointerEvents = 'none'
+      })
     },
     hideNavigationMenu() {
-      this.navigationMenuVisible = false;
+      this.navigationMenuVisible = false
+    },
+    closeNavigationMenu() {
+      this.shouldOpenNavigationMenu = false
     },
     hideAboutNavigation() {
-      this.aboutNavigationVisible = false;
+      this.aboutNavigationVisible = false
 
-      this.moveDownToAbout = false;
-      this.moveUpToSkills = false;
-      this.moveDownToExperience = false;
-      this.moveUpToAbout = false;
+      this.moveDownToAbout = false
+      this.moveUpToSkills = false
+      this.moveDownToExperience = false
+      this.moveUpToAbout = false
     },
     emptyPanelHardSkills() {
-      this.panelHardSkills = [];
+      this.panelHardSkills = []
     },
     disableComputerVisible() {
-      this.computerVisible = false;
+      this.computerVisible = false
     },
     hideCursorCircle() {
-      this.cursorCircleVisible = false;
+      this.cursorCircleVisible = false
+    },
+    disableInfoPanel() {
+      this.infoPanelVisible = false
+      this.enableMouseEvents()
+      this.showDowloadCV = true
+      this.showSettingsMenu = true
+    },
+    disableDownloadCV() {
+      this.showDowloadCV = false
+    },
+    disableSettingsMenu() {
+      this.showSettingsMenu = false
     },
 
     // Setters
     setLocale(locale: string) {
-      this.locale = locale;
+      this.locale = locale
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setPanelHardSkills(panelHardSkills: any) {
-      this.panelHardSkills = panelHardSkills;
+      this.panelHardSkills = panelHardSkills
     },
     setClickDelay(delay: boolean) {
-      this.delayClick = delay;
+      this.delayClick = delay
     },
     initializePickHelper(pickHelper: unknown) {
-      this.pickHelper = pickHelper;
+      this.pickHelper = pickHelper
     },
     setOutlinePass(outlinePass: unknown) {
-      this.outlinePass = outlinePass;
+      this.outlinePass = outlinePass
     },
     set3DScene(scene: unknown) {
-      this.scene = scene;
+      this.scene = scene
     },
+    setCurrentProjectIndex(index: number) {
+      this.currentProjectIndex = index
+    }
   },
   getters: {
     isHardSkillsVisible: (state) => state.showHardSkills,
@@ -272,6 +317,10 @@ export const useMainStore = defineStore('main', {
     isCreditsVisible: (state) => state.showCredits,
     isMouseEventsAllowed: (state) => state.shouldAllowMouseEvents,
     isNavigationMenuVisible: (state) => state.navigationMenuVisible,
+    isNavigationMenuOpen: (state) => state.shouldOpenNavigationMenu,
+    isInfoPanelVisible: (state) => state.infoPanelVisible,
+    isSettingsMenuVisible: (state) => state.showSettingsMenu,
+    isDownloadCVVisible: (state) => state.showDowloadCV,
     isComputerVisible: (state) => state.computerVisible,
     getLocale: (state) => state.locale,
     getPanelHardSkills: (state) => state.panelHardSkills,
@@ -280,6 +329,6 @@ export const useMainStore = defineStore('main', {
     getPickHelper: (state) => state.pickHelper,
     getOutlinePass: (state) => state.outlinePass,
     get3DScene: (state) => state.scene,
-    getSelectedProjectIndex: (state) => state.selectedProjectIndex,
-  }
-});
+    getSelectedProjectIndex: (state) => state.currentProjectIndex,
+  },
+})

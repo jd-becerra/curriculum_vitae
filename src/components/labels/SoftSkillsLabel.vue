@@ -38,6 +38,8 @@ const closeSoftSkills = () => {
 
   mainStore.hideSoftSkills();
   mainStore.enableMouseEvents();
+  mainStore.showNavigationMenu();
+  mainStore.showAboutNavigation('skills');
 
   panel.value = [];
 }

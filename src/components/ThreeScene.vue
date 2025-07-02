@@ -117,7 +117,7 @@ defineExpose({
   justify-content: center;
   align-items: center;
   pointer-events: none;
-  opacity: 0.1; /* for debugging */
+  /* opacity: 0.1; /* for debugging */
 }
 
 .loading-bar-container {

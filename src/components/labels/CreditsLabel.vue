@@ -38,6 +38,7 @@ const closeView = () => {
 
   mainStore.hideCredits();
   mainStore.enableMouseEvents();
+  mainStore.showNavigationMenu();
 };
 </script>
 

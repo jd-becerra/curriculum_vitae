@@ -1,28 +1,8 @@
 <template>
-  <v-container
-    class="projects"
-    @mouseenter="handleMouseEnter($event)"
-    @mouseleave="handleMouseLeave"
-  >
-    <v-carousel cycle show-arrows="hover">
-      <template v-slot:prev="{ props }">
-        <v-btn class="prev" v-bind="props" variant="plain" :ripple="false">&lt;</v-btn>
-      </template>
-      <template v-slot:next="{ props }">
-        <v-btn class="next" v-bind="props" variant="plain" :ripple="false">&gt;</v-btn>
-      </template>
-
-      <v-carousel-item>
-        <v-card class="project-card">
-          <v-card-title>{{ $t('projects.title') }}</v-card-title>
-          <v-card-text>
-            <p v-html="$t('projects.description')"></p>
-          </v-card-text>
-        </v-card>
-      </v-carousel-item>
-
+  <v-container class="projects">
+    <v-carousel cycle :show-arrows="false" v-model="currentProjectIndex">
       <v-carousel-item v-for="(project, index) in projects" :key="index" cover>
-        <v-card class="project-card" @click="openProjectFull(index)">
+        <v-card class="project-card" style="cursor: pointer">
           <v-card-title>{{ project.title }}</v-card-title>
           <v-card-text>
             <p v-html="project.description"></p>
@@ -35,11 +15,9 @@
 </template>
 
 <script setup lang="ts">
-import { useMainStore } from '../store'
-import { Vector2 } from 'three'
-import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { handleProjectsExpandClick } from '../../World/systems/mouse_events.js'
+import { ref, watch } from 'vue'
+import { useMainStore } from '../store'
 
 interface Project {
   title: string
@@ -50,46 +28,11 @@ interface Project {
 const { tm } = useI18n()
 const projects = tm('projects.cards') as Project[]
 
-const openProjectFull = (index: number) => {
-  handleProjectsExpandClick(index)
-}
-
-const computerObject = ref(null)
-
-const handleMouseEnter = (event: MouseEvent) => {
-  setTimeout(() => {
-    // Delay to ensure the event is processed
-    const store = useMainStore()
-    if (!store.isComputerVisible) return
-
-    const pick_helper = store.getPickHelper
-    const scene = store.get3DScene
-
-    if (!pick_helper || !scene) return
-
-    if (!computerObject.value) {
-      computerObject.value = scene.getObjectByName('computer') || scene.getObjectByName('Computer')
-    }
-
-    if (!computerObject.value) return
-
-    const mouse = new Vector2()
-    const rect = document.body.getBoundingClientRect()
-    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
-    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1
-
-    pick_helper.outlineObject(computerObject.value)
-  }, 20)
-}
-
-const handleMouseLeave = () => {
-  const store = useMainStore()
-  const pick_helper = store.getPickHelper
-
-  if (!pick_helper) return
-
-  pick_helper.clearOutline()
-}
+const currentProjectIndex = ref(0)
+watch(currentProjectIndex, (newIndex) => {
+  const mainStore = useMainStore()
+  if (!mainStore.showProjects) mainStore.setCurrentProjectIndex(newIndex)
+})
 </script>
 
 <style scoped>

@@ -46,7 +46,7 @@ const selectedProject = computed({
   get: () => mainStore.getSelectedProjectIndex,  // Get the currently selected project index
   /* The set method helps us update the selection, since without it, the computed property
   would be read-only and it would get stuck on the first project selected */
-  set: (val: number) => mainStore.selectedProjectIndex = val,
+  set: (val: number) => mainStore.setCurrentProjectIndex(val)
 });
 
 const closeView = () => {
@@ -56,7 +56,7 @@ const closeView = () => {
 
   mainStore.hideProjects();
   mainStore.enableMouseEvents();
-
+  mainStore.showNavigationMenu();
 }
 </script>
 

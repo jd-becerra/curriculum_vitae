@@ -45,6 +45,8 @@ const closeHardSkills = () => {
 
   mainStore.hideHardSkills();
   mainStore.enableMouseEvents();
+  mainStore.showNavigationMenu();
+  mainStore.showAboutNavigation('skills');
 
   panelRefs.value = [];
   mainStore.emptyPanelHardSkills();

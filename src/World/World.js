@@ -265,7 +265,7 @@ class World {
       setTimeout(() => {
         // resizer.onResize(); // I don't like this solution
         // Once the world is loaded, allow clicks
-        store.enableMouseEvents()
+        store.disableMouseEvents() // Only allow clicks when the user clicks out of the info panel
         labelRenderer.domElement.style.pointerEvents = 'auto'
         this.render()
         const loadingElement = document.querySelector('.loading')

@@ -46,7 +46,7 @@ function loadGLTF(
           model.traverse((child) => {
             if (trophies.includes(child.name)) {
               child.clickable = true
-              child.area = child.name != 'Credits' ? 'socials'  : 'credits'
+              child.area = child.name != 'Credits' ? 'socials' : 'credits'
             }
           })
         }
@@ -96,6 +96,13 @@ function loadGLTF(
             child.clickable = true
             child.area = 'about_experience'
           })
+        }
+        if (name === 'desk') {
+          const computer = model.getObjectByName('Computer')
+          if (computer) {
+            computer.clickable = true
+            computer.area = 'projects'
+          }
         }
 
         // If we have an lod, add model to the corresponding lod level

@@ -89,6 +89,10 @@ class PickHelper {
         ) {
           mouseEvents.handleExperienceClick(this.pickedObject)
         }
+      } else if (mouseEvents.getIsAreaActive('projects')) {
+        if (this.pickedObject.name == 'Computer') {
+          mouseEvents.handleProjectsExpandClick()
+        }
       }
     }
   }

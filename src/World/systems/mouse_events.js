@@ -11,6 +11,7 @@ let isAboutAreaActive = false
 let isAboutSkillsSubareaActive = false
 let isAboutMainSubareaActive = false
 let isAboutExperienceSubareaActive = false
+let isProjectsAreaActive = false
 let hoveredObjectTag = null
 
 // For social icons
@@ -158,9 +159,16 @@ function loadPngHeader(url, name, pos, scale, loop, scene) {
 
   header.position.set(pos.x, pos.y, pos.z)
 
-  textureLoader.load(url, (texture) => {
-    header.material.map = texture
-    header.material.needsUpdate = true
+  // We first load a low resolution texture so that it doesn't look as bad while the high resolution one loads
+  const lowResUrl = url.replace('.png', '_low.png')
+  textureLoader.load(lowResUrl, (lowResTexture) => {
+    material.map = lowResTexture
+    material.needsUpdate = true
+
+    textureLoader.load(url, (highResTexture) => {
+      material.map = highResTexture
+      material.needsUpdate = true
+    })
   })
 
   // Add tick to make it bounce
@@ -213,6 +221,7 @@ function handleReturnToMainView(controls, loop, scene) {
   isBookOpen = false
   isSocialsAreaActive = false
   isAboutAreaActive = false
+  isProjectsAreaActive = false
   useMainStore().disableComputerVisible()
 
   // Return area selectors
@@ -238,6 +247,7 @@ function handleProjectsClick(controls, loop, scene) {
   isBookOpen = false
   isSocialsAreaActive = false
   isAboutAreaActive = false
+  isProjectsAreaActive = true
 
   const to = { x: -40, y: 0, z: -10 }
 
@@ -261,6 +271,7 @@ function handleSocialsClick(controls, loop, scene) {
   isBookOpen = false
   isAboutAreaActive = false
   isSocialsAreaActive = true
+  isProjectsAreaActive = false
   useMainStore().disableComputerVisible()
 
   // Render header
@@ -344,6 +355,7 @@ function handleAboutSubarea(controls, loop, scene, subarea = 'main') {
   handleSocialIconHover(null, loop, scene)
   isBookOpen = false
   isSocialsAreaActive = false
+  isProjectsAreaActive = false
   let targetPos = aboutMePos
   if (subarea === 'main') {
     headersToRender = ['about']
@@ -419,7 +431,9 @@ function setAboutSubareaActive(subarea) {
 }
 
 function getIsAreaActive(area, subArea = '') {
-  if (area === 'socials') {
+  if (area === 'projects') {
+    return isProjectsAreaActive
+  } else if (area === 'socials') {
     return isSocialsAreaActive
   } else if (area === 'about') {
     if (subArea === '') {
@@ -468,7 +482,7 @@ function handleOpenBook(object) {
     console.error('No animation found for object:', object.name)
     return
   }
-  isBookOpen = !isBookOpen
+  isBookOpen = true
 
   if (!bookAnimation) {
     console.error('No animation found for object:', object.name)
@@ -493,6 +507,8 @@ function handleOpenBook(object) {
     bookObject = object
   }
 
+  store.hideNavigationMenu()
+  store.hideAboutNavigation()
   // Wait for the animation to finish
   mixer.addEventListener('finished', () => {
     // Stop the animation to reset to the original state
@@ -501,7 +517,6 @@ function handleOpenBook(object) {
     isBookOpen = !isBookOpen
     document.querySelector('.label-renderer').style.pointerEvents = 'none'
     document.querySelector('.inspect-view').style.pointerEvents = 'auto'
-    document.querySelector('.menu-container').style.display = 'none'
     store.triggerShowAbout()
   })
 }
@@ -663,7 +678,7 @@ function setHoveredObjectTag(name, mousePosition, objectArea = '') {
   tag.innerHTML = tagName
   tag.style.position = 'absolute'
   tag.style.pointerEvents = 'none'
-  tag.style.zIndex = '9999'
+  tag.style.zIndex = '100'
   tag.style.transition = 'opacity 0.3s ease-in-out'
   tag.style.opacity = '1'
   tag.style.fontSize = '16px'
@@ -690,7 +705,8 @@ function setupVueInspectView() {
 
   document.querySelector('.label-renderer').style.pointerEvents = 'none'
   document.querySelector('.inspect-view').style.pointerEvents = 'auto'
-  document.querySelector('.menu-container').style.display = 'none'
+  store.hideNavigationMenu()
+  store.hideAboutNavigation()
 
   return store
 }
@@ -729,9 +745,9 @@ function handleCreditsClick(loop) {
   if (!store.isCreditsVisible) store.triggerShowCredits()
 }
 
-function handleProjectsExpandClick(index) {
+function handleProjectsExpandClick() {
   const store = setupVueInspectView()
-  store.triggerShowProjects(index)
+  store.triggerShowProjects()
 }
 
 function _removeSocialIconTick(loop) {

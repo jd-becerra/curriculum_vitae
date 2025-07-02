@@ -44,13 +44,15 @@ const certificates = (messages.value[locale.value].certificates as Certificate[]
 const mainStore = useMainStore();
 
 const closeView = () => {
+  console.log('Closing certificates view');
   (document.querySelector('.label-renderer') as HTMLElement).style.pointerEvents = "auto";
   (document.querySelector('.inspect-view') as HTMLElement).style.pointerEvents = "none";
   (document.querySelector('.menu-container') as HTMLElement).style.display = 'block';
 
   mainStore.hideCertificates();
   mainStore.enableMouseEvents();
-
+  mainStore.showNavigationMenu();
+  mainStore.showAboutNavigation('experience');
 }
 </script>
 

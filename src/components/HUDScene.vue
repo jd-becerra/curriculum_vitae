@@ -13,115 +13,131 @@ import {
   mdiAccountCircle,
   mdiGithub,
   mdiMenuUp,
-  mdiMenuDown
-} from '@mdi/js';
+  mdiMenuDown,
+} from '@mdi/js'
 import type { VListGroup } from 'vuetify/components'
 
-const world = inject('world') as any;
-const { t, locale } = useI18n();
-const store = useMainStore();
+const world = inject('world') as any
+const { t, locale } = useI18n()
+const store = useMainStore()
 
-const showAboutNavigationBtns = computed(() => store.isAboutNavigationVisible);
+const showAboutNavigationBtns = computed(() => store.isAboutNavigationVisible)
+const infoPanelVisible = computed(() => store.isInfoPanelVisible)
+
+// To show at the beginning of the application
+const showNavigationMenu = computed(() => store.isNavigationMenuVisible)
+const showSettingsMenu = computed(() => store.isSettingsMenuVisible)
+const showDownloadCV = computed(() => store.isDownloadCVVisible)
 
 const isNavOpen = computed({
   get() {
-    return store.isNavigationMenuVisible;
+    return store.isNavigationMenuOpen
   },
   set(value) {
     if (value) {
-      store.showNavigationMenu();
-      store.disableMouseEvents();
+      store.openNavigationMenu()
+      store.disableMouseEvents()
     } else {
-      store.hideNavigationMenu();
-      store.enableMouseEvents();
+      store.closeNavigationMenu()
+      store.enableMouseEvents()
     }
-  }
-});
+  },
+})
 const isAboutOpen = ref(false)
 
 const returnToMainView = () => {
-  store.hideNavigationMenu();
-  store.hideAboutNavigation();
-  store.enableMouseEvents();
-  world.value.moveToMainArea();
+  store.closeNavigationMenu()
+  store.hideAboutNavigation()
+  store.enableMouseEvents()
+  store.setClickDelay(false)
+  world.value.moveToMainArea()
 }
 const moveToProjects = () => {
-  store.hideNavigationMenu();
-  store.enableMouseEvents();
-  store.hideAboutNavigation();
-  world.value.moveToProjectsArea();
+  store.closeNavigationMenu()
+  store.enableMouseEvents()
+  store.hideAboutNavigation()
+  store.setClickDelay(true)
+  world.value.moveToProjectsArea()
 }
 const moveToSocials = () => {
-  store.hideNavigationMenu();
-  store.enableMouseEvents();
-  store.hideAboutNavigation();
-  world.value.moveToSocialsArea();
+  store.closeNavigationMenu()
+  store.enableMouseEvents()
+  store.hideAboutNavigation()
+  store.setClickDelay(false)
+  world.value.moveToSocialsArea()
 }
 const moveToAboutMain = () => {
-  store.hideNavigationMenu();
-  store.enableMouseEvents();
-  world.value.moveToAboutMainSubarea();
+  store.closeNavigationMenu()
+  store.enableMouseEvents()
+  store.setClickDelay(false)
+  world.value.moveToAboutMainSubarea()
 }
-
 const moveToAboutSkills = () => {
-  store.hideNavigationMenu();
-  store.enableMouseEvents();
-  world.value.moveToAboutSkillsSubarea();
+  store.closeNavigationMenu()
+  store.enableMouseEvents()
+  store.setClickDelay(false)
+  world.value.moveToAboutSkillsSubarea()
 }
-
 const moveToAboutExperience = () => {
-  store.hideNavigationMenu();
-  store.enableMouseEvents();
-  world.value.moveToAboutExperienceSubarea();
+  store.closeNavigationMenu()
+  store.enableMouseEvents()
+  store.setClickDelay(false)
+  world.value.moveToAboutExperienceSubarea()
 }
-
 const moveAboutUp = () => {
   if (store.moveUpToSkills) {
-    moveToAboutSkills();
+    moveToAboutSkills()
   } else if (store.moveUpToAbout) {
-    moveToAboutMain();
+    moveToAboutMain()
   }
 }
-
 const moveAboutDown = () => {
   if (store.moveDownToExperience) {
-    moveToAboutExperience();
+    moveToAboutExperience()
   } else if (store.moveDownToAbout) {
-    moveToAboutMain();
+    moveToAboutMain()
   }
-
 }
 
 function setLang(lang: string) {
-  locale.value = lang;
-  store.setLocale(lang);
+  locale.value = lang
+  store.setLocale(lang)
 }
 
 // Detect clicks outside the menu and close it
-const menuRef = ref<any>(null);
+const menuRef = ref<any>(null)
+const infoPanelRef = ref<any>(null)
 const handleClickOutside = (event: MouseEvent) => {
-  const menuElement = menuRef.value?.$el as HTMLElement | undefined;
-  if (store.isNavigationMenuVisible && menuElement && !menuElement.contains(event.target as Node)) {
-    store.hideNavigationMenu();
-    store.enableMouseEvents();
-    store.setClickDelay(true);
+  const isMenuVisible =
+    store.isNavigationMenuOpen &&
+    menuRef.value?.$el &&
+    !menuRef.value.$el.contains(event.target as Node)
+  const isInfoPanelVisible =
+    infoPanelVisible.value &&
+    infoPanelRef.value?.$el &&
+    !infoPanelRef.value.$el.contains(event.target as Node)
+  if (isMenuVisible || isInfoPanelVisible) {
+    store.closeNavigationMenu()
+    store.disableInfoPanel()
+    store.enableMouseEvents()
+    store.enableSettingsMenu();
+    store.enableDownloadCV();
 
-    isNavOpen.value = false;
+    isNavOpen.value = false
   }
-};
+}
 
 onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-});
+  document.addEventListener('click', handleClickOutside)
+})
 onBeforeUnmount(() => {
-  document.removeEventListener('click', handleClickOutside);
-});
-
+  document.removeEventListener('click', handleClickOutside)
+})
 </script>
 
 <template>
   <v-main>
-    <v-list ref="menuRef" class="menu-container">
+    <v-list ref="menuRef" class="menu-container" v-show="showNavigationMenu">
       <v-list-item @click="isNavOpen = !isNavOpen">
         <v-list-item-title>
           {{ isNavOpen ? 'Close' : 'Navigation' }}
@@ -131,44 +147,52 @@ onBeforeUnmount(() => {
       <transition name="fade-slide">
         <div v-show="isNavOpen">
           <!-- Main View -->
-            <v-list-item>
+          <v-list-item>
             <NavigationItem :prepend-icon="mdiHome" @click.stop.prevent="returnToMainView">
               <template #heading>{{ $t('menu.main-view') }}</template>
             </NavigationItem>
-            </v-list-item>
+          </v-list-item>
 
-            <!-- Projects -->
-            <v-list-item>
-            <NavigationItem :prepend-icon="mdiBriefcaseOutline" @click.stop.prevent="moveToProjects">
+          <!-- Projects -->
+          <v-list-item>
+            <NavigationItem
+              :prepend-icon="mdiBriefcaseOutline"
+              @click.stop.prevent="moveToProjects"
+            >
               <template #heading>{{ $t('menu.projects') }}</template>
             </NavigationItem>
-            </v-list-item>
+          </v-list-item>
 
-            <!-- Socials -->
-            <v-list-item>
+          <!-- Socials -->
+          <v-list-item>
             <NavigationItem :prepend-icon="mdiGithub" @click.stop.prevent="moveToSocials">
               <template #heading>{{ $t('menu.socials') }}</template>
             </NavigationItem>
-            </v-list-item>
+          </v-list-item>
 
-            <!-- About Section -->
-            <v-list-item @click.stop.prevent="isAboutOpen = !isAboutOpen">
+          <!-- About Section -->
+          <v-list-item @click.stop.prevent="isAboutOpen = !isAboutOpen">
             <NavigationItem :prepend-icon="mdiAccountCircle">
               <template #heading>{{ $t('menu.about') }}</template>
             </NavigationItem>
-            </v-list-item>
+          </v-list-item>
 
-            <transition name="fade-slide">
+          <transition name="fade-slide">
             <div v-show="isAboutOpen" class="about-subitems">
               <v-list-item>
-              <NavigationItem
-                @click.stop.prevent="moveToAboutSkills"><template #heading>{{ $t('menu.skills') }}</template></NavigationItem>
+                <NavigationItem @click.stop.prevent="moveToAboutSkills"
+                  ><template #heading>{{ $t('menu.skills') }}</template></NavigationItem
+                >
               </v-list-item>
               <v-list-item>
-              <NavigationItem @click.stop.prevent="moveToAboutMain"><template #heading>{{ $t('menu.summary') }}</template></NavigationItem>
+                <NavigationItem @click.stop.prevent="moveToAboutMain"
+                  ><template #heading>{{ $t('menu.summary') }}</template></NavigationItem
+                >
               </v-list-item>
               <v-list-item>
-              <NavigationItem @click.stop.prevent="moveToAboutExperience"><template #heading>{{ $t('menu.experience') }}</template></NavigationItem>
+                <NavigationItem @click.stop.prevent="moveToAboutExperience"
+                  ><template #heading>{{ $t('menu.experience') }}</template></NavigationItem
+                >
               </v-list-item>
             </div>
           </transition>
@@ -180,28 +204,28 @@ onBeforeUnmount(() => {
       <v-btn
         v-show="store.moveUpToSkills || store.moveUpToAbout"
         @click.stop.prevent="moveAboutUp"
-        class="about-navigation-up">
+        class="about-navigation-up"
+      >
         <v-icon :icon="mdiMenuUp" class="about-nav-icon"></v-icon>
       </v-btn>
 
       <v-btn
         v-show="store.moveDownToExperience || store.moveDownToAbout"
         @click.stop.prevent="moveAboutDown"
-        class="about-navigation-down">
+        class="about-navigation-down"
+      >
         <v-icon :icon="mdiMenuDown" class="about-nav-icon"></v-icon>
       </v-btn>
     </v-container>
 
-    <v-container class="menu-download-cv">
+    <v-container class="menu-download-cv" v-show="showDownloadCV">
       <v-btn>Download CV</v-btn>
     </v-container>
 
-    <v-list class="menu-settings">
-      <v-list-group >
+    <v-list class="menu-settings d-flex flex-column" v-if="showSettingsMenu">
+      <v-list-group>
         <template v-slot:activator="{ props }">
-          <v-list-item
-            v-bind="props"
-          >
+          <v-list-item v-bind="props">
             <v-list-item-title>Settings</v-list-item-title>
           </v-list-item>
         </template>
@@ -209,36 +233,57 @@ onBeforeUnmount(() => {
         <v-list-item>
           <v-list-group>
             <template v-slot:activator="{ props }">
-              <v-list-item
-                v-bind="props"
-              >
+              <v-list-item v-bind="props">
                 <v-list-item-title>Change Language</v-list-item-title>
               </v-list-item>
             </template>
             <v-list-item>
-              <v-btn
-                  @click.stop.prevent="setLang('en')"
-                  class="language-button"
-                >English</v-btn>
+              <v-btn @click.stop.prevent="setLang('en')" class="language-button">English</v-btn>
             </v-list-item>
             <v-list-item>
-              <v-btn
-                @click.stop.prevent="setLang('es')"
-                class="language-button"
-              >Español</v-btn>
+              <v-btn @click.stop.prevent="setLang('es')" class="language-button">Español</v-btn>
             </v-list-item>
           </v-list-group>
         </v-list-item>
       </v-list-group>
+
+      <v-list-item>
+        <v-btn @click.stop.prevent="store.enableInfoPanel()" class="language-button">
+          {{ t('menu.info_panel') }}
+        </v-btn>
+      </v-list-item>
     </v-list>
+
+    <v-container class="info" ref="infoPanelRef" v-show="infoPanelVisible">
+      <div class="info-item d-flex justify-end">
+        <v-btn class="close-info" @click.stop.prevent="store.disableInfoPanel()"> X </v-btn>
+      </div>
+      <div class="info-item">
+        <v-img src="/img/click.gif" width="50" height="50" alt="Click"></v-img>
+        <span class="info-text">{{ t('menu.click_interact') }}</span>
+      </div>
+      <div class="info-item">
+        <div style="height: 50px; width: 50px; position: relative">
+          <v-img id="drag-icon" src="/img/drag.png" width="50" height="50" alt="Drag"></v-img>
+        </div>
+        <span class="info-text">{{ t('menu.click_and_drag') }}</span>
+      </div>
+      <div class="info-item">
+        <v-img id="scroll-icon" src="/img/scroll.png" width="50" height="50" alt="Scroll"></v-img>
+        <span class="info-text">{{ t('menu.scroll_zoom') }}</span>
+      </div>
+    </v-container>
+    <div class="info-background" v-if="infoPanelVisible"></div>
   </v-main>
 </template>
 
 <style scoped>
-.fade-slide-enter-active, .fade-slide-leave-active {
+.fade-slide-enter-active,
+.fade-slide-leave-active {
   transition: all 0.3s ease;
 }
-.fade-slide-enter-from, .fade-slide-leave-to {
+.fade-slide-enter-from,
+.fade-slide-leave-to {
   opacity: 0;
   transform: translateY(-5px);
 }
@@ -314,6 +359,51 @@ onBeforeUnmount(() => {
   opacity: 0.9;
 }
 
+.info {
+  position: absolute;
+  right: 0;
+  padding: 16px;
+  width: 30%;
+  height: 100%;
+  pointer-events: all;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  animation: slide-in 0.5s ease-in-out;
+  z-index: 1000;
+  cursor: default;
+}
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.info-item {
+  margin-bottom: 2rem;
+}
+.close-info {
+  background-color: transparent;
+  color: black;
+  border: none;
+  font-size: 1.5rem;
+}
+.info-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  cursor: default;
+}
+
 .language-button {
   width: 100%;
   background-color: rgb(58, 58, 58);
@@ -342,27 +432,15 @@ onBeforeUnmount(() => {
   border: 2px solid black;
   background-color: white;
 
-    /* New glowing border effect */
+  /* New glowing border effect */
   border-image: linear-gradient(90deg, transparent, var(--color-sweep), transparent);
   border-image-slice: 1;
   animation: glow-sweep 3s infinite;
 }
 
-/* TODO: Add animation for a glow border effect */
-@keyframes glow-sweep {
-  0% {
-    border-image-source: linear-gradient(90deg, transparent, var(--color-sweep), transparent);
-  }
-  50% {
-    border-image-source: linear-gradient(90deg, transparent, var(--color-sweep) 80%, transparent);
-  }
-  100% {
-    border-image-source: linear-gradient(90deg, transparent, var(--color-sweep), transparent);
-  }
-}
-
 @keyframes bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(-50%, -50%) translateY(0);
   }
   50% {
@@ -380,5 +458,55 @@ onBeforeUnmount(() => {
   right: 15%;
 
   animation-delay: 0.75s; /* Add delay to alternate the bounce */
+}
+
+#drag-icon {
+  animation: drag 3s infinite ease-in-out;
+}
+@keyframes drag {
+  0% {
+    transform: translateX(0);
+    width: 50px;
+    height: 50px;
+  }
+  30% {
+    transform: translateX(0);
+    width: 50px;
+    height: 50px;
+  }
+  40% {
+    transform: translateX(0);
+    width: 45px;
+    height: 45px;
+  }
+  60% {
+    transform: translateX(10px);
+  }
+  90% {
+    width: 45px;
+    height: 45px;
+    transform: translateX(0);
+  }
+}
+
+#scroll-icon {
+  animation: scroll 3s infinite ease-in-out;
+}
+@keyframes scroll {
+  0% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-2px);
+  }
+  60% {
+    transform: translateY(5px);
+  }
+  90% {
+    transform: translateY(0);
+  }
 }
 </style>

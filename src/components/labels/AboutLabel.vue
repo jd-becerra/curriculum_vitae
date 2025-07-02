@@ -21,6 +21,7 @@ const closeAboutMe = () => {
   mainStore.hideAbout();
   mainStore.showAboutNavigation("main");
   mainStore.enableMouseEvents();
+  mainStore.showNavigationMenu();
 };
 </script>
 
