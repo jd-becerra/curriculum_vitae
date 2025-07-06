@@ -6,6 +6,70 @@ let renderedHeaders = []
 let currentLang = 'en'
 let currentTick = null
 
+const headers = {
+  my_projects: {
+    path: '/my_projects.png',
+    name: 'My Projects Section',
+    position: { x: 0, y: 6, z: 8 },
+    rotation_y: degToRad(60),
+    scale: { x: 8, y: 4 },
+  },
+  professional_overview: {
+    path: '/professional_overview.png',
+    name: 'Professional Overview Section',
+    position: { x: 6, y: 6, z: -5 },
+    rotation_y: degToRad(20),
+    scale: { x: 8, y: 4 },
+  },
+  contact_me: {
+    path: '/contact_me.png',
+    name: 'Contact Me Section',
+    position: { x: 17, y: 5, z: -5 },
+    rotation_y: degToRad(10),
+    scale: { x: 8, y: 4 },
+  },
+  about: {
+    path: '/about_me.png',
+    name: 'About Me Section',
+    position: { x: -1.6, y: 2, z: -26 },
+  },
+  certificates: {
+    path: '/certificates.png',
+    name: 'Certificates Section',
+    position: { x: -4.6, y: -1.5, z: -26 },
+  },
+  experience: {
+    path: '/experience.png',
+    name: 'Experience Section',
+    position: { x: -1.6, y: -1.5, z: -26 },
+  },
+  soft_skills: {
+    path: '/soft_skills.png',
+    name: 'Soft Skills Section',
+    position: { x: -1.6, y: 5.2, z: -26 },
+  },
+  hard_skills: {
+    path: '/hard_skills.png',
+    name: 'Hard Skills Section',
+    position: { x: -5.1, y: 5.2, z: -26 },
+  },
+  credits: {
+    path: '/credits.png',
+    name: 'Credits Section',
+    position: { x: 14.7, y: 6.3, z: -29 },
+  },
+  socials: {
+    path: '/socials.png',
+    name: 'Social Links Icons',
+    position: { x: 14.7, y: 4.5, z: -29 },
+  },
+  projects_expand: {
+    path: '/projects_expand.png',
+    name: 'Expand Projects',
+    position: { x: -1.6, y: 7.5, z: -26 },
+  },
+}
+
 function createLoadingManager() {
   const manager = new LoadingManager()
   manager.onStart = function () {}
@@ -23,72 +87,35 @@ function getCurrentLocale() {
   return useMainStore().getLocale
 }
 
+function degToRad(degrees) {
+  return degrees * (Math.PI / 180)
+}
+
 function getHeadersByLang(locale) {
   const basePath = `img/section_headers/${locale}`
 
-  return {
-    my_projects: {
-      path: `${basePath}/my_projects.png`,
-      name: 'My Projects Section',
-      position: { x: -1.6, y: 8.5, z: -26 },
-    },
-    professional_overview: {
-      path: `${basePath}/professional_overview.png`,
-      name: 'Professional Overview Section',
-      position: { x: -5.1, y: 8.5, z: -26 },
-    },
-    contact_me: {
-      path: `${basePath}/contact_me.png`,
-      name: 'Contact Me Section',
-      position: { x: -1.6, y: 3.5, z: -26 },
-    },
-    about: {
-      path: `${basePath}/about_me.png`,
-      name: 'About Me Section',
-      position: { x: -1.6, y: 2, z: -26 },
-    },
-    certificates: {
-      path: `${basePath}/certificates.png`,
-      name: 'Certificates Section',
-      position: { x: -4.6, y: -1.5, z: -26 },
-    },
-    experience: {
-      path: `${basePath}/experience.png`,
-      name: 'Experience Section',
-      position: { x: -1.6, y: -1.5, z: -26 },
-    },
-    soft_skills: {
-      path: `${basePath}/soft_skills.png`,
-      name: 'Soft Skills Section',
-      position: { x: -1.6, y: 5.2, z: -26 },
-    },
-    hard_skills: {
-      path: `${basePath}/hard_skills.png`,
-      name: 'Hard Skills Section',
-      position: { x: -5.1, y: 5.2, z: -26 },
-    },
-    credits: {
-      path: `${basePath}/credits.png`,
-      name: 'Credits Section',
-      position: { x: 14.7, y: 6.3, z: -29 },
-    },
-    socials: {
-      path: `${basePath}/socials.png`,
-      name: 'Social Links Icons',
-      position: { x: 14.7, y: 4.5, z: -29 },
-    },
-    projects_expand: {
-      path: `${basePath}/projects_expand.png`,
-      name: 'Expand Projects',
-      position: { x: -1.6, y: 7.5, z: -26 },
-    },
+  // Add base path to each header path
+  const localizedHeaders = {}
+  for (const key in headers) {
+    localizedHeaders[key] = { ...headers[key] }
+    localizedHeaders[key].path = basePath + localizedHeaders[key].path
   }
+  return localizedHeaders
 }
 
-function createPngHeaders(loop, scene, headerNames, lang = 'en', manager = null) {
-  if (!headerNames || headerNames.length === 0) return
+function headersAlreadyRendered(headerKeys) {
+  if (renderedHeaders.length !== headerKeys.length) return false
+  return headerKeys.every((key) => {
+    return renderedHeaders.some((header) => header.key === key)
+  })
+}
 
-  if (renderedHeaders.length > 0) removePngHeaders(scene, loop)
+function createPngHeaders(loop, scene, headerKeys, lang = 'en', manager = null) {
+  if (!headerKeys || headerKeys.length === 0) return
+  // Avoid unnecessary re-rendering
+  if (headersAlreadyRendered(headerKeys) && currentLang === lang) return
+
+  removePngHeaders(scene, loop)
 
   // Mouse events won't create a manager by itself, but we will also need to create headers
   // on startup, and that process already has a manager, this is why we can pass it as an argument
@@ -96,58 +123,53 @@ function createPngHeaders(loop, scene, headerNames, lang = 'en', manager = null)
 
   const textureLoader = new TextureLoader(manager)
 
-  const planeSize = { x: 3, y: 1.5 }
-
   currentLang = lang
-  const headers = getHeadersByLang(currentLang)
+  const headersByLang = getHeadersByLang(currentLang)
 
-  headerNames.forEach((key) => {
-    const header = headers[key]
+  headerKeys.forEach((key) => {
+    const header = headersByLang[key]
     const promise = new Promise(() => {
-      loadPngHeader(
-        header.path,
-        header.name,
-        header.position,
-        planeSize,
-        loop,
-        scene,
-        textureLoader,
-      )
+      loadPngHeader(header, key, loop, scene, textureLoader)
     })
     loadingPromises.push(promise)
   })
 
   // Monitor language change
-  currentTick ={
+  currentTick = {
     tick: () => {
       if (getCurrentLocale() !== currentLang) {
-        createPngHeaders(loop, scene, headerNames, getCurrentLocale(), manager)
+        createPngHeaders(loop, scene, headerKeys, getCurrentLocale(), manager)
       }
     },
   }
   loop.updatables.push(currentTick)
 
   Promise.all(loadingPromises)
-  .then(() => {
-    console.log('All PNG headers loaded successfully.')
-  })
-  .catch((error) => {
-    console.error('Error loading PNG headers:', error)
-  })
+    .then(() => {
+      console.log('All PNG headers loaded successfully.')
+    })
+    .catch((error) => {
+      console.error('Error loading PNG headers:', error)
+    })
 }
 
-function loadPngHeader(url, name, pos, scale, loop, scene, textureLoader) {
+function loadPngHeader(headerData, key, loop, scene, textureLoader) {
+  let scale = { x: 3, y: 1.5 }
+  if (headerData.scale) scale = headerData.scale
   const geometry = new PlaneGeometry(scale.x, scale.y)
   const material = new MeshBasicMaterial({ color: 0xffffff, transparent: true })
   const header = new Mesh(geometry, material)
-  header.name = name
+  header.name = headerData.name
   header.area = 'headers'
+  const pos = headerData.position
 
   header.position.set(pos.x, pos.y, pos.z)
 
+  if (headerData.rotation_y) header.rotation.y = headerData.rotation_y
+
   // Load the texture
   textureLoader.load(
-    url,
+    headerData.path,
     (texture) => {
       material.map = texture
       material.needsUpdate = true
@@ -159,7 +181,7 @@ function loadPngHeader(url, name, pos, scale, loop, scene, textureLoader) {
   )
 
   // Add tick to make it bounce
-  if (name !== 'Credits Section') {
+  if (header.name !== 'Credits Section') {
     // Credits must be static for the plaque
     let elapsed = 0
     const bounceHeight = 0.1
@@ -174,11 +196,10 @@ function loadPngHeader(url, name, pos, scale, loop, scene, textureLoader) {
     })
   }
 
-  header.cickable = false
   header.layers.set(1) // Set to layer 1 to avoid picking by raycaster
 
-  // Push header to the array for removal later
-  renderedHeaders.push(header.name)
+  // Push header to the array for removal later and for checking if it was already rendered
+  renderedHeaders.push({ key: key, name: headerData.name })
 
   scene.add(header)
 }
@@ -193,8 +214,8 @@ function removePngHeaders(scene, loop) {
     }
   }
 
-  renderedHeaders.forEach((headerName) => {
-    const header = scene.getObjectByName(headerName)
+  renderedHeaders.forEach((headerData) => {
+    const header = scene.getObjectByName(headerData.name)
     if (header) {
       scene.remove(header)
       header.geometry.dispose()

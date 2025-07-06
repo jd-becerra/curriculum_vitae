@@ -21,6 +21,7 @@ import {
   handleAboutClick,
   handleAboutSubarea,
 } from './systems/mouse_events.js'
+import { createPngHeaders } from './systems/png_loader.js'
 
 // Three.js imports
 import { Vector3, Vector2, EquirectangularReflectionMapping } from 'three'
@@ -89,6 +90,7 @@ function loadHDR(path, loadingManager) {
 
 class World {
   constructor(container) {
+    const store = useMainStore()
     const manager = createLoadingManager()
     // showStats();
 
@@ -155,6 +157,11 @@ class World {
       loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/candle_flame.glb", objectsPos, 0.7, "candle_flame"));
       loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/exterior.glb", objectsPos, 0.7, "exterior"));
     */
+
+    // This are the only headers to be rendered at the start
+    const headersToRender = ['my_projects', 'professional_overview', 'contact_me']
+    createPngHeaders(loop, scene, headersToRender, store.getLocale, manager)
+
     // Add snow shader
     const snowShaderPlane = createSnowShaderPlane(
       container.clientHeight,
@@ -189,7 +196,6 @@ class World {
     )
     outlineComposer = composer
 
-    const store = useMainStore()
     // Add the pick helper (needs the outline pass to highlight objects)
     const pickHelper = new PickHelper(store.getOutlinePass)
     store.initializePickHelper(pickHelper)

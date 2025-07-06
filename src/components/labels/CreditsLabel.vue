@@ -32,8 +32,6 @@ const credits: Credit[] = tm('credits.models')
 
 const mainStore = useMainStore()
 const closeView = () => {
-  console.log('Closing credits view')
-
   ;(document.querySelector('.label-renderer') as HTMLElement).style.pointerEvents = 'auto'
   ;(document.querySelector('.inspect-view') as HTMLElement).style.pointerEvents = 'none'
   ;(document.querySelector('.menu-container') as HTMLElement).style.display = 'block'
