@@ -6,17 +6,7 @@ import { LoopPingPong } from 'three'
 
 const trophies = ['LinkedIn', 'Github', 'Gmail', 'Credits']
 
-function loadGLTF(
-  scene,
-  loop,
-  loadingManager,
-  path,
-  position,
-  scale,
-  name = '',
-  lod = null,
-  lod_level = -1,
-) {
+function loadGLTF(scene, loop, loadingManager, path, position, scale, name = '') {
   return new Promise((resolve, reject) => {
     const loader = new GLTFLoader(loadingManager)
     loader.load(
@@ -103,11 +93,6 @@ function loadGLTF(
             computer.clickable = true
             computer.area = 'projects'
           }
-        }
-
-        // If we have an lod, add model to the corresponding lod level
-        if (lod && lod_level !== null && lod_level >= 0) {
-          lod.addLevel(model, lod_level)
         }
 
         scene.add(model)

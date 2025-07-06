@@ -15,6 +15,7 @@ class PickHelper {
     // Since we use Pinia, we also read the store to detect if we should force the state of the mouse events
     this.store = useMainStore()
     this.outlinePass = outlinePass
+    this.socialIcons = ['Github', 'LinkedIn', 'Gmail']
   }
 
   // Public methods
@@ -72,7 +73,8 @@ class PickHelper {
       // If clicked object is a social media icon, open the corresponding link
       else if (mouseEvents.getIsAreaActive('socials')) {
         if (this.pickedObject.name == 'Credits') mouseEvents.handleCreditsClick(loop)
-        else mouseEvents.handleSocialIconClick(this.pickedObject.name, loop)
+        else if (this.socialIcons.includes(this.pickedObject.name))
+          mouseEvents.handleSocialIconClick(this.pickedObject.name, loop)
       } else if (mouseEvents.getIsAreaActive('about')) {
         if (mouseEvents.getActiveAboutSubarea() == 'skills') {
           this._removeHoverEffects(loop, normalizedPosition, scene)
@@ -83,8 +85,8 @@ class PickHelper {
           !mouseEvents.isBookOpen
         ) {
           mouseEvents.handleOpenBook(this.pickedObject)
-        } else if (mouseEvents.getActiveAboutSubarea() == 'experience' &&
-          objectName == 'Experience' ||
+        } else if (
+          (mouseEvents.getActiveAboutSubarea() == 'experience' && objectName == 'Experience') ||
           objectName == 'Certificates'
         ) {
           mouseEvents.handleExperienceClick(this.pickedObject)
@@ -120,7 +122,6 @@ class PickHelper {
         this.outlinePass.selectedObjects = []
         this.hoveredObject = candidate
       }
-
 
       if (mouseEvents.getIsAreaActive('socials') && candidate.clickable) {
         // We should instead use mouseEvents to handle the hover

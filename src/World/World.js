@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 // Custom classes for the 3D world
 import { createCamera } from './components/camera.js'
 import { createLights } from './components/lights.js'
@@ -24,18 +23,12 @@ import {
 } from './systems/mouse_events.js'
 
 // Three.js imports
-import {
-  Vector3,
-  Vector2,
-  EquirectangularReflectionMapping,
-  LOD,
-} from 'three'
+import { Vector3, Vector2, EquirectangularReflectionMapping } from 'three'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import { EXRLoader } from 'three/addons/loaders/EXRLoader.js'
 
 // Vue components
-import {
-  createVueRenderer, createComputerLabel, updateLabels } from './systems/vue_renderer.js'
+import { createVueRenderer, createComputerLabel, updateLabels } from './systems/vue_renderer.js'
 
 import Stats from 'stats.js'
 
@@ -118,9 +111,11 @@ class World {
     container.appendChild(labelRenderer.domElement)
 
     // Set background (with skybox)
-    /*       const path = "textures/skybox/";
-        const format = ".jpg";
-        scene.background = createSkybox(path, format); */
+    /*
+      const path = "textures/skybox/";
+      const format = ".jpg";
+      scene.background = createSkybox(path, format);
+    */
 
     // Initialize Loop
     loop = new Loop(camera, scene, renderer)
@@ -138,14 +133,12 @@ class World {
         });
       */
 
-    // For performance, we will add an LOD object to reduce the number of polygons rendered
-    const lod = new LOD()
-
     const objectsPos = [-20, -10, -10]
 
     loadingPromises.push(
       loadGLTF(scene, loop, manager, '3d_models/trophies.glb', objectsPos, 0.7, 'trophies'),
-    ) // For socials and credits
+    )
+    // For socials and credits
     loadingPromises.push(
       loadGLTF(scene, loop, manager, '3d_models/desk.glb', objectsPos, 0.7, 'desk'),
     )
@@ -155,13 +148,13 @@ class World {
     loadingPromises.push(
       loadGLTF(scene, loop, manager, '3d_models/notebook.glb', objectsPos, 0.7, 'notebook'),
     )
-    // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/room.glb", objectsPos, 0.7, "room"));
-    // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/butterfly.glb", objectsPos, 0.7, "butterfly"));
-    // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/fire.glb", objectsPos, 0.7, "fire"));
-    // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/candle_flame.glb", objectsPos, 0.7, "candle_flame"));
-    // loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/exterior.glb", objectsPos, 0.7, "exterior"));
-    // scene.add(lod);
-
+    /*
+      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/room.glb", objectsPos, 0.7, "room"));
+      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/butterfly.glb", objectsPos, 0.7, "butterfly"));
+      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/fire.glb", objectsPos, 0.7, "fire"));
+      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/candle_flame.glb", objectsPos, 0.7, "candle_flame"));
+      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/exterior.glb", objectsPos, 0.7, "exterior"));
+    */
     // Add snow shader
     const snowShaderPlane = createSnowShaderPlane(
       container.clientHeight,
@@ -188,10 +181,12 @@ class World {
     loop.updatables.push(controls)
 
     // Create composer for outline
-    const {
-      composer,
-      onResize: resizeComposer,
-    } = createOutlineComposer(renderer, scene, camera, container)
+    const { composer, onResize: resizeComposer } = createOutlineComposer(
+      renderer,
+      scene,
+      camera,
+      container,
+    )
     outlineComposer = composer
 
     const store = useMainStore()
@@ -221,26 +216,15 @@ class World {
     store.disableMouseEvents()
 
     loop.updatables.push({
-      tick: (delta) => {
+      tick: () => {
         this.render()
       },
     })
 
-    /*
-      // For constantly updating the hover state
-      window.addEventListener("mousemove", (event) => {
-          const normalizedPosition = {
-            x: (event.clientX / window.innerWidth) * 2 - 1,
-            y: -(event.clientY / window.innerHeight) * 2 + 1,
-          };
-          pickHelper.hover(normalizedPosition, scene, camera, loop);
-        });
-    */
-
     const resizer = new Resizer(container, camera, renderer)
     resizer.onResize = () => {
       labelRenderer.setSize(container.clientWidth, container.clientHeight)
-      updateLabels(container.clientWidth, container.clientHeight);
+      updateLabels(container.clientWidth, container.clientHeight)
       camera.aspect = container.clientWidth / container.clientHeight
       camera.updateProjectionMatrix()
       renderer.setSize(container.clientWidth, container.clientHeight)
@@ -249,14 +233,15 @@ class World {
     }
 
     // Load HDR background
-    /*       loadingPromises.push(
-          loadHDR("textures/background.exr", manager).then((texture) => {
-            texture.mapping = EquirectangularReflectionMapping;
-            texture.intensity = 0.1;
-            scene.background = texture;
-            scene.environment = texture;
-          })
-        ); */
+    /*
+      loadingPromises.push(
+        loadHDR("textures/background.exr", manager).then((texture) => {
+          texture.mapping = EquirectangularReflectionMapping;
+          texture.intensity = 0.1;
+          scene.background = texture;
+          scene.environment = texture;
+      }));
+    */
 
     // render from the start
 

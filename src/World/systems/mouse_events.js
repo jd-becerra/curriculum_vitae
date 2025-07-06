@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Tween, Easing } from '@tweenjs/tween.js'
-import { LoopOnce, TextureLoader, PlaneGeometry, MathUtils, Mesh, MeshBasicMaterial } from 'three'
+import { LoopOnce, MathUtils } from 'three'
 import { useMainStore } from '../../components/store'
 import { createAreaSelectors, removeAreaSelectors } from '../components/objects/cube'
+import { createPngHeaders } from './png_loader'
 
 // State variables
 let isBookOpen = false
@@ -47,58 +48,10 @@ const skillsPos = { x: aboutX, y: 3.5, z: aboutZ }
 const aboutMePos = { x: aboutX, y: 0.5, z: aboutZ }
 const experiencePos = { x: aboutX, y: -2.5, z: aboutZ }
 let bookObject = null
-// Headers that can be rendered
-let headersToRender = []
-let lang = 'en'
-
-// Three.js helpers
-const textureLoader = new TextureLoader()
 
 function getCurrentLocale() {
   const mainStore = useMainStore()
   return mainStore.getLocale
-}
-
-function getHeadersByLang(locale) {
-  const basePath = `img/section_headers/${locale}`
-
-  return {
-    about: {
-      path: `${basePath}/about_me.png`,
-      name: 'About Me Section',
-      position: { x: -1.6, y: 2, z: -26 },
-    },
-    certificates: {
-      path: `${basePath}/certificates.png`,
-      name: 'Certificates Section',
-      position: { x: -4.6, y: -1.5, z: -26 },
-    },
-    experience: {
-      path: `${basePath}/experience.png`,
-      name: 'Experience Section',
-      position: { x: -1.6, y: -1.5, z: -26 },
-    },
-    soft_skills: {
-      path: `${basePath}/soft_skills.png`,
-      name: 'Soft Skills Section',
-      position: { x: -1.6, y: 5.2, z: -26 },
-    },
-    hard_skills: {
-      path: `${basePath}/hard_skills.png`,
-      name: 'Hard Skills Section',
-      position: { x: -5.1, y: 5.2, z: -26 },
-    },
-    credits: {
-      path: `${basePath}/credits.png`,
-      name: 'Credits Section',
-      position: { x: 14.7, y: 6.3, z: -29 },
-    },
-  }
-}
-
-function reloadHeadersOnLangChange(loop, scene, headersToRender, locale) {
-  removePngHeaders(scene) // Ensure old headers are removed
-  createPngHeaders(loop, scene, headersToRender, locale) // Load new ones
 }
 
 function moveToArea(controls, loop, to, angles, minDist = 20, maxDist = 32) {
@@ -150,49 +103,6 @@ function moveToArea(controls, loop, to, angles, minDist = 20, maxDist = 32) {
   })
 }
 
-function loadPngHeader(url, name, pos, scale, loop, scene) {
-  const geometry = new PlaneGeometry(scale.x, scale.y)
-  const material = new MeshBasicMaterial({ color: 0xffffff, transparent: true })
-  const header = new Mesh(geometry, material)
-  header.name = name
-  header.area = 'headers'
-
-  header.position.set(pos.x, pos.y, pos.z)
-
-  // We first load a low resolution texture so that it doesn't look as bad while the high resolution one loads
-  const lowResUrl = url.replace('.png', '_low.png')
-  textureLoader.load(lowResUrl, (lowResTexture) => {
-    material.map = lowResTexture
-    material.needsUpdate = true
-
-    textureLoader.load(url, (highResTexture) => {
-      material.map = highResTexture
-      material.needsUpdate = true
-    })
-  })
-
-  // Add tick to make it bounce
-  if (name !== 'Credits Section') {
-    // Credits must be static for the plaque
-    let elapsed = 0
-    const bounceHeight = 0.1
-    const bounceSpeed = 3
-    const initialY = header.position.y
-    loop.updatables.push({
-      tick: (delta) => {
-        elapsed += delta
-        const y = initialY + Math.sin(elapsed * bounceSpeed) * bounceHeight
-        header.position.set(pos.x, y, pos.z)
-      },
-    })
-  }
-
-  header.cickable = false
-  header.layers.set(1) // Set to layer 1 to avoid picking by raycaster
-
-  scene.add(header)
-}
-
 function getAnimation(animations, name) {
   for (let i = 0; i < animations.length; i++) {
     const animation = animations[i]
@@ -226,6 +136,8 @@ function handleReturnToMainView(controls, loop, scene) {
 
   // Return area selectors
   createAreaSelectors(scene)
+  const headersToRender = ['my_projects', 'professional_overview', 'contact_me']
+  createPngHeaders(loop, scene, headersToRender, getCurrentLocale())
 
   const to = { x: 17, y: 4, z: 17 }
   const angles = {
@@ -275,17 +187,8 @@ function handleSocialsClick(controls, loop, scene) {
   useMainStore().disableComputerVisible()
 
   // Render header
-  headersToRender = ['credits']
+  const headersToRender = ['credits']
   createPngHeaders(loop, scene, headersToRender, getCurrentLocale())
-  // Add to loop a tick to re-render the headers if the language changes
-  loop.updatables.push({
-    tick: (delta) => {
-      if (isSocialsAreaActive && getCurrentLocale() !== lang) {
-        removePngHeaders(scene)
-        createPngHeaders(loop, scene, headersToRender)
-      }
-    },
-  })
 
   const to = { x: 15, y: 4, z: -42 }
   const angles = {
@@ -297,50 +200,6 @@ function handleSocialsClick(controls, loop, scene) {
   moveToArea(controls, loop, to, angles)
 }
 
-function removePngHeaders(scene) {
-  const hardSkillsHeader = scene.getObjectByName('Hard Skills Section')
-  if (hardSkillsHeader) {
-    scene.remove(hardSkillsHeader)
-  }
-
-  const softSkillsHeader = scene.getObjectByName('Soft Skills Section')
-  if (softSkillsHeader) {
-    scene.remove(softSkillsHeader)
-  }
-
-  const aboutHeader = scene.getObjectByName('About Me Section')
-  if (aboutHeader) {
-    scene.remove(aboutHeader)
-  }
-
-  const experienceHeader = scene.getObjectByName('Experience Section')
-  if (experienceHeader) {
-    scene.remove(experienceHeader)
-  }
-
-  const certificatesHeader = scene.getObjectByName('Certificates Section')
-  if (certificatesHeader) {
-    scene.remove(certificatesHeader)
-  }
-
-  const creditsHeader = scene.getObjectByName('Credits Section')
-  if (creditsHeader) {
-    scene.remove(creditsHeader)
-  }
-}
-
-function createPngHeaders(loop, scene, headersToRender) {
-  lang = getCurrentLocale()
-
-  const planeSize = { x: 3, y: 1.5 }
-  const headers = getHeadersByLang(lang)
-
-  headersToRender.forEach((key) => {
-    const header = headers[key]
-    loadPngHeader(header.path, header.name, header.position, planeSize, loop, scene)
-  })
-}
-
 // Moves to the general About Me area (a bookcase with books, picture frames and a flower pot)
 function handleAboutSubarea(controls, loop, scene, subarea = 'main') {
   const store = useMainStore()
@@ -350,13 +209,13 @@ function handleAboutSubarea(controls, loop, scene, subarea = 'main') {
   store.disableComputerVisible()
 
   removeAreaSelectors(scene)
-  removePngHeaders(scene)
 
   handleSocialIconHover(null, loop, scene)
   isBookOpen = false
   isSocialsAreaActive = false
   isProjectsAreaActive = false
   let targetPos = aboutMePos
+  let headersToRender = []
   if (subarea === 'main') {
     headersToRender = ['about']
   } else if (subarea === 'skills') {
@@ -370,15 +229,6 @@ function handleAboutSubarea(controls, loop, scene, subarea = 'main') {
     return
   }
   createPngHeaders(loop, scene, headersToRender, getCurrentLocale())
-  // Add to loop a tick to re-render the headers if the language changes
-  loop.updatables.push({
-    tick: (delta) => {
-      if (isAboutAreaActive && getCurrentLocale() !== lang) {
-        removePngHeaders(scene)
-        createPngHeaders(loop, scene, headersToRender)
-      }
-    },
-  })
   isAboutAreaActive = true
   setAboutSubareaActive(subarea)
 

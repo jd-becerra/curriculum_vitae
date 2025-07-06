@@ -20,7 +20,10 @@ const closeAboutMe = () => {
 
   mainStore.hideAbout();
   mainStore.showAboutNavigation("main");
-  mainStore.enableMouseEvents();
+  setTimeout(() => {
+    // Avoid the click overlapping with PickHelper
+    mainStore.enableMouseEvents()
+  }, 100)
   mainStore.showNavigationMenu();
 };
 </script>

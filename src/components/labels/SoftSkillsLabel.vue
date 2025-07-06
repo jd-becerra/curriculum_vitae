@@ -4,46 +4,45 @@
 
     <h1>{{ $t('soft-skills.title') }}</h1>
     <p v-html="$t('soft-skills.main-description')"></p>
-    <v-expansion-panels
-    v-model="panel"
-    multiple
-    class="soft-skills-list">
+    <v-expansion-panels v-model="panel" multiple class="soft-skills-list">
       <v-expansion-panel
         v-for="(soft_skill, index) in softSkills"
         :key="index"
         :text="soft_skill.description"
         :title="soft_skill.name"
-        ></v-expansion-panel>
+      ></v-expansion-panel>
     </v-expansion-panels>
     <div class="background"></div>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useMainStore } from '../store';
+import { ref } from 'vue'
+import { useMainStore } from '../store'
 
-import { useI18n } from 'vue-i18n';
+import { useI18n } from 'vue-i18n'
 
-const { tm } = useI18n();
-const softSkills = tm('soft-skills.skills') as Array<{ name: string, description: string }>;
+const { tm } = useI18n()
+const softSkills = tm('soft-skills.skills') as Array<{ name: string; description: string }>
 
-const mainStore = useMainStore();
+const mainStore = useMainStore()
 // Use computed to get panel for soft skills
-const panel = ref<number[]>([]);
+const panel = ref<number[]>([])
 const closeSoftSkills = () => {
-  (document.querySelector('.label-renderer') as HTMLElement).style.pointerEvents = "auto";
-  (document.querySelector('.inspect-view') as HTMLElement).style.pointerEvents = "none";
-  (document.querySelector('.menu-container') as HTMLElement).style.display = 'block';
+  ;(document.querySelector('.label-renderer') as HTMLElement).style.pointerEvents = 'auto'
+  ;(document.querySelector('.inspect-view') as HTMLElement).style.pointerEvents = 'none'
+  ;(document.querySelector('.menu-container') as HTMLElement).style.display = 'block'
 
-  mainStore.hideSoftSkills();
-  mainStore.enableMouseEvents();
-  mainStore.showNavigationMenu();
-  mainStore.showAboutNavigation('skills');
+  mainStore.hideSoftSkills()
+  setTimeout(() => {
+    // Avoid the click overlapping with PickHelper
+    mainStore.enableMouseEvents()
+  }, 100)
+  mainStore.showNavigationMenu()
+  mainStore.showAboutNavigation('skills')
 
-  panel.value = [];
+  panel.value = []
 }
-
 </script>
 
 <style scoped>

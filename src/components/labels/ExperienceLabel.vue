@@ -24,7 +24,10 @@ const closeView = () => {
   (document.querySelector('.menu-container') as HTMLElement).style.display = 'block';
 
   mainStore.hideExperience();
-  mainStore.enableMouseEvents();
+  setTimeout(() => {
+    // Avoid the click overlapping with PickHelper
+    mainStore.enableMouseEvents()
+  }, 100)
   mainStore.showNavigationMenu();
   mainStore.showAboutNavigation('experience');
 }

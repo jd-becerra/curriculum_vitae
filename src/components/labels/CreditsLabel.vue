@@ -18,8 +18,8 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-import { useMainStore } from '../store';
+import { useI18n } from 'vue-i18n'
+import { useMainStore } from '../store'
 
 interface Credit {
   name: string
@@ -27,19 +27,25 @@ interface Credit {
   link: string
 }
 
-const { tm } = useI18n();
-const credits: Credit[] = tm('credits.models');
+const { tm } = useI18n()
+const credits: Credit[] = tm('credits.models')
 
-const mainStore = useMainStore();
+const mainStore = useMainStore()
 const closeView = () => {
-  (document.querySelector('.label-renderer') as HTMLElement).style.pointerEvents = 'auto';
-  (document.querySelector('.inspect-view') as HTMLElement).style.pointerEvents = 'none';
-  (document.querySelector('.menu-container') as HTMLElement).style.display = 'block';
+  console.log('Closing credits view')
 
-  mainStore.hideCredits();
-  mainStore.enableMouseEvents();
-  mainStore.showNavigationMenu();
-};
+  ;(document.querySelector('.label-renderer') as HTMLElement).style.pointerEvents = 'auto'
+  ;(document.querySelector('.inspect-view') as HTMLElement).style.pointerEvents = 'none'
+  ;(document.querySelector('.menu-container') as HTMLElement).style.display = 'block'
+
+  mainStore.hideCredits()
+
+  setTimeout(() => {
+    // Avoid the click overlapping with PickHelper
+    mainStore.enableMouseEvents()
+  }, 100)
+  mainStore.showNavigationMenu()
+}
 </script>
 
 <style scoped>
