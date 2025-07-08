@@ -6,8 +6,8 @@ function createLoadingManager() {
   const manager = new LoadingManager();
   const { t } = useI18n();
   const store = useMainStore();
-  manager.onStart = function (url, itemsLoaded, itemsTotal) {
-    // console.log('Started loading file: ' + url);
+  manager.onStart = function () {
+    store.disableMouseEvents();
   };
 
   manager.onLoad = function () {

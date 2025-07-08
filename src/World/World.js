@@ -150,13 +150,21 @@ class World {
     loadingPromises.push(
       loadGLTF(scene, loop, manager, '3d_models/notebook.glb', objectsPos, 0.7, 'notebook'),
     )
-    /*
-      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/room.glb", objectsPos, 0.7, "room"));
-      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/butterfly.glb", objectsPos, 0.7, "butterfly"));
-      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/fire.glb", objectsPos, 0.7, "fire"));
-      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/candle_flame.glb", objectsPos, 0.7, "candle_flame"));
-      loadingPromises.push(loadGLTF(scene, loop, manager, "3d_models/exterior.glb", objectsPos, 0.7, "exterior"));
-    */
+    loadingPromises.push(
+      loadGLTF(scene, loop, manager, '3d_models/room.glb', objectsPos, 0.7, 'room'),
+    )
+    loadingPromises.push(
+      loadGLTF(scene, loop, manager, '3d_models/butterfly.glb', objectsPos, 0.7, 'butterfly'),
+    )
+    loadingPromises.push(
+      loadGLTF(scene, loop, manager, '3d_models/fire.glb', objectsPos, 0.7, 'fire'),
+    )
+    loadingPromises.push(
+      loadGLTF(scene, loop, manager, '3d_models/candle_flame.glb', objectsPos, 0.7, 'candle_flame'),
+    )
+    loadingPromises.push(
+      loadGLTF(scene, loop, manager, '3d_models/exterior.glb', objectsPos, 0.7, 'exterior'),
+    )
 
     // This are the only headers to be rendered at the start
     const headersToRender = ['my_projects', 'professional_overview', 'contact_me']
@@ -239,15 +247,14 @@ class World {
     }
 
     // Load HDR background
-    /*
-      loadingPromises.push(
-        loadHDR("textures/background.exr", manager).then((texture) => {
-          texture.mapping = EquirectangularReflectionMapping;
-          texture.intensity = 0.1;
-          scene.background = texture;
-          scene.environment = texture;
-      }));
-    */
+
+    loadingPromises.push(
+      loadHDR("textures/background.exr", manager).then((texture) => {
+        texture.mapping = EquirectangularReflectionMapping;
+        texture.intensity = 0.1;
+        scene.background = texture;
+        scene.environment = texture;
+    }));
 
     // render from the start
 

@@ -14,7 +14,7 @@ export const useMainStore = defineStore('main', {
     shouldOpenNavigationMenu: false,
     infoPanelVisible: false,
     showSettingsMenu: false,
-    showDowloadCV: false,
+    showDownloadCV: false,
 
     // Navigation buttons for the About section
     aboutNavigationVisible: false,
@@ -40,11 +40,12 @@ export const useMainStore = defineStore('main', {
     computerVisible: false,
     currentProjectIndex: 0,
 
+    showPngHeadersLoading: false,
 
     // Cursor
     cursorCircleVisible: false,
 
-    locale: 'en',
+    locale: localStorage.getItem('locale') || 'en', // Default to English if no locale is set
   }),
   actions: {
     // Show elements
@@ -134,6 +135,8 @@ export const useMainStore = defineStore('main', {
       this.aboutNavigationVisible = false
     },
     enableMouseEvents() {
+      if (this.showPngHeadersLoading) return
+
       this.shouldAllowMouseEvents = true
       this.cursorCircleVisible = true
 
@@ -187,7 +190,7 @@ export const useMainStore = defineStore('main', {
     enableInfoPanel() {
       this.infoPanelVisible = true
       this.disableMouseEvents()
-      this.showDowloadCV = false
+      this.showDownloadCV = false
       this.showSettingsMenu = false
       this.delayClick = true
 
@@ -198,10 +201,16 @@ export const useMainStore = defineStore('main', {
       })
     },
     enableDownloadCV() {
-      this.showDowloadCV = true
+      this.showDownloadCV = true
     },
     enableSettingsMenu() {
       this.showSettingsMenu = true
+    },
+    triggerShowPngHeadersLoading() {
+      this.showPngHeadersLoading = true
+      this.cursorCircleVisible = false
+
+      this.disableMouseEvents()
     },
 
     // Hide elements
@@ -246,6 +255,7 @@ export const useMainStore = defineStore('main', {
       labels.forEach((label) => {
         ;(label as HTMLElement).style.pointerEvents = 'none'
       })
+      document.body.style.cursor = 'default'
     },
     hideNavigationMenu() {
       this.navigationMenuVisible = false
@@ -272,15 +282,25 @@ export const useMainStore = defineStore('main', {
     },
     disableInfoPanel() {
       this.infoPanelVisible = false
-      this.enableMouseEvents()
-      this.showDowloadCV = true
+
+      this.showDownloadCV = true
       this.showSettingsMenu = true
+      this.enableMouseEvents()
     },
     disableDownloadCV() {
-      this.showDowloadCV = false
+      this.showDownloadCV = false
     },
     disableSettingsMenu() {
       this.showSettingsMenu = false
+    },
+    hidePngHeadersLoading() {
+      this.showPngHeadersLoading = false
+      this.cursorCircleVisible = true
+
+      setTimeout(() => {
+        // To avoid the click event being triggered immediately after the loading animation is hidden
+        this.enableMouseEvents()
+      }, 10)
     },
 
     // Setters
@@ -305,7 +325,7 @@ export const useMainStore = defineStore('main', {
     },
     setCurrentProjectIndex(index: number) {
       this.currentProjectIndex = index
-    }
+    },
   },
   getters: {
     isHardSkillsVisible: (state) => state.showHardSkills,
@@ -320,7 +340,7 @@ export const useMainStore = defineStore('main', {
     isNavigationMenuOpen: (state) => state.shouldOpenNavigationMenu,
     isInfoPanelVisible: (state) => state.infoPanelVisible,
     isSettingsMenuVisible: (state) => state.showSettingsMenu,
-    isDownloadCVVisible: (state) => state.showDowloadCV,
+    isDownloadCVVisible: (state) => state.showDownloadCV,
     isComputerVisible: (state) => state.computerVisible,
     getLocale: (state) => state.locale,
     getPanelHardSkills: (state) => state.panelHardSkills,
@@ -330,5 +350,6 @@ export const useMainStore = defineStore('main', {
     getOutlinePass: (state) => state.outlinePass,
     get3DScene: (state) => state.scene,
     getSelectedProjectIndex: (state) => state.currentProjectIndex,
+    isPngHeadersLoadingVisible: (state) => state.showPngHeadersLoading,
   },
 })

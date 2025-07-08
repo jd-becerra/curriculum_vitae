@@ -80,6 +80,13 @@ defineExpose({
 </template>
 
 <style scoped>
+* {
+  font-smooth: always;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 .main-container {
   position: fixed; /* makes this the origin of its children */
   width: 100%;
@@ -119,7 +126,6 @@ defineExpose({
   pointer-events: none;
   /* opacity: 0.1; /* for debugging */
 }
-
 .loading-bar-container {
   width: 50%;
   height: 10px;
@@ -167,13 +173,6 @@ defineExpose({
   left: 0;
   pointer-events: none; /* optional if you want mouse clicks to pass through */
   z-index: 12;
-}
-
-* {
-  font-smooth: always;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
 }
 
 .cursor {

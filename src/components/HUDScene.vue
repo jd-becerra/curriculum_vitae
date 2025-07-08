@@ -1,9 +1,8 @@
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, inject } from 'vue'
 import NavigationItem from './NavigationItem.vue'
-import { inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useMainStore } from './store'
 
@@ -28,6 +27,7 @@ const infoPanelVisible = computed(() => store.isInfoPanelVisible)
 const showNavigationMenu = computed(() => store.isNavigationMenuVisible)
 const showSettingsMenu = computed(() => store.isSettingsMenuVisible)
 const showDownloadCV = computed(() => store.isDownloadCVVisible)
+const showPngHeadersLoading = computed(() => store.isPngHeadersLoadingVisible)
 
 const isNavOpen = computed({
   get() {
@@ -102,6 +102,11 @@ const moveAboutDown = () => {
 function setLang(lang: string) {
   locale.value = lang
   store.setLocale(lang)
+
+  localStorage.setItem('locale', lang)
+
+  // change html lang attribute
+  document.documentElement.setAttribute('lang', lang)
 }
 
 // Detect clicks outside the menu and close it
@@ -119,9 +124,9 @@ const handleClickOutside = (event: MouseEvent) => {
   if (isMenuVisible || isInfoPanelVisible) {
     store.closeNavigationMenu()
     store.disableInfoPanel()
-    store.enableMouseEvents()
-    store.enableSettingsMenu();
-    store.enableDownloadCV();
+    if (!store.isPngHeadersLoadingVisible) store.enableMouseEvents()
+    store.enableSettingsMenu()
+    store.enableDownloadCV()
 
     isNavOpen.value = false
   }
@@ -137,7 +142,13 @@ onBeforeUnmount(() => {
 
 <template>
   <v-main>
-    <v-list ref="menuRef" class="menu-container" v-show="showNavigationMenu">
+    <v-list
+      ref="menuRef"
+      class="menu-container"
+      v-show="showNavigationMenu"
+      @mouseenter="store.hideCursorCircle()"
+      @mouseleave="store.showCursorCircle()"
+    >
       <v-list-item @click="isNavOpen = !isNavOpen">
         <v-list-item-title>
           {{ isNavOpen ? 'Close' : 'Navigation' }}
@@ -218,46 +229,44 @@ onBeforeUnmount(() => {
       </v-btn>
     </v-container>
 
-    <v-container class="menu-download-cv" v-show="showDownloadCV">
+    <v-container
+      class="menu-download-cv"
+      v-show="showDownloadCV"
+      @mouseenter="store.hideCursorCircle()"
+      @mouseleave="store.showCursorCircle()"
+    >
       <v-btn>Download CV</v-btn>
     </v-container>
 
-    <v-list class="menu-settings d-flex flex-column" v-if="showSettingsMenu">
-      <v-list-group>
-        <template v-slot:activator="{ props }">
-          <v-list-item v-bind="props">
-            <v-list-item-title>Settings</v-list-item-title>
-          </v-list-item>
-        </template>
+    <v-btn @click.stop.prevent="store.enableInfoPanel()" class="language-button">
+      {{ t('menu.info_panel') }}
+    </v-btn>
 
-        <v-list-item>
-          <v-list-group>
-            <template v-slot:activator="{ props }">
-              <v-list-item v-bind="props">
-                <v-list-item-title>Change Language</v-list-item-title>
-              </v-list-item>
-            </template>
-            <v-list-item>
-              <v-btn @click.stop.prevent="setLang('en')" class="language-button">English</v-btn>
-            </v-list-item>
-            <v-list-item>
-              <v-btn @click.stop.prevent="setLang('es')" class="language-button">Español</v-btn>
-            </v-list-item>
-          </v-list-group>
-        </v-list-item>
-      </v-list-group>
-
-      <v-list-item>
-        <v-btn @click.stop.prevent="store.enableInfoPanel()" class="language-button">
-          {{ t('menu.info_panel') }}
-        </v-btn>
-      </v-list-item>
-    </v-list>
-
-    <v-container class="info" ref="infoPanelRef" v-show="infoPanelVisible">
+    <v-container
+      class="info"
+      ref="infoPanelRef"
+      v-show="infoPanelVisible"
+      @mouseenter="store.hideCursorCircle()"
+      @mouseleave="store.showCursorCircle()"
+    >
       <div class="info-item d-flex justify-end">
         <v-btn class="close-info" @click.stop.prevent="store.disableInfoPanel()"> X </v-btn>
       </div>
+      <v-list>
+        <v-list-group>
+          <template v-slot:activator="{ props }">
+            <v-list-item v-bind="props">
+              <v-list-item-title>Change Language</v-list-item-title>
+            </v-list-item>
+          </template>
+          <v-list-item>
+            <v-btn @click.stop.prevent="setLang('en')">English</v-btn>
+          </v-list-item>
+          <v-list-item>
+            <v-btn @click.stop.prevent="setLang('es')">Español</v-btn>
+          </v-list-item>
+        </v-list-group>
+      </v-list>
       <div class="info-item">
         <v-img src="/img/click.gif" width="50" height="50" alt="Click"></v-img>
         <span class="info-text">{{ t('menu.click_interact') }}</span>
@@ -274,6 +283,15 @@ onBeforeUnmount(() => {
       </div>
     </v-container>
     <div class="info-background" v-if="infoPanelVisible"></div>
+    <div class="png-headers-loading" v-show="showPngHeadersLoading">
+      <v-progress-circular
+        indeterminate
+        color="white"
+        size="32"
+        width="4"
+        class="loading-spinner"
+      ></v-progress-circular>
+    </div>
   </v-main>
 </template>
 
@@ -405,9 +423,14 @@ onBeforeUnmount(() => {
 }
 
 .language-button {
-  width: 100%;
   background-color: rgb(58, 58, 58);
   color: white;
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 16px;
+  z-index: 1000;
+  pointer-events: all;
 }
 
 .about-subitems {
@@ -508,5 +531,25 @@ onBeforeUnmount(() => {
   90% {
     transform: translateY(0);
   }
+}
+
+.png-headers-loading {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  cursor: default;
+}
+.loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
 }
 </style>

@@ -56,8 +56,29 @@ function loadGLTF(scene, loop, loadingManager, path, position, scale, name = '')
             const mixer = model.mixer
             const clip = mixer.animations[0] // Get the first animation clip
             const action = mixer.clipAction(clip)
-            action.setLoop(LoopPingPong) // Loop the animation
-            action.clampWhenFinished = false // Allow looping
+
+            // Pause butterfly anim for 5 seconds before starting again
+            if (name === 'butterfly') {
+              loop.updatables.push({
+                tick: () => {
+                  if (action.time === clip.duration) {
+                    action.time = 0 // Reset the animation time
+                    action.paused = true // Pause the animation
+                    setTimeout(() => {
+                      action.paused = false // Resume after 2 seconds
+                    }, 5000)
+                  }
+                },
+              })
+              action.timeScale = 0.5 // Slow down
+              action.setLoop(LoopPingPong, 1) // Play once and then stop
+              action.clampWhenFinished = true // Stop the animation when it finishes
+            }
+
+            else {
+              action.setLoop(LoopPingPong) // Loop the animation
+              action.clampWhenFinished = false // Allow looping
+            }
             action.play()
           } else {
             console.error('No animation found for fireplace model')

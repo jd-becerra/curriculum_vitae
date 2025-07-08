@@ -1,9 +1,8 @@
 import { PlaneGeometry, MeshBasicMaterial, Mesh, TextureLoader, LoadingManager } from 'three'
 import { useMainStore } from '../../components/store'
 
-const loadingPromises = []
 let renderedHeaders = []
-let currentLang = 'en'
+let currentLang = localStorage.getItem('locale') || 'en' // Default to English if no locale is set
 let currentTick = null
 
 const headers = {
@@ -73,13 +72,9 @@ const headers = {
 function createLoadingManager() {
   const manager = new LoadingManager()
   manager.onStart = function () {}
-  manager.onLoad = function () {
-    console.log('All headers loaded successfully.')
-  }
+  manager.onLoad = function () {}
   manager.onProgress = function () {}
-  manager.onError = function (url) {
-    console.error('There was an error loading ' + url)
-  }
+  manager.onError = function () {}
   return manager
 }
 
@@ -116,92 +111,90 @@ function createPngHeaders(loop, scene, headerKeys, lang = 'en', manager = null) 
   if (headersAlreadyRendered(headerKeys) && currentLang === lang) return
 
   removePngHeaders(scene, loop)
+  const store = useMainStore()
 
   // Mouse events won't create a manager by itself, but we will also need to create headers
   // on startup, and that process already has a manager, this is why we can pass it as an argument
-  if (!manager) manager = createLoadingManager()
 
-  const textureLoader = new TextureLoader(manager)
+  const textureLoader = new TextureLoader()
 
   currentLang = lang
   const headersByLang = getHeadersByLang(currentLang)
 
-  headerKeys.forEach((key) => {
-    const header = headersByLang[key]
-    const promise = new Promise(() => {
-      loadPngHeader(header, key, loop, scene, textureLoader)
-    })
-    loadingPromises.push(promise)
-  })
+  const promises = headerKeys.map((key) =>
+    loadPngHeader(headersByLang[key], key, loop, scene, textureLoader),
+  )
 
   // Monitor language change
   currentTick = {
     tick: () => {
       if (getCurrentLocale() !== currentLang) {
-        createPngHeaders(loop, scene, headerKeys, getCurrentLocale(), manager)
+        // Don't send the custom manager if exists, since it is only used once by startup
+        createPngHeaders(loop, scene, headerKeys, getCurrentLocale())
       }
     },
   }
   loop.updatables.push(currentTick)
 
-  Promise.all(loadingPromises)
+  if (manager) return
+
+  store.triggerShowPngHeadersLoading()
+  Promise.all(promises)
     .then(() => {
-      console.log('All PNG headers loaded successfully.')
+      store.hidePngHeadersLoading()
     })
     .catch((error) => {
       console.error('Error loading PNG headers:', error)
+      store.hidePngHeadersLoading()
     })
 }
 
 function loadPngHeader(headerData, key, loop, scene, textureLoader) {
-  let scale = { x: 3, y: 1.5 }
-  if (headerData.scale) scale = headerData.scale
-  const geometry = new PlaneGeometry(scale.x, scale.y)
-  const material = new MeshBasicMaterial({ color: 0xffffff, transparent: true })
-  const header = new Mesh(geometry, material)
-  header.name = headerData.name
-  header.area = 'headers'
-  const pos = headerData.position
+  return new Promise((resolve, reject) => {
+    let scale = { x: 3, y: 1.5 }
+    if (headerData.scale) scale = headerData.scale
+    const geometry = new PlaneGeometry(scale.x, scale.y)
+    const material = new MeshBasicMaterial({ color: 0xffffff, transparent: true })
+    const header = new Mesh(geometry, material)
+    header.name = headerData.name
+    header.area = 'headers'
+    const pos = headerData.position
 
-  header.position.set(pos.x, pos.y, pos.z)
+    header.position.set(pos.x, pos.y, pos.z)
+    if (headerData.rotation_y) header.rotation.y = headerData.rotation_y
 
-  if (headerData.rotation_y) header.rotation.y = headerData.rotation_y
+    textureLoader.load(
+      headerData.path,
+      (texture) => {
+        material.map = texture
+        material.needsUpdate = true
+        // Add bounce animation
+        if (header.name !== 'Credits Section') {
+          let elapsed = 0
+          const bounceHeight = 0.1
+          const bounceSpeed = 3
+          const initialY = header.position.y
+          loop.updatables.push({
+            tick: (delta) => {
+              elapsed += delta
+              const y = initialY + Math.sin(elapsed * bounceSpeed) * bounceHeight
+              header.position.set(pos.x, y, pos.z)
+            },
+          })
+        }
 
-  // Load the texture
-  textureLoader.load(
-    headerData.path,
-    (texture) => {
-      material.map = texture
-      material.needsUpdate = true
-    },
-    undefined,
-    (error) => {
-      console.error(`Error loading header texture: ${error}`)
-    },
-  )
-
-  // Add tick to make it bounce
-  if (header.name !== 'Credits Section') {
-    // Credits must be static for the plaque
-    let elapsed = 0
-    const bounceHeight = 0.1
-    const bounceSpeed = 3
-    const initialY = header.position.y
-    loop.updatables.push({
-      tick: (delta) => {
-        elapsed += delta
-        const y = initialY + Math.sin(elapsed * bounceSpeed) * bounceHeight
-        header.position.set(pos.x, y, pos.z)
+        header.layers.set(1)
+        renderedHeaders.push({ key, name: headerData.name })
+        scene.add(header)
+        resolve()
       },
-    })
-  }
-
-  header.layers.set(1) // Set to layer 1 to avoid picking by raycaster
-
-  // Push header to the array for removal later and for checking if it was already rendered
-  renderedHeaders.push({ key: key, name: headerData.name })
-
-  scene.add(header)
+      undefined,
+      (error) => {
+        console.error(`Error loading header texture: ${error}`)
+        reject(error)
+      },
+    )
+  })
 }
 
 function removePngHeaders(scene, loop) {
