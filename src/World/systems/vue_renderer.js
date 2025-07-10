@@ -74,8 +74,7 @@ function createVueRenderer(clientWidth, clientHeight) {
   labelRenderer.domElement.style.top = '0px'
   labelRenderer.domElement.style.width = '100%'
   labelRenderer.domElement.style.height = '100%'
-  labelRenderer.domElement.style.transform = `scale(${window.devicePixelRatio})`
-  labelRenderer.domElement.style.transformOrigin = 'top left'
+
   // Allow pointer events to pass through the label while still receiving them
   labelRenderer.domElement.style.pointerEvents = 'auto'
   labelRenderer.domElement.style.backgroundColor = 'transparent'

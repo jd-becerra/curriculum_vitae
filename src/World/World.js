@@ -9,7 +9,6 @@ import { Resizer } from './systems/Resizer.js'
 import { createOrbitControls } from './systems/controls.js'
 import { createSnowShaderPlane } from './components/shaders.js'
 import { createAreaSelectors } from './components/objects/cube.js'
-// import { createSkybox } from "./components/background.js";
 import { PickHelper } from './systems/pick_helper.js'
 import { createLoadingManager } from './systems/loading_manager.js'
 import { createOutlineComposer } from './systems/outline.js'
@@ -22,11 +21,11 @@ import {
   handleAboutSubarea,
 } from './systems/mouse_events.js'
 import { createPngHeaders } from './systems/png_loader.js'
+import { createSkybox } from './components/background.js'
+import { createBushes } from './systems/instance_mesh.js'
 
 // Three.js imports
-import { Vector3, Vector2, EquirectangularReflectionMapping } from 'three'
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
-import { EXRLoader } from 'three/addons/loaders/EXRLoader.js'
+import { Vector3, Vector2 } from 'three'
 
 // Vue components
 import { createVueRenderer, createComputerLabel, updateLabels } from './systems/vue_renderer.js'
@@ -66,33 +65,11 @@ function showStats() {
   requestAnimationFrame(animate)
 }
 
-function loadHDR(path, loadingManager) {
-  return new Promise((resolve, reject) => {
-    /*     new RGBELoader(loadingManager).load(
-        path,
-        (texture) => resolve(texture),
-        undefined,
-        (err) => reject(err)
-      ); */
-
-    // Experimental EXR loader
-    new EXRLoader(loadingManager).load(
-      path,
-      (texture) => {
-        texture.mapping = EquirectangularReflectionMapping
-        resolve(texture)
-      },
-      undefined,
-      (err) => reject(err),
-    )
-  })
-}
-
 class World {
   constructor(container) {
     const store = useMainStore()
     const manager = createLoadingManager()
-    // showStats();
+    showStats()
 
     // Instances of camera, scene, and renderer
     camera = createCamera(
@@ -113,34 +90,25 @@ class World {
     container.appendChild(labelRenderer.domElement)
 
     // Set background (with skybox)
-    /*
-      const path = "textures/skybox/";
-      const format = ".jpg";
-      scene.background = createSkybox(path, format);
-    */
+    const path = 'textures/skybox/'
+    const format = '.jpg'
+    scene.background = createSkybox(path, format)
 
     // Initialize Loop
     loop = new Loop(camera, scene, renderer)
 
     // Light Instance, with optional light helper
-    const { lights, lightHelpers } = createLights('white')
+    const { lights } = createLights('white')
     lights.forEach((light) => {
       loop.updatables.push(light)
       scene.add(light)
     })
-
-    // If we want to see the light position in the scene, we can add the light helpers
-    /* lightHelpers.forEach(lightHelper => {
-          scene.add(lightHelper);
-        });
-      */
 
     const objectsPos = [-20, -10, -10]
 
     loadingPromises.push(
       loadGLTF(scene, loop, manager, '3d_models/trophies.glb', objectsPos, 0.7, 'trophies'),
     )
-    // For socials and credits
     loadingPromises.push(
       loadGLTF(scene, loop, manager, '3d_models/desk.glb', objectsPos, 0.7, 'desk'),
     )
@@ -165,6 +133,10 @@ class World {
     loadingPromises.push(
       loadGLTF(scene, loop, manager, '3d_models/exterior.glb', objectsPos, 0.7, 'exterior'),
     )
+    loadingPromises.push(
+      loadGLTF(scene, loop, manager, '3d_models/trees.glb', objectsPos, 0.7, 'trees'),
+    )
+    createBushes(scene)
 
     // This are the only headers to be rendered at the start
     const headersToRender = ['my_projects', 'professional_overview', 'contact_me']
@@ -245,16 +217,6 @@ class World {
       resizeComposer(container.clientWidth, container.clientHeight)
       this.render()
     }
-
-    // Load HDR background
-
-    loadingPromises.push(
-      loadHDR("textures/background.exr", manager).then((texture) => {
-        texture.mapping = EquirectangularReflectionMapping;
-        texture.intensity = 0.1;
-        scene.background = texture;
-        scene.environment = texture;
-    }));
 
     // render from the start
 

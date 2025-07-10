@@ -73,9 +73,7 @@ function loadGLTF(scene, loop, loadingManager, path, position, scale, name = '')
               action.timeScale = 0.5 // Slow down
               action.setLoop(LoopPingPong, 1) // Play once and then stop
               action.clampWhenFinished = true // Stop the animation when it finishes
-            }
-
-            else {
+            } else {
               action.setLoop(LoopPingPong) // Loop the animation
               action.clampWhenFinished = false // Allow looping
             }
@@ -114,6 +112,20 @@ function loadGLTF(scene, loop, loadingManager, path, position, scale, name = '')
             computer.clickable = true
             computer.area = 'projects'
           }
+        }
+
+        if (name === 'trees') {
+          // Trees have png textures, avoid overlapping
+          // with PNG background
+          let child = model.children[0]
+          child.traverse((c) => {
+            if (c.isMesh) {
+              c.material.alphaTest = 0.5
+              c.material.transparent = false
+              c.material.depthWrite = true
+              c.material.side = 2
+            }
+          })
         }
 
         scene.add(model)

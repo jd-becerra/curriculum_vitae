@@ -30,17 +30,13 @@ let hovHardSkillInitialX = null
 let hovHardSkillTick = null
 const hardSkillIndexes = {
   'C++': 0,
-  Python: 1,
+  PHP: 1,
   Javascript: 2,
-  'HTML_+_CSS': 3,
-  MySQL: 4,
-  Nodejs: 5,
-  Linux: 6,
-  Git: 7,
-  Frontend_Frameworks: 8,
-  English: 9,
-  Chinese: 10,
-  More: 11,
+  MySQL: 3,
+  Nodejs: 4,
+  Linux: 5,
+  Git: 6,
+  English: 7,
 }
 const aboutX = -3,
   aboutZ = -50
