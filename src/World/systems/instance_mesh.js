@@ -14,7 +14,7 @@ export function createBushes(scene) {
     const instancedMesh = new InstancedMesh(geometry, material, count)
 
     const dummy = new Object3D()
-    const initialPos = { x: -185, y: -17, z: -60 }
+    const initialPos = { x: -185, y: -10, z: -60 }
 
     const numRows = 2
 
@@ -27,7 +27,8 @@ export function createBushes(scene) {
 
       let scale = Math.random() * (15 - 10) + 10
       dummy.scale.set(scale, scale, scale)
-      dummy.rotation.set(rotation, 0, Math.random() * (Math.PI * 2))
+      // Random rotation around the Y axis between 0 and 45 degrees
+      dummy.rotation.set(rotation, 0, Math.random() * (Math.PI / 4))
 
       // Every 6th in a row gets more spacing
       let spacingZ = (column + 1) % 6 === 0 ? 40 : Math.random() * (15 - 10) + 10
@@ -36,7 +37,7 @@ export function createBushes(scene) {
 
       dummy.position.set(
         initialPos.x + row * spacingX,
-        initialPos.y + (Math.random() * -0.5 + 0), // random Y bump
+        initialPos.y, // random Y bump
         initialPos.z + rowOffsets[row],
       )
 

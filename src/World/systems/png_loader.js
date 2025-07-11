@@ -1,5 +1,6 @@
 import { PlaneGeometry, MeshBasicMaterial, Mesh, TextureLoader, LoadingManager } from 'three'
 import { useMainStore } from '../../components/store'
+import { handleSocialIconHover } from './mouse_events'
 
 let renderedHeaders = []
 let currentLang = localStorage.getItem('locale') || 'en' // Default to English if no locale is set
@@ -67,15 +68,6 @@ const headers = {
     name: 'Expand Projects',
     position: { x: -1.6, y: 7.5, z: -26 },
   },
-}
-
-function createLoadingManager() {
-  const manager = new LoadingManager()
-  manager.onStart = function () {}
-  manager.onLoad = function () {}
-  manager.onProgress = function () {}
-  manager.onError = function () {}
-  return manager
 }
 
 function getCurrentLocale() {
@@ -217,6 +209,9 @@ function removePngHeaders(scene, loop) {
   })
 
   renderedHeaders = []
+
+  // Reset the social icon hover state
+  handleSocialIconHover(null, loop, scene)
 }
 
 export { getHeadersByLang, createPngHeaders, removePngHeaders }

@@ -300,7 +300,7 @@ export const useMainStore = defineStore('main', {
       setTimeout(() => {
         // To avoid the click event being triggered immediately after the loading animation is hidden
         this.enableMouseEvents()
-      }, 10)
+      }, 50)
     },
 
     // Setters

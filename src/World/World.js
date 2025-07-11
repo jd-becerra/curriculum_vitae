@@ -143,20 +143,12 @@ class World {
     createPngHeaders(loop, scene, headersToRender, store.getLocale, manager)
 
     // Add snow shader
-    const snowShaderPlane = createSnowShaderPlane(
+    createSnowShaderPlane(
       container.clientHeight,
       new Vector3(-40, -60, -15),
+      scene,
+      loop,
     )
-    snowShaderPlane.position.y = -20
-    snowShaderPlane.position.x = -5
-    snowShaderPlane.position.z = 10
-    // Add tick to update the shader
-    loop.updatables.push({
-      tick: (delta) => {
-        snowShaderPlane.material.uniforms.elapsedTime.value += delta
-      },
-    })
-    scene.add(snowShaderPlane)
 
     scene.add(createComputerLabel(container.clientWidth, container.clientHeight))
 

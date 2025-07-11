@@ -139,8 +139,8 @@ function handleReturnToMainView(controls, loop, scene) {
   const angles = {
     yDown: MathUtils.degToRad(80),
     yUp: MathUtils.degToRad(85),
-    xLeft: MathUtils.degToRad(30),
-    xRight: MathUtils.degToRad(35),
+    xLeft: MathUtils.degToRad(25),
+    xRight: MathUtils.degToRad(40),
   }
 
   moveToArea(controls, loop, to, angles, 5, 10)
