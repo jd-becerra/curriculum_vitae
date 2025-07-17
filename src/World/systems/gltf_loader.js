@@ -76,6 +76,9 @@ function loadGLTF(scene, loop, loadingManager, path, position, scale, name = '')
             } else {
               action.setLoop(LoopPingPong) // Loop the animation
               action.clampWhenFinished = false // Allow looping
+
+              // Slow down animation for fire
+              if (name === 'fire') action.timeScale = 0.5
             }
             action.play()
           } else {

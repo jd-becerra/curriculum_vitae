@@ -98,7 +98,7 @@ class World {
     loop = new Loop(camera, scene, renderer)
 
     // Light Instance, with optional light helper
-    const { lights } = createLights('white')
+    const { lights } = createLights()
     lights.forEach((light) => {
       loop.updatables.push(light)
       scene.add(light)
@@ -143,12 +143,7 @@ class World {
     createPngHeaders(loop, scene, headersToRender, store.getLocale, manager)
 
     // Add snow shader
-    createSnowShaderPlane(
-      container.clientHeight,
-      new Vector3(-40, -60, -15),
-      scene,
-      loop,
-    )
+    createSnowShaderPlane(container.clientHeight, new Vector3(-40, -60, -15), scene, loop)
 
     scene.add(createComputerLabel(container.clientWidth, container.clientHeight))
 

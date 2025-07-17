@@ -18,6 +18,7 @@ function createCube(props) {
     transparent: true,
     opacity: 0.1, // Default opacity set to 0.5
     emissive: 0x270000,
+    depthWrite: false,
   })
 
   const cube = new Mesh(geometry, material)

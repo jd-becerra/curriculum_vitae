@@ -157,6 +157,9 @@ function handleProjectsClick(controls, loop, scene) {
   isAboutAreaActive = false
   isProjectsAreaActive = true
 
+  const headersToRender = ['projects_expand']
+  createPngHeaders(loop, scene, headersToRender, getCurrentLocale())
+
   const to = { x: -40, y: 0, z: -10 }
 
   const angles = {
@@ -183,7 +186,7 @@ function handleSocialsClick(controls, loop, scene) {
   useMainStore().disableComputerVisible()
 
   // Render header
-  const headersToRender = ['credits']
+  const headersToRender = ['credits', 'socials']
   createPngHeaders(loop, scene, headersToRender, getCurrentLocale())
 
   const to = { x: 15, y: 4, z: -42 }

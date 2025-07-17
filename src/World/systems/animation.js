@@ -1,7 +1,7 @@
 // Handles animation of objects in Three.js
 import { AnimationMixer } from 'three';
 
-function createAnimationMixer(gltf, loop) {
+function createAnimationMixer(gltf) {
   const clips = gltf.animations;
   if (clips.length === 0) {
     return null;

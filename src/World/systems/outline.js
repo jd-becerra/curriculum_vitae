@@ -24,6 +24,9 @@ export function createOutlineComposer(renderer, scene, camera, container) {
   outlinePass.edgeThickness = 1.0;
   outlinePass.visibleEdgeColor.set("#ffffff");
   outlinePass.hiddenEdgeColor.set("#190a05");
+
+  // Set this outline to layer 1
+
   composer.addPass(outlinePass);
 
   const store = useMainStore();

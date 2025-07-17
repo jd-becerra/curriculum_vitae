@@ -1,4 +1,4 @@
-import { PlaneGeometry, MeshBasicMaterial, Mesh, TextureLoader, LoadingManager } from 'three'
+import { PlaneGeometry, MeshBasicMaterial, Mesh, TextureLoader } from 'three'
 import { useMainStore } from '../../components/store'
 import { handleSocialIconHover } from './mouse_events'
 
@@ -56,17 +56,20 @@ const headers = {
   credits: {
     path: '/credits.png',
     name: 'Credits Section',
-    position: { x: 14.7, y: 6.3, z: -29 },
+    position: { x: 14.7, y: 6.5, z: -29 },
   },
   socials: {
     path: '/socials.png',
     name: 'Social Links Icons',
-    position: { x: 14.7, y: 4.5, z: -29 },
+    position: { x: 14.7, y: 3.4, z: -27 },
+    scale: { x: 6, y: 3 },
   },
   projects_expand: {
     path: '/projects_expand.png',
     name: 'Expand Projects',
-    position: { x: -1.6, y: 7.5, z: -26 },
+    position: { x: -27, y: 4, z: -9.5 },
+    rotation_y: degToRad(90),
+    scale: { x: 8, y: 4 },
   },
 }
 
