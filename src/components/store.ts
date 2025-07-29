@@ -207,6 +207,10 @@ export const useMainStore = defineStore('main', {
       this.showSettingsMenu = true
     },
     triggerShowPngHeadersLoading() {
+      this.navigationMenuVisible = false
+      this.aboutNavigationVisible = false
+      this.shouldOpenNavigationMenu = false
+
       this.showPngHeadersLoading = true
       this.cursorCircleVisible = false
 
@@ -294,6 +298,10 @@ export const useMainStore = defineStore('main', {
       this.showSettingsMenu = false
     },
     hidePngHeadersLoading() {
+      this.navigationMenuVisible = true
+      this.aboutNavigationVisible = true
+      this.shouldOpenNavigationMenu = false
+      
       this.showPngHeadersLoading = false
       this.cursorCircleVisible = true
 
