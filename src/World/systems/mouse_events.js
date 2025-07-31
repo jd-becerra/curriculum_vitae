@@ -14,6 +14,7 @@ let isAboutMainSubareaActive = false
 let isAboutExperienceSubareaActive = false
 let isProjectsAreaActive = false
 let hoveredObjectTag = null
+let bookFinishedListener = null
 
 // For social icons
 const gmailLink = 'mailto:jbecerraofficial@gmail.com'
@@ -358,8 +359,14 @@ function handleOpenBook(object) {
 
   store.hideNavigationMenu()
   store.hideAboutNavigation()
-  // Wait for the animation to finish
-  mixer.addEventListener('finished', () => {
+
+  // Wait for the animation to finish (remember to remove previous listeners)
+  if (bookFinishedListener) {
+    mixer.removeEventListener('finished', bookFinishedListener)
+    bookFinishedListener = null
+  }
+
+  bookFinishedListener = () => {
     // Stop the animation to reset to the original state
     animation.stop()
 
@@ -367,7 +374,13 @@ function handleOpenBook(object) {
     document.querySelector('.label-renderer').style.pointerEvents = 'none'
     document.querySelector('.inspect-view').style.pointerEvents = 'auto'
     store.triggerShowAbout()
-  })
+
+    // After listener fires, remove it
+    mixer.removeEventListener('finished', bookFinishedListener)
+    bookFinishedListener = null
+  }
+
+  mixer.addEventListener('finished', bookFinishedListener)
 }
 
 function handleSocialIconClick(iconName, loop) {
