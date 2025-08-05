@@ -20,73 +20,79 @@
   },
   "about": {
     "title": "About me",
-    "description": "Being a 6th grade Software Engineering student, I am always eager to learn and improve my skills in order to use them in a competitive and exciting environment. With this in mind, I'm currently seeking for entry level jobs to begin my career in software development.<br> The programming languages I have most experience with are Python, C/C++ and Javascript. I am also proficient working with Linux systems, which I regularly use for personal and academic purposes. I have a continuous pursuit for learning about new technologies and concepts, and I always strive to stay up-to-date with the latest tech news.<br> I am excited to connect with your organization in order to apply my skills in real scenarios, continue learning, and ultimately bring value to your projects' vision to the best of my abilities."
+    "description": "I'm currently a 7th grade Software Engineering student with good academic and personal experience, seeking for entry level jobs involving backend development. The programming languages I have most experience with are C/C++, Javascript and PHP, as well as backend frameworks such as Node.js. I also have a good understanding on Linux systems, Git, database design and management, as well as a C1 proficiency level in the English language. My main strengths include a continuous curiosity and pursuit for learning about new technologies and concepts, ability to work in a team and communicate effectively with others, and a strong sense of abstraction and understanding of a project and its requirements. I am excited to connect with your organization in order to apply my skills to real world scenarios, continue learning, and ultimately bring value to your projects' vision to the best of my abilities."
   },
   "projects": {
     "title": "Projects",
-    "description": "Here you can find some of the projects I have worked on. You can find more on my GitHub profile.",
     "cards": [
       {
-        "title": "Alicia - Demo for a Time Bending Game",
-        "description": "This is a description of the first project.",
-        "image": "img\\projects_scr\\p1.png",
-        "link": "https://github.com/jd-becerra/alicia"
+        "title": "Collabtales - Imagine, write share, collaborate!",
+        "description": "Collabtales is a web platform designed to create and develop stories in collaboration with others. Each user can start a story and generate a unique code to invite other participants to continue the narrative. The goal is to foster skills like creativity, teamwork, writing, and reading (especially in younger audiences). It was built using the Vue.js framework for the frontend, and PHP with a MySQL database for the backend. The platform includes features such as user authentication, story creation and management, and a voting system based on likes, plus localization support for both English and Spanish languages.",
+        "image": "img\\projects_scr\\collabtales.png",
+        "link": "https://collabtales.avaldez0.com",
+        "github_link": "https://github.com/jd-becerra/collabtales"
       },
       {
         "title": "Chess Game for Nand2Tetris ",
-        "description": "This is a description of the second project.",
-        "image": "img\\projects_scr\\p2.png",
-        "link": "https://github.com/jd-becerra/nand2tetris-Chess"
+        "description": "This project is a simulation of a chess game built for the Nand2Tetris platform, specifically designed to run within the VM Emulator. The main objective was to deepen my understanding of low-level programming and assembly language by implementing chessboard logic, move handling, and graphics rendering from scratch. This was made after completing course modules corresponding to building essential computer components like: a Virtual Machine, a simple CPU, the Operating System, plus a custom programming language, a compiler and a basic graphics library.",
+        "image": "img\\projects_scr\\chess.png",
+        "github_link": "https://github.com/jd-becerra/nand2tetris-Chess"
+      },
+      {
+        "title": "Alicia - Demo for a Time Bending Game",
+        "description": "This is a short, narrative-driven adventure game demo built in Godot that focuses on time manipulation mechanics. Developing this project gave me hands-on experience in key areas of game development, including programming functional game mechanics, creating a character control system based on unconventional physics, animation, and UI/UX design. The codebase showcases practical applications of software engineering principles such as event-driven programming, finite state machines, debugging, and optimization. NOTE: The demo was made with only Spanish language support.",
+        "image": "img\\projects_scr\\alicia.png",
+        "link": "https://alicia-juego.netlify.app/",
+        "github_link": "https://github.com/jd-becerra/alicia"
       },
       {
         "title": "Interpolation Calculator",
-        "description": "This is a description of the third project.",
-        "image": "img\\projects_scr\\p3.png",
-        "link": "https://github.com/jd-becerra/interpolationCalculator"
+        "description": "A small web tool developed for a Discrete Mathematics course, designed to visualize and compare four interpolation methods: Linear, Quadratic, and Lagrange of first and second order. Built with HTML, CSS, and JavaScript, it allows users to input data points and estimate unknown values using different interpolation techniques, displaying both the calculated results and the relative error percentage. The project integrates the GeoGebra API to graphically represent the data points, interpolation curves, and the estimated values, distinguishing between interpolation and extrapolation cases. NOTE: The tool and its documentation are only available in Spanish.",
+        "image": "img\\projects_scr\\interpolation.png",
+        "link": "https://metodos-interpolacion.netlify.app/",
+        "github_link": "https://github.com/jd-becerra/interpolationCalculator"
       }
     ]
   },
   "hard-skills": {
     "title": "Main technical skills:",
-    "main-description": "Throughout my academic journey and personal projects, I have developed a set of technical skills that form the foundation of my work in software development, web technologies, backend systems, and computer science fundamentals. I strongly believe these skills reflect not only the tools and languages I have learned, but also the way I approach learning itself: with a focus on practical application, problem-solving, and a deep curiosity for understanding how systems work at every level.",
     "skills": [
       {
         "name": "C++",
-        "description": " I have worked with C++ mainly for graphics programming projects using OpenGL, which helped me gain a deeper understanding of rendering pipelines and low-level graphics concepts. Additionally, I used C++ to strengthen my knowledge of algorithms, data structures, and manual memory management, both in academic coursework and through personal projects, where efficiency and control over system resources were important. I further developed these skills through courses like Harvard’s CS50 and the LearnOpenGL.com tutorial series, where I worked on practical implementations of computer science fundamentals and real-time rendering."
+        "description": "Mainly used through programming courses like CS50 by Harvard University and for self-learning subjects such as graphics programming with OpenGL, algorithms, data structures and manual memory management, using the language capabilities to seek better control and understanding of how code executes at lower levels."
       },
       {
         "name": "PHP",
-        "description": "I have used PHP primarily for backend development in web applications, particularly during my Social Service program at the University of Colima. I designed and implemented custom APIs to connect SQL databases with frontend applications, focusing on security, data validation, and performance. My experience includes working with frameworks like Laravel and CodeIgniter, which helped me understand how to structure web applications effectively and implement best practices in PHP development."
+        "description": "Used for an academic project that involved creating and managing a backend to be deployed on a Hostinger server. I designed and implemented custom APIs to connect a SQL database, focusing mainly on security (data validation, authentication, encryption, rate limiting, etc.). I also worked with extra libraries like Composer for dependency management, Firebase's JWT library for authentication, and PHP-Mailer for custom email notifications."
       },
       {
         "name": "JavaScript",
-        "description": " JavaScript has been a key part of my web development work. I have used it both on the frontend and backend to build interactive and dynamic web applications. My projects often combine JavaScript with frameworks like Vue and React, as well as backend technologies like Node.js, giving me a practical understanding of how client-server architectures operate."
+        "description": "A key part of my web development work, used in both frontend and backend to build dynamic web applications. My projects often combine JavaScript with frameworks like Vue and React, as well as backend technologies like Node.js."
       },
       {
         "name": "MySQL",
-        "description": " I have used SQL (through MySQL) to design and manage databases for personal projects and during my Social Service program at school. My experience includes not only creating and connecting databases with backend technologies like PHP and Node.js but also designing the database architecture and implementing advanced features such as stored procedures, functions, and triggers to improve performance and maintain data integrity."
+        "description": "This has been my main database management system for personal projects and academic work. My experience includes creating and connecting databases with backend technologies (PHP and Node.js), as well as designing the database architecture and implementing features such as stored procedures, functions, and triggers for better security and performance."
       },
       {
         "name": "Node.js",
-        "description": " I have used Node.js for backend development, particularly during my Social Service program, where I designed and implemented custom APIs to connect SQL databases with frontend applications. I worked with libraries like JWT for authentication, JOI for data validation, and Swagger for API documentation. These experiences helped me understand how to build backend systems that are secure, maintainable, and easy for frontend teams to integrate with."
+        "description": "Mainly used during my Social Service program, where I designed and implemented custom APIs to connect SQL databases with frontend applications. I worked with libraries like JWT for authentication, JOI for data validation and Express to connect with additional APIs from other services in my school's ecosystem. My team was also in charge of writing the documentation for the APIs using Swagger, in order to facilitate integration with the frontend team."
       },
       {
         "name": "Linux",
-        "description": " Linux has been my main operating environment for personal use and academic work. I have experience with distributions like Arch, Ubuntu, Fedora, and Lubuntu. My regular use of Linux involves working extensively through the terminal, handling software installations, scripting tasks, and basic server management. I also have moderate experience with networking concepts, which I strengthened through Cisco Academy courses focused on the fundamentals of networking and system administration."
+        "description": "Linux has been my main operating environment for personal use and academic work. The main distributions I have worked with are: Arch, Ubuntu and Fedora. My regular use of Linux involves working extensively through the terminal, handling software installations, scripting tasks, and basic server management. I also have moderate experience with networking concepts through Cisco Academy courses and academic experience."
       },
       {
         "name": "Git",
-        "description": " I regularly use Git for version control in both personal and team projects. My experience includes managing repositories, creating and merging branches, handling permissions, resolving merge conflicts, and organizing issues and pull requests to track project progress. Using Git has helped me maintain clean development workflows, collaborate efficiently with others, and keep codebases organized and maintainable over time."
+        "description": "I regularly use Git for version control in both personal and team projects. My experience includes managing repositories, creating and merging branches, handling permissions, resolving merge conflicts, and organizing issues and pull requests to track project progress."
       },
       {
         "name": "English",
-        "description": " I have a TOEFL ITP certification at the C1 level, which reflects a strong ability in reading, writing, listening, and speaking English. This has allowed me to comfortably work with technical documentation, communicate effectively in academic and professional contexts, and engage with a wide range of learning resources in the field of software development."
+        "description": "I hold a TOEFL ITP certification at the C1 level, demonstrating a strong proficiency in reading, writing, listening, and speaking. This has allowed me to comfortably work with technical documentation, communicate effectively in academic, personal and professional contexts, and engage with a wide range of learning resources."
       }
     ]
   },
   "soft-skills": {
     "title": "Soft skills:",
-    "main-description": "While I consider it important to have a strong technical background, having a good set of soft skills is even more crucial to succeed in any work setting. These are what I consider to be my stronger qualities, developed through academic work, personal development, and collaborative efforts:",
     "skills": [
       {
         "name": "Communication, collaboration, and effective listening",
@@ -109,19 +115,19 @@
   "certificates": [
     {
       "title": "TOEFL ITP",
-      "description": "C1 level English proficiency certification.",
+      "description": "C1 level English proficiency certification, by the University of Colima.",
       "image": "img\\certs\\toefl.jpg",
       "link": ""
     },
     {
       "title": "Chinese for HSK 6",
-      "description": "HSK 6 level Chinese proficiency certification by Peking University on Coursera. The course focuses on reading and listening comprehension",
+      "description": "HSK 6 Chinese proficiency certification by Peking University on Coursera. The course focuses on reading and listening comprehension.",
       "image": "img\\certs\\hsk6.jpeg",
       "link": "https://www.coursera.org/account/accomplishments/verify/7983U7F5RGUQ"
     },
     {
       "title": "NDG Linux Essentials",
-      "description": "Linux Essentials certification by Cisco Networking Academy. This helped me solidify my understanding of Linux systems, command line usage, and basic system administration.",
+      "description": "Linux Essentials certification by Cisco Networking Academy. This helped me review and solidify my understanding of Linux systems, command line usage, and basic system administration.",
       "image": "img\\certs\\ndg_linux.jpg",
       "link": ""
     },
@@ -143,8 +149,8 @@
   },
   "credits": {
     "title": "Credits",
-    "description": "While I developed this portfolio website and created this 3D scene on Blender, I want to acknowledge that a lot of the models and textures were sourced from other creators that shared their work freely on the internet. Here are the 3D models I used in this scene:",
-    "note": "If you see your work and it wasn't credited, please contact me so I can add it.",
+    "description": "The 3D scene shown in this website was assembled on Blender using different models and textures, many of which were sourced from other creators that shared their work freely on the internet. Here are the 3D models I used in this scene:",
+    "note": "If you are the owner of any content used here and have not been properly credited, please contact me so I can rectify the attribution.",
     "models": [
       {
         "name": "Wooden Ceiling Lamp",

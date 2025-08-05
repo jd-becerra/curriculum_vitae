@@ -3,7 +3,6 @@
     <v-btn @click="closeSoftSkills">X</v-btn>
 
     <h1>{{ $t('soft-skills.title') }}</h1>
-    <p v-html="$t('soft-skills.main-description')"></p>
     <v-expansion-panels v-model="panel" multiple class="soft-skills-list">
       <v-expansion-panel
         v-for="(soft_skill, index) in softSkills"

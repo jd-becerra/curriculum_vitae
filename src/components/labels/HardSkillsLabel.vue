@@ -3,7 +3,6 @@
     <v-btn @click="closeHardSkills">X</v-btn>
 
     <h1>{{ $t('hard-skills.title') }}</h1>
-    <p v-html="$t('hard-skills.main-description')"></p>
     <v-expansion-panels
     v-model="panel"
     multiple
