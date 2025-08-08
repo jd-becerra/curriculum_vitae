@@ -55,11 +55,12 @@
     ]
   },
   "hard-skills": {
-    "title": "Main technical skills:",
+    "title": "Technical skills",
+    "expand": "Expand All Panels",
     "skills": [
       {
         "name": "C++",
-        "description": "Mainly used through programming courses like CS50 by Harvard University and for self-learning subjects such as graphics programming with OpenGL, algorithms, data structures and manual memory management, using the language capabilities to seek better control and understanding of how code executes at lower levels."
+        "description": "Mainly used through online programming courses like the CS50 by Harvard University and for self-learning subjects such as graphics programming with OpenGL, algorithms, data structures and manual memory management, using the language capabilities to seek better control and understanding of how code executes at lower levels."
       },
       {
         "name": "PHP",

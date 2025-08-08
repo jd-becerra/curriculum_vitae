@@ -69,7 +69,7 @@ class World {
   constructor(container) {
     const store = useMainStore()
     const manager = createLoadingManager()
-    showStats()
+    // showStats()
 
     // Instances of camera, scene, and renderer
     camera = createCamera(

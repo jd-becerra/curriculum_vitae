@@ -55,11 +55,12 @@
     ]
   },
   "hard-skills": {
-    "title": "Principales habilidades técnicas:",
+    "title": "Habilidades técnicas",
+    "expand": "Expandir todos los paneles",
     "skills": [
       {
         "name": "C++",
-        "description": "Principalmente utilizado en cursos de programación como CS50 de la Universidad de Harvard y para temas de autoaprendizaje como programación gráfica con OpenGL, algoritmos, estructuras de datos y gestión manual de memoria, usando las capacidades del lenguaje para buscar un mejor control y comprensión de cómo se ejecuta el código a bajo nivel."
+        "description": "Principalmente utilizado en cursos de programación en-línea como CS50 de la Universidad de Harvard y para temas de autoaprendizaje como programación gráfica con OpenGL, algoritmos, estructuras de datos y gestión manual de memoria, usando las capacidades del lenguaje para buscar un mejor control y comprensión de cómo se ejecuta el código a bajo nivel."
       },
       {
         "name": "PHP",

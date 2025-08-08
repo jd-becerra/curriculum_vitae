@@ -34,6 +34,8 @@
   --color-text: var(--vt-c-text-light-1);
   --color-sweep: #f2f2f2;
 
+  --border-radius: 5px;
+
   --section-gap: 160px;
 }
 
