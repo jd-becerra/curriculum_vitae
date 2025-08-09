@@ -56,7 +56,7 @@
   },
   "hard-skills": {
     "title": "Technical skills",
-    "expand": "Expand All Panels",
+    "expand": "Expand All Skills",
     "skills": [
       {
         "name": "C++",
@@ -94,6 +94,7 @@
   },
   "soft-skills": {
     "title": "Soft skills:",
+    "expand": "Expand All Skills",
     "skills": [
       {
         "name": "Ability to work in a team and communicate effectively",

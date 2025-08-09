@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
 import CloseButton from './CloseButton.vue'
-import '../assets/base.css';
+import '../assets/base.css'
 
 defineProps<{
   onClose: () => void
@@ -32,10 +32,11 @@ defineProps<{
   position: relative;
 }
 .label-container {
-  background-color: white;
+  background-color: var(--background-color);
   padding: 2rem;
   margin: 2rem;
   border-radius: var(--border-radius);
+  border: 5px solid var(--color-border);
   text-align: justify;
   font-family: Arial, sans-serif;
   width: 80%;

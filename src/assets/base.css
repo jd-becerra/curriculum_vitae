@@ -35,6 +35,8 @@
   --color-sweep: #f2f2f2;
 
   --border-radius: 5px;
+  --background-color: var(--vt-c-white);
+  --expand-panel-title: var(--vt-c-black-mute);
 
   --section-gap: 160px;
 }

@@ -52,6 +52,7 @@ export const useMainStore = defineStore('main', {
     triggerShowHardSkills() {
       this.showHardSkills = true
       this.aboutNavigationVisible = false
+      this.showDownloadCV = false
 
       // Set all other elements to false
       this.showSoftSkills = false
@@ -64,6 +65,7 @@ export const useMainStore = defineStore('main', {
     triggerShowSoftSkills() {
       this.showSoftSkills = true
       this.aboutNavigationVisible = false
+      this.showDownloadCV = false
 
       // Set all other elements to false
       this.showHardSkills = false
@@ -75,9 +77,10 @@ export const useMainStore = defineStore('main', {
     },
     triggerShowProjects() {
       this.showProjects = true
+      this.aboutNavigationVisible = false
+      this.showDownloadCV = false
 
       // Set all other elements to false
-      this.aboutNavigationVisible = false
       this.showHardSkills = false
       this.showSoftSkills = false
       this.showAbout = false
@@ -87,8 +90,8 @@ export const useMainStore = defineStore('main', {
     },
     triggerShowAbout() {
       this.showAbout = true
-
       this.aboutNavigationVisible = false
+      this.showDownloadCV = false
 
       // Set all other elements to false
       this.showHardSkills = false
@@ -101,6 +104,7 @@ export const useMainStore = defineStore('main', {
     triggerShowExperience() {
       this.showExperience = true
       this.aboutNavigationVisible = false
+      this.showDownloadCV = false
 
       // Set all other elements to false
       this.showHardSkills = false
@@ -113,6 +117,7 @@ export const useMainStore = defineStore('main', {
     triggerShowCertificates() {
       this.showCertificates = true
       this.aboutNavigationVisible = false
+      this.showDownloadCV = false
 
       // Set all other elements to false
       this.showHardSkills = false
@@ -124,6 +129,8 @@ export const useMainStore = defineStore('main', {
     },
     triggerShowCredits() {
       this.showCredits = true
+      this.aboutNavigationVisible = false
+      this.showDownloadCV = false
 
       // Set all other elements to false
       this.showHardSkills = false
@@ -132,7 +139,6 @@ export const useMainStore = defineStore('main', {
       this.showAbout = false
       this.showExperience = false
       this.showCertificates = false
-      this.aboutNavigationVisible = false
     },
     enableMouseEvents() {
       if (this.showPngHeadersLoading) return
@@ -221,29 +227,37 @@ export const useMainStore = defineStore('main', {
     hideHardSkills() {
       this.showHardSkills = false
       this.aboutNavigationVisible = true
+      this.showDownloadCV = true
     },
     hideSoftSkills() {
       this.showSoftSkills = false
       this.aboutNavigationVisible = true
+      this.showDownloadCV = true
     },
     hideProjects() {
       this.showProjects = false
       this.aboutNavigationVisible = true
+      this.showDownloadCV = true
     },
     hideAbout() {
       this.showAbout = false
       this.aboutNavigationVisible = true
+      this.showDownloadCV = true
     },
     hideExperience() {
       this.showExperience = false
       this.aboutNavigationVisible = true
+      this.showDownloadCV = true
     },
     hideCertificates() {
       this.showCertificates = false
       this.aboutNavigationVisible = true
+      this.showDownloadCV = true
     },
     hideCredits() {
       this.showCredits = false
+      this.aboutNavigationVisible = true
+      this.showDownloadCV = true
     },
     disableMouseEvents() {
       this.shouldAllowMouseEvents = false
@@ -286,10 +300,13 @@ export const useMainStore = defineStore('main', {
     },
     disableInfoPanel() {
       this.infoPanelVisible = false
-
-      this.showDownloadCV = true
       this.showSettingsMenu = true
-      this.enableMouseEvents()
+
+      // If Vue labels are open, don't enable mouse events
+      if (!this.isVueLabelOpen) {
+        this.showDownloadCV = true
+        this.enableMouseEvents()
+      }
     },
     disableDownloadCV() {
       this.showDownloadCV = false
@@ -298,12 +315,14 @@ export const useMainStore = defineStore('main', {
       this.showSettingsMenu = false
     },
     hidePngHeadersLoading() {
-      this.navigationMenuVisible = true
-      this.aboutNavigationVisible = true
-      this.shouldOpenNavigationMenu = false
-      
       this.showPngHeadersLoading = false
-      this.cursorCircleVisible = true
+
+      if (!this.isVueLabelOpen) {
+        this.navigationMenuVisible = true
+        this.aboutNavigationVisible = true
+        this.shouldOpenNavigationMenu = false
+        this.cursorCircleVisible = true
+      }
 
       setTimeout(() => {
         // To avoid the click event being triggered immediately after the loading animation is hidden
@@ -359,5 +378,16 @@ export const useMainStore = defineStore('main', {
     get3DScene: (state) => state.scene,
     getSelectedProjectIndex: (state) => state.currentProjectIndex,
     isPngHeadersLoadingVisible: (state) => state.showPngHeadersLoading,
+    isVueLabelOpen: (state) => {
+      return (
+        state.showHardSkills ||
+        state.showSoftSkills ||
+        state.showProjects ||
+        state.showAbout ||
+        state.showExperience ||
+        state.showCertificates ||
+        state.showCredits
+      )
+    },
   },
 })

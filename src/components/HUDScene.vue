@@ -39,7 +39,8 @@ const isNavOpen = computed({
       store.disableMouseEvents()
     } else {
       store.closeNavigationMenu()
-      store.enableMouseEvents()
+      if (!store.isVueLabelOpen && !store.isPngHeadersLoadingVisible)
+        store.enableMouseEvents()
     }
   },
 })
@@ -124,9 +125,11 @@ const handleClickOutside = (event: MouseEvent) => {
   if (isMenuVisible || isInfoPanelVisible) {
     store.closeNavigationMenu()
     store.disableInfoPanel()
-    if (!store.isPngHeadersLoadingVisible) store.enableMouseEvents()
+    if (!store.isPngHeadersLoadingVisible && !store.isVueLabelOpen) {
+      store.enableMouseEvents()
+      store.enableDownloadCV()
+    }
     store.enableSettingsMenu()
-    store.enableDownloadCV()
 
     isNavOpen.value = false
   }

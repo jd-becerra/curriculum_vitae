@@ -1,32 +1,51 @@
 <template>
-  <v-container class="soft-skills">
-    <v-btn @click="closeSoftSkills">X</v-btn>
-
-    <h1>{{ $t('soft-skills.title') }}</h1>
-    <v-expansion-panels v-model="panel" multiple class="soft-skills-list">
+  <LabelContainer class="soft-skills" @close="closeSoftSkills">
+    <h1 class="label-title">{{ $t('soft-skills.title') }}</h1>
+    <div class="expand-container">
+      <v-btn class="expand-btn" @click="expandAllPanels" flat>
+        {{ $t('soft-skills.expand') }}
+      </v-btn>
+    </div>
+    <v-expansion-panels
+      v-model="panelSoftSkills"
+      multiple
+      class="soft-skills-list"
+      flat
+      variant="popout"
+    >
       <v-expansion-panel
+        class="soft-skill-item"
         v-for="(soft_skill, index) in softSkills"
         :key="index"
         :text="soft_skill.description"
         :title="soft_skill.name"
       ></v-expansion-panel>
     </v-expansion-panels>
-    <div class="background"></div>
-  </v-container>
+  </LabelContainer>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useMainStore } from '../store'
-
 import { useI18n } from 'vue-i18n'
+import LabelContainer from '../LabelContainer.vue'
+import '../../assets/base.css'
 
 const { tm } = useI18n()
-const softSkills = tm('soft-skills.skills') as Array<{ name: string; description: string }>
+const softSkills = ref<Array<{ name: string; description: string }>>(
+  tm('soft-skills.skills') as Array<{ name: string; description: string }>,
+)
+
+watch(
+  () => tm('soft-skills.skills'),
+  (newSkills) => {
+    softSkills.value = newSkills as Array<{ name: string; description: string }>
+  },
+)
 
 const mainStore = useMainStore()
 // Use computed to get panel for soft skills
-const panel = ref<number[]>([])
+const panelSoftSkills = ref<number[]>([])
 const closeSoftSkills = () => {
   ;(document.querySelector('.label-renderer') as HTMLElement).style.pointerEvents = 'auto'
   ;(document.querySelector('.inspect-view') as HTMLElement).style.pointerEvents = 'none'
@@ -40,38 +59,38 @@ const closeSoftSkills = () => {
   mainStore.showNavigationMenu()
   mainStore.showAboutNavigation('skills')
 
-  panel.value = []
+  panelSoftSkills.value = []
+}
+
+const expandAllPanels = () => {
+  panelSoftSkills.value = softSkills.value.map((_, index) => index)
 }
 </script>
 
 <style scoped>
-.soft-skills {
-  background-color: white;
-  padding: 2rem;
-  margin: 2rem;
-  text-align: justify;
-  font-family: Arial, sans-serif;
-  width: 90%;
-  height: 80%;
-  overflow: scroll;
+.label-title {
+  font-weight: bold;
+  width: 100%;
+  text-align: center;
+  text-decoration: underline;
 }
-
 .soft-skill-item {
-  margin-top: 1rem;
+  border-radius: 0px;
+  border-bottom: 1px solid var(--color-border);
+}
+.v-expansion-panel >>> .v-expansion-panel-title {
+  font-weight: bold;
+  color: var(--expand-panel-title);
+}
+.expand-container {
+  display: flex;
+  justify-content: end;
   margin-bottom: 1rem;
 }
-
-.soft-skill-name {
-  font-weight: bold;
-}
-
-.background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: -1;
+.expand-btn {
+  border: 1px solid black;
+  border-radius: var(--border-radius);
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
 }
 </style>

@@ -1,17 +1,18 @@
 <template>
   <LabelContainer class="hard-skills" @close="closeHardSkills">
-    <h1>{{ $t('hard-skills.title') }}</h1>
+    <h1 class="label-title">{{ $t('hard-skills.title') }}</h1>
     <div class="expand-container">
-      <v-btn class="expand-btn" @click="expandAllPanels">
+      <v-btn class="expand-btn" @click="expandAllPanels" flat>
         {{ $t('hard-skills.expand') }}
       </v-btn>
     </div>
-    <v-expansion-panels v-model="panel" multiple class="hard-skills-list">
+    <v-expansion-panels v-model="panel" multiple class="hard-skills-list" flat variant="popout">
       <v-expansion-panel
+        class="hard-skill-item"
         v-for="(hard_skill, index) in getHardSkills"
         :key="index"
         :text="hard_skill.description"
-        :title="hard_skill.name"
+        :title="`${index + 1}. ${hard_skill.name}`"
         :ref="(el) => (panelRefs[index] = el as HTMLElement)"
       ></v-expansion-panel>
     </v-expansion-panels>
@@ -23,13 +24,19 @@ import { ref, computed, watch, nextTick } from 'vue'
 import { useMainStore } from '../store'
 import { useI18n } from 'vue-i18n'
 import LabelContainer from '../LabelContainer.vue'
+import '../../assets/base.css'
 
 const { tm } = useI18n()
-const getHardSkills = ref<Array<{ name: string; description: string }>>(tm('hard-skills.skills') as Array<{ name: string; description: string }>)
+const getHardSkills = ref<Array<{ name: string; description: string }>>(
+  tm('hard-skills.skills') as Array<{ name: string; description: string }>,
+)
 
-watch(() => tm('hard-skills.skills'), (newSkills) => {
-  getHardSkills.value = newSkills as Array<{ name: string; description: string }>
-})
+watch(
+  () => tm('hard-skills.skills'),
+  (newSkills) => {
+    getHardSkills.value = newSkills as Array<{ name: string; description: string }>
+  },
+)
 
 const mainStore = useMainStore()
 // Use computed to get panel for hard skills
@@ -78,16 +85,29 @@ const expandAllPanels = () => {
 </script>
 
 <style scoped>
-.hard-skill-item {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-.hard-skill-name {
+.label-title {
   font-weight: bold;
+  width: 100%;
+  text-align: center;
+  text-decoration: underline;
+}
+.hard-skill-item {
+  border-radius: 0px;
+  border-bottom: 1px solid var(--color-border);
+}
+.v-expansion-panel >>> .v-expansion-panel-title {
+  font-weight: bold;
+  color: var(--expand-panel-title);
 }
 .expand-container {
   display: flex;
   justify-content: end;
   margin-bottom: 1rem;
+}
+.expand-btn {
+  border: 1px solid black;
+  border-radius: var(--border-radius);
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
 }
 </style>

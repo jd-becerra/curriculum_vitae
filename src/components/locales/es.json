@@ -56,7 +56,7 @@
   },
   "hard-skills": {
     "title": "Habilidades técnicas",
-    "expand": "Expandir todos los paneles",
+    "expand": "Mostrar todas las habilidades",
     "skills": [
       {
         "name": "C++",
@@ -94,6 +94,7 @@
   },
   "soft-skills": {
     "title": "Habilidades blandas:",
+    "expand": "Mostrar todas las habilidades",
     "skills": [
       {
         "name": "Capacidad para trabajar en equipo y comunicarse eficazmente",

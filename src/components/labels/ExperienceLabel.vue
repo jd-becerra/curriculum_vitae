@@ -3,33 +3,33 @@
     <v-btn @click="closeView">X</v-btn>
 
     <h1>{{ $t('experience.title') }}</h1>
-    <h2>{{ $t('experience.education') }}</h2>
-    <p>{{ $t('experience.education-description') }}</p>
-    <h2>{{ $t('experience.exchange') }}</h2>
-    <p>{{ $t('experience.exchange-description') }}</p>
-    <h2>{{ $t('experience.social-service') }}</h2>
-    <p>{{ $t('experience.social-service-description') }}</p>
+    <h2>{{ $t('experience.education_title') }}</h2>
+    <p>{{ $t('experience.education_description') }}</p>
+    <h2>{{ $t('experience.exchange_title') }}</h2>
+    <p>{{ $t('experience.exchange_description') }}</p>
+    <h2>{{ $t('experience.social_service_title') }}</h2>
+    <p>{{ $t('experience.social_service_description') }}</p>
 
     <div class="background"></div>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { useMainStore } from '../store';
-const mainStore = useMainStore();
+import { useMainStore } from '../store'
+const mainStore = useMainStore()
 
 const closeView = () => {
-  (document.querySelector('.label-renderer') as HTMLElement).style.pointerEvents = "auto";
-  (document.querySelector('.inspect-view') as HTMLElement).style.pointerEvents = "none";
-  (document.querySelector('.menu-container') as HTMLElement).style.display = 'block';
+  ;(document.querySelector('.label-renderer') as HTMLElement).style.pointerEvents = 'auto'
+  ;(document.querySelector('.inspect-view') as HTMLElement).style.pointerEvents = 'none'
+  ;(document.querySelector('.menu-container') as HTMLElement).style.display = 'block'
 
-  mainStore.hideExperience();
+  mainStore.hideExperience()
   setTimeout(() => {
     // Avoid the click overlapping with PickHelper
     mainStore.enableMouseEvents()
   }, 100)
-  mainStore.showNavigationMenu();
-  mainStore.showAboutNavigation('experience');
+  mainStore.showNavigationMenu()
+  mainStore.showAboutNavigation('experience')
 }
 </script>
 
@@ -50,5 +50,4 @@ const closeView = () => {
   background-color: rgba(0, 0, 0, 0.5);
   z-index: -1;
 }
-
 </style>
