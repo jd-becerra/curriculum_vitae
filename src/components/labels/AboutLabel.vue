@@ -1,52 +1,61 @@
 <template>
-  <v-container class="about_me">
-    <v-btn @click="closeAboutMe">X</v-btn>
-
-    <h1>{{ $t('about.title') }}</h1>
-    <p v-html="$t('about.description')"></p>
-
-    <div class="background"></div>
-  </v-container>
+  <LabelContainer @close="closeAboutMe">
+    <div class="about-me">
+      <h1 class="label-title">{{ $t('about.title') }}</h1>
+      <p class="label-description" v-html="$t('about.description')"></p>
+    </div>
+  </LabelContainer>
 </template>
 
 <script setup lang="ts">
-import { useMainStore } from '../store';
-const mainStore = useMainStore();
+import { useMainStore } from '../store'
+import LabelContainer from '../LabelContainer.vue'
+import '../../assets/base.css'
+
+const mainStore = useMainStore()
 
 const closeAboutMe = () => {
-  (document.querySelector('.label-renderer') as HTMLElement).style.pointerEvents = "auto";
-  (document.querySelector('.inspect-view') as HTMLElement).style.pointerEvents = "none";
-  (document.querySelector('.menu-container') as HTMLElement).style.display = 'block';
+  ;(document.querySelector('.label-renderer') as HTMLElement).style.pointerEvents = 'auto'
+  ;(document.querySelector('.inspect-view') as HTMLElement).style.pointerEvents = 'none'
+  ;(document.querySelector('.menu-container') as HTMLElement).style.display = 'block'
 
-  mainStore.hideAbout();
-  mainStore.showAboutNavigation("main");
+  mainStore.hideAbout()
+  mainStore.showAboutNavigation('main')
   setTimeout(() => {
     // Avoid the click overlapping with PickHelper
     mainStore.enableMouseEvents()
   }, 100)
-  mainStore.showNavigationMenu();
-};
+  mainStore.showNavigationMenu()
+}
 </script>
 
-<style scoped>
-.about_me {
-  background-color: white;
-  padding: 2rem;
-  margin: 2rem;
-  text-align: justify;
-  font-family: Arial, sans-serif;
-  width: 90%;
-  height: 80%;
-  overflow: scroll;
-}
-
-.background {
-  position: fixed;
-  top: 0;
-  left: 0;
+<style>
+.label-title {
+  font-weight: bold;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: -1;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
+  color: white;
+}
+
+.label-description {
+  text-align: justify;
+  font-family: Arial, sans-serif;
+  overflow: scroll;
+  align-items: center;
+  padding-left: 5rem;
+  padding-right: 5rem;
+  width: 250%;
+}
+.about-me {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

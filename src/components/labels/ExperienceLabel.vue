@@ -1,21 +1,43 @@
 <template>
-  <v-container class="experience-label">
-    <v-btn @click="closeView">X</v-btn>
+  <LabelContainer @close="closeView">
+    <div class="experience">
+      <h1 class="label-title">{{ $t('experience.title') }}</h1>
 
-    <h1>{{ $t('experience.title') }}</h1>
-    <h2>{{ $t('experience.education_title') }}</h2>
-    <p>{{ $t('experience.education_description') }}</p>
-    <h2>{{ $t('experience.exchange_title') }}</h2>
-    <p>{{ $t('experience.exchange_description') }}</p>
-    <h2>{{ $t('experience.social_service_title') }}</h2>
-    <p>{{ $t('experience.social_service_description') }}</p>
-
-    <div class="background"></div>
-  </v-container>
+      <div class="experience-content">
+        <h2 class="experience-subtitle">{{ $t('experience.education_title') }}</h2>
+        <p class="experience-description">{{ $t('experience.education_description') }}</p>
+        <div class="image-container">
+          <img src="/img/experience/education.png" alt="Education" class="experience-image" />
+        </div>
+        <h2 class="experience-subtitle">{{ $t('experience.social_service_title') }}</h2>
+        <p class="experience-description">
+          {{ $t('experience.social_service_description') }}
+          <a :href="$t('experience.social_service_link')" target="_blank">{{
+            $t('experience.social_service_link')
+          }}</a>
+        </p>
+        <div class="image-container">
+          <img
+            src="/img/experience/social_service.svg"
+            alt="Social Service"
+            class="experience-image"
+          />
+        </div>
+        <h2 class="experience-subtitle">{{ $t('experience.exchange_title') }}</h2>
+        <p class="experience-description">{{ $t('experience.exchange_description') }}</p>
+        <div class="image-container">
+          <img src="/img/experience/exchange.jpg" alt="Exchange" class="experience-image" />
+        </div>
+      </div>
+    </div>
+  </LabelContainer>
 </template>
 
 <script setup lang="ts">
 import { useMainStore } from '../store'
+import LabelContainer from '../LabelContainer.vue'
+import '../../assets/base.css'
+
 const mainStore = useMainStore()
 
 const closeView = () => {
@@ -34,20 +56,34 @@ const closeView = () => {
 </script>
 
 <style scoped>
-.experience-label {
-  width: 80%;
-  height: 80%;
-  background-color: rgba(255, 255, 255, 0.9);
-  overflow-y: scroll;
-}
-
-.background {
-  position: fixed;
-  top: 0;
-  left: 0;
+.experience {
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.experience-content {
+  text-align: justify;
+  font-family: Arial, sans-serif;
+  overflow-y: scroll;
+  padding-left: 5rem;
+  padding-right: 5rem;
+  height: 100%;
+  width: 250%;
+}
+.experience-subtitle {
+  font-weight: bold;
+}
+.image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.experience-image {
+  width: 80%;
+  height: auto;
+  margin-top: 1rem;
+  margin-bottom: 3rem;
 }
 </style>

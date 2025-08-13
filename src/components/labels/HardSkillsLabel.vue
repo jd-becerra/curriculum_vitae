@@ -1,21 +1,23 @@
 <template>
-  <LabelContainer class="hard-skills" @close="closeHardSkills">
-    <h1 class="label-title">{{ $t('hard-skills.title') }}</h1>
-    <div class="expand-container">
+  <LabelContainer @close="closeHardSkills">
+    <div class="hard-skills">
       <v-btn class="expand-btn" @click="expandAllPanels" flat>
         {{ $t('hard-skills.expand') }}
       </v-btn>
+      <h1 class="label-title">{{ $t('hard-skills.title') }}</h1>
+      <div class="hard-skills-list">
+        <v-expansion-panels v-model="panel" multiple flat variant="popout">
+          <v-expansion-panel
+            class="hard-skill-item"
+            v-for="(hard_skill, index) in getHardSkills"
+            :key="index"
+            :text="hard_skill.description"
+            :title="`${index + 1}. ${hard_skill.name}`"
+            :ref="(el) => (panelRefs[index] = el as HTMLElement)"
+          ></v-expansion-panel>
+        </v-expansion-panels>
+      </div>
     </div>
-    <v-expansion-panels v-model="panel" multiple class="hard-skills-list" flat variant="popout">
-      <v-expansion-panel
-        class="hard-skill-item"
-        v-for="(hard_skill, index) in getHardSkills"
-        :key="index"
-        :text="hard_skill.description"
-        :title="`${index + 1}. ${hard_skill.name}`"
-        :ref="(el) => (panelRefs[index] = el as HTMLElement)"
-      ></v-expansion-panel>
-    </v-expansion-panels>
   </LabelContainer>
 </template>
 
@@ -85,29 +87,40 @@ const expandAllPanels = () => {
 </script>
 
 <style scoped>
+.hard-skills {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .label-title {
   font-weight: bold;
   width: 100%;
   text-align: center;
-  text-decoration: underline;
+}
+.hard-skills-list {
+  width: 250%;
+  height: 100%;
+  overflow-y: scroll;
+  padding-top: 5rem;
 }
 .hard-skill-item {
   border-radius: 0px;
   border-bottom: 1px solid var(--color-border);
 }
-.v-expansion-panel >>> .v-expansion-panel-title {
+.v-expansion-panel :deep() .v-expansion-panel-title {
   font-weight: bold;
   color: var(--expand-panel-title);
-}
-.expand-container {
-  display: flex;
-  justify-content: end;
-  margin-bottom: 1rem;
 }
 .expand-btn {
   border: 1px solid black;
   border-radius: var(--border-radius);
   font-size: 0.7rem;
   padding: 0.2rem 0.5rem;
+  position: absolute;
+  right: 15%;
+  top: 15%;
+  z-index: 10;
 }
 </style>

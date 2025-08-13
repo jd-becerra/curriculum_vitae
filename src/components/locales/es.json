@@ -93,7 +93,7 @@
     ]
   },
   "soft-skills": {
-    "title": "Habilidades blandas:",
+    "title": "Habilidades blandas",
     "expand": "Mostrar todas las habilidades",
     "skills": [
       {
@@ -114,32 +114,35 @@
       }
     ]
   },
-  "certificates": [
-    {
-      "title": "TOEFL ITP",
-      "description": "Certificación de competencia en inglés nivel C1, por la Universidad de Colima.",
-      "image": "img\\certs\\toefl.jpg",
-      "link": ""
-    },
-    {
-      "title": "Chino para HSK 6",
-      "description": "Certificación de competencia en chino HSK 6 por la Universidad de Pekín en Coursera. El curso se centra en comprensión lectora y auditiva.",
-      "image": "img\\certs\\hsk6.jpeg",
-      "link": "https://www.coursera.org/account/accomplishments/verify/7983U7F5RGUQ"
-    },
-    {
-      "title": "NDG Linux Essentials",
-      "description": "Certificación Linux Essentials por Cisco Networking Academy. Esto me ayudó a repasar y solidificar mi comprensión de sistemas Linux, uso de la línea de comandos y administración básica de sistemas.",
-      "image": "img\\certs\\ndg_linux.jpg",
-      "link": ""
-    },
-    {
-      "title": "CCNAv7: Introducción a redes",
-      "description": "Certificación Introducción a redes por Cisco Networking Academy. Este curso me enseñó los fundamentos de redes, incluyendo protocolos, direccionamiento IP y diseño de redes.",
-      "image": "img\\certs\\ccna.jpg",
-      "link": ""
-    }
-  ],
+  "certificates": {
+    "title": "Certificados",
+    "content": [
+      {
+        "title": "TOEFL ITP",
+        "description": "Certificación de competencia en inglés nivel C1, por la Universidad de Colima.",
+        "image": "img\\certs\\toefl.jpg",
+        "link": ""
+      },
+      {
+        "title": "Chino para HSK 6",
+        "description": "Certificación de competencia en chino HSK 6 por la Universidad de Pekín en Coursera. El curso se centra en comprensión lectora y auditiva.",
+        "image": "img\\certs\\hsk6.jpeg",
+        "link": "https://www.coursera.org/account/accomplishments/verify/7983U7F5RGUQ"
+      },
+      {
+        "title": "NDG Linux Essentials",
+        "description": "Certificación Linux Essentials por Cisco Networking Academy. Esto me ayudó a repasar y solidificar mi comprensión de sistemas Linux, uso de la línea de comandos y administración básica de sistemas.",
+        "image": "img\\certs\\ndg_linux.jpg",
+        "link": ""
+      },
+      {
+        "title": "CCNAv7: Introducción a redes",
+        "description": "Certificación Introducción a redes por Cisco Networking Academy. Este curso me enseñó los fundamentos de redes, incluyendo protocolos, direccionamiento IP y diseño de redes.",
+        "image": "img\\certs\\ccna.jpg",
+        "link": ""
+      }
+    ]
+  },
   "experience": {
     "title": "Experiencia",
     "education_title": "Educación",
@@ -147,7 +150,8 @@
     "exchange_title": "Programa de intercambio",
     "exchange_description": "Actualmente participo en un programa de intercambio en el ITESO, Universidad Jesuita de Guadalajara, donde estoy tomando cursos de bases de datos, desarrollo de aplicaciones móviles y diseño de sistemas escalables. Esta experiencia me permitirá ampliar mis horizontes, obtener nuevas perspectivas y conocer nuevas personas en mi campo, todo en un entorno tecnológico en crecimiento como Guadalajara.",
     "social_service_title": "Servicio social",
-    "social_service_description": "Completé mi servicio social en la Universidad de Colima, para la plataforma 'Educación a Distancia' (EDUC), diseñando e implementando el backend para el módulo de cuestionarios, permitiendo a los profesores crear evaluaciones como herramienta adicional de repaso para los estudiantes. Mis contribuciones incluyeron diseñar y actualizar la base de datos conforme recibíamos nuevos requisitos, crear y documentar APIs con Swagger, implementar autenticación y validación JSON para seguridad, y colaborar estrechamente tanto con los equipos backend y frontend como con profesores para asegurar que la plataforma cumpliera con los requisitos cambiantes y mantuviera la estabilidad."
+    "social_service_description": "Completé mi servicio social en la Universidad de Colima, para la plataforma 'Educación a Distancia' (EDUC), diseñando e implementando el backend para el módulo de cuestionarios, permitiendo a los profesores crear evaluaciones como herramienta adicional de repaso para los estudiantes. Mis contribuciones incluyeron diseñar y actualizar la base de datos conforme recibíamos nuevos requisitos, crear y documentar APIs con Swagger, implementar autenticación y validación JSON para seguridad, y colaborar estrechamente tanto con los equipos backend y frontend como con profesores para asegurar que la plataforma cumpliera con los requisitos cambiantes y mantuviera la estabilidad. Esta fue una experiencia muy valiosa para mí, con un gran equipo y supervisores que incluso nos permitieron aparecer en la página 'Acerca de' de la plataforma:",
+    "social_service_link": "https://educ.ucol.mx/educ-about/"
   },
   "credits": {
     "title": "Créditos",

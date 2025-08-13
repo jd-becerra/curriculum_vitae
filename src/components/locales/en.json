@@ -93,7 +93,7 @@
     ]
   },
   "soft-skills": {
-    "title": "Soft skills:",
+    "title": "Soft skills",
     "expand": "Expand All Skills",
     "skills": [
       {
@@ -114,32 +114,35 @@
       }
     ]
   },
-  "certificates": [
-    {
-      "title": "TOEFL ITP",
-      "description": "C1 level English proficiency certification, by the University of Colima.",
-      "image": "img\\certs\\toefl.jpg",
-      "link": ""
-    },
-    {
-      "title": "Chinese for HSK 6",
-      "description": "HSK 6 Chinese proficiency certification by Peking University on Coursera. The course focuses on reading and listening comprehension.",
-      "image": "img\\certs\\hsk6.jpeg",
-      "link": "https://www.coursera.org/account/accomplishments/verify/7983U7F5RGUQ"
-    },
-    {
-      "title": "NDG Linux Essentials",
-      "description": "Linux Essentials certification by Cisco Networking Academy. This helped me review and solidify my understanding of Linux systems, command line usage, and basic system administration.",
-      "image": "img\\certs\\ndg_linux.jpg",
-      "link": ""
-    },
-    {
-      "title": "CCNAv7: Introduction to Networks",
-      "description": "Introduction to Networks certification by Cisco Networking Academy. This course taught me the fundamentals of networking, including protocols, IP addressing, and network design.",
-      "image": "img\\certs\\ccna.jpg",
-      "link": ""
-    }
-  ],
+  "certificates": {
+    "title": "Certificates",
+    "content": [
+      {
+        "title": "TOEFL ITP",
+        "description": "C1 level English proficiency certification, by the University of Colima.",
+        "image": "img\\certs\\toefl.jpg",
+        "link": ""
+      },
+      {
+        "title": "Chinese for HSK 6",
+        "description": "HSK 6 Chinese proficiency certification by Peking University on Coursera. The course focuses on reading and listening comprehension.",
+        "image": "img\\certs\\hsk6.jpeg",
+        "link": "https://www.coursera.org/account/accomplishments/verify/7983U7F5RGUQ"
+      },
+      {
+        "title": "NDG Linux Essentials",
+        "description": "Linux Essentials certification by Cisco Networking Academy. This helped me review and solidify my understanding of Linux systems, command line usage, and basic system administration.",
+        "image": "img\\certs\\ndg_linux.jpg",
+        "link": ""
+      },
+      {
+        "title": "CCNAv7: Introduction to Networks",
+        "description": "Introduction to Networks certification by Cisco Networking Academy. This course taught me the fundamentals of networking, including protocols, IP addressing, and network design.",
+        "image": "img\\certs\\ccna.jpg",
+        "link": ""
+      }
+    ]
+  },
   "experience": {
     "title": "Experience",
     "education_title": "Education",
@@ -147,7 +150,8 @@
     "exchange_title": "Exchange Program",
     "exchange_description": "I'm currently participating in an exchange program at the ITESO, Universidad Jesuita de Guadalajara, where I am taking courses in databases, mobile app development, and scalable systems design. This experience will allow me to broaden my horizons, gain new perspectives and meet new people in my field, all in a growing tech environment such as Guadalajara.",
     "social_service_title": "Social Service",
-    "social_service_description": "I completed my Social Service program at the University of Colima, for the 'Educación a Distancia' (EDUC) platform, by designing and implementing the backend for the quizzes module, enabling teachers to create assessments as an additional review tool for students. My contributions included designing and updating the database as we got new requirements, creating and documenting APIs with Swagger, implementing JSON authentication and validation for security, and collaborating closely with both backend and frontend teams as well as professors to ensure the platform met evolving requirements and maintained stability."
+    "social_service_description": "I completed my Social Service program at the University of Colima, for the 'Educación a Distancia' (EDUC) platform, by designing and implementing the backend for the quizzes module, enabling teachers to create assessments as an additional review tool for students. My contributions included designing and updating the database as we got new requirements, creating and documenting APIs with Swagger, implementing JSON authentication and validation for security, and collaborating closely with both backend and frontend teams as well as professors to ensure the platform met evolving requirements and maintained stability. Overall, it was a very valuable experience with a great team and supervisors that even allowed us to appear on the 'About' page of the platform:",
+    "social_service_link": "https://educ.ucol.mx/educ-about/"
   },
   "credits": {
     "title": "Credits",

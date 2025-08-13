@@ -317,12 +317,12 @@ export const useMainStore = defineStore('main', {
     hidePngHeadersLoading() {
       this.showPngHeadersLoading = false
 
-      if (!this.isVueLabelOpen) {
-        this.navigationMenuVisible = true
-        this.aboutNavigationVisible = true
-        this.shouldOpenNavigationMenu = false
-        this.cursorCircleVisible = true
-      }
+      if (this.isVueLabelOpen) return;
+
+      this.navigationMenuVisible = true
+      this.aboutNavigationVisible = true
+      this.shouldOpenNavigationMenu = false
+      this.cursorCircleVisible = true
 
       setTimeout(() => {
         // To avoid the click event being triggered immediately after the loading animation is hidden

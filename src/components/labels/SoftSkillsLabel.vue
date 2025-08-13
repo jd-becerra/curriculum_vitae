@@ -1,26 +1,22 @@
 <template>
-  <LabelContainer class="soft-skills" @close="closeSoftSkills">
-    <h1 class="label-title">{{ $t('soft-skills.title') }}</h1>
-    <div class="expand-container">
+  <LabelContainer @close="closeSoftSkills">
+    <div class="soft-skills">
       <v-btn class="expand-btn" @click="expandAllPanels" flat>
         {{ $t('soft-skills.expand') }}
       </v-btn>
+      <h1 class="label-title">{{ $t('soft-skills.title') }}</h1>
+      <div class="soft-skills-list">
+        <v-expansion-panels v-model="panelSoftSkills" multiple flat variant="popout">
+          <v-expansion-panel
+            class="soft-skill-item"
+            v-for="(soft_skill, index) in softSkills"
+            :key="index"
+            :text="soft_skill.description"
+            :title="soft_skill.name"
+          ></v-expansion-panel>
+        </v-expansion-panels>
+      </div>
     </div>
-    <v-expansion-panels
-      v-model="panelSoftSkills"
-      multiple
-      class="soft-skills-list"
-      flat
-      variant="popout"
-    >
-      <v-expansion-panel
-        class="soft-skill-item"
-        v-for="(soft_skill, index) in softSkills"
-        :key="index"
-        :text="soft_skill.description"
-        :title="soft_skill.name"
-      ></v-expansion-panel>
-    </v-expansion-panels>
   </LabelContainer>
 </template>
 
@@ -68,29 +64,40 @@ const expandAllPanels = () => {
 </script>
 
 <style scoped>
+.soft-skills {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .label-title {
   font-weight: bold;
   width: 100%;
   text-align: center;
-  text-decoration: underline;
+}
+.soft-skills-list {
+  width: 250%;
+  height: 100%;
+  overflow-y: scroll;
+  padding-top: 5rem;
 }
 .soft-skill-item {
   border-radius: 0px;
   border-bottom: 1px solid var(--color-border);
 }
-.v-expansion-panel >>> .v-expansion-panel-title {
+.v-expansion-panel :deep() .v-expansion-panel-title {
   font-weight: bold;
   color: var(--expand-panel-title);
-}
-.expand-container {
-  display: flex;
-  justify-content: end;
-  margin-bottom: 1rem;
 }
 .expand-btn {
   border: 1px solid black;
   border-radius: var(--border-radius);
   font-size: 0.7rem;
   padding: 0.2rem 0.5rem;
+  position: absolute;
+  right: 15%;
+  top: 15%;
+  z-index: 10;
 }
 </style>

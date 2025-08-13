@@ -1,11 +1,8 @@
 <template>
-  <v-container class="certificates">
-    <v-btn @click="closeView">X</v-btn>
-    <v-carousel cycle>
-      <v-carousel-item
-        v-for="(certificate, index) in certificates"
-        :key="index"
-      >
+  <LabelContainer @close="closeView">
+    <h1 class="certificates-title">{{ $t('certificates.title') }}</h1>
+    <v-carousel cycle class="certificates-carousel">
+      <v-carousel-item v-for="(certificate, index) in certificates" :key="index">
         <v-card class="certificate-card">
           <v-card-title>{{ certificate.title }}</v-card-title>
           <v-card-text>
@@ -16,21 +13,18 @@
               </a>
             </p>
           </v-card-text>
-          <v-img
-            :src="certificate.image"
-            class="certificate-image"
-          ></v-img>
+          <v-img :src="certificate.image" class="certificate-image"></v-img>
         </v-card>
       </v-carousel-item>
     </v-carousel>
-
-    <div class="background"></div>
-  </v-container>
+  </LabelContainer>
 </template>
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { useMainStore } from '../store';
+import { useMainStore } from '../store'
+import LabelContainer from '../LabelContainer.vue'
+import '../../assets/base.css'
 
 interface Certificate {
   title: string
@@ -39,62 +33,54 @@ interface Certificate {
   image: string
 }
 
-const { locale, messages } = useI18n()
-const certificates = (messages.value[locale.value].certificates as Certificate[])
-const mainStore = useMainStore();
+const { tm } = useI18n()
+// Safely access certificates array from i18n messages
+const certificates = Array.isArray(tm('certificates'))
+  ? (tm('certificates') as Certificate[])
+  : (tm('certificates.content') as Certificate[]) || []
+const mainStore = useMainStore()
 
 const closeView = () => {
-  console.log('Closing certificates view');
-  (document.querySelector('.label-renderer') as HTMLElement).style.pointerEvents = "auto";
-  (document.querySelector('.inspect-view') as HTMLElement).style.pointerEvents = "none";
-  (document.querySelector('.menu-container') as HTMLElement).style.display = 'block';
+  console.log('Closing certificates view')
+  ;(document.querySelector('.label-renderer') as HTMLElement).style.pointerEvents = 'auto'
+  ;(document.querySelector('.inspect-view') as HTMLElement).style.pointerEvents = 'none'
+  ;(document.querySelector('.menu-container') as HTMLElement).style.display = 'block'
 
-  mainStore.hideCertificates();
+  mainStore.hideCertificates()
   setTimeout(() => {
     // Avoid the click overlapping with PickHelper
     mainStore.enableMouseEvents()
   }, 100)
-  mainStore.showNavigationMenu();
-  mainStore.showAboutNavigation('experience');
+  mainStore.showNavigationMenu()
+  mainStore.showAboutNavigation('experience')
 }
 </script>
 
 <style scoped>
+.certificates-carousel {
+  width: 100%;
+  height: 100%;
+}
+.certificates-title {
+  font-weight: bold;
+  width: 100%;
+  text-align: center;
+  background-color: black;
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 20%;
+}
 .certificate-card {
-  max-width: 600px;
+  width: 100%;
+  height: 100%;
   margin: auto;
 }
 .certificate-image {
   width: 100%;
-  height: auto;
-}
-.certificate {
-  text-align: center;
-  padding: 1rem;
-  background-color: #f5f5f5;
-  border-radius: 8px;
-}
-.certificate h2 {
-  margin-bottom: 0.5rem;
-}
-.certificate p {
-  margin: 0.5rem 0;
-}
-.certificate a {
-  color: #1976d2;
-  text-decoration: none;
-}
-.certificate a:hover {
-  text-decoration: underline;
-}
-
-.background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: -1;
 }
 </style>
