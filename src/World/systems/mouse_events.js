@@ -17,7 +17,7 @@ let hoveredObjectTag = null
 let bookFinishedListener = null
 
 // For social icons
-const gmailLink = 'mailto:jbecerraofficial@gmail.com'
+const gmailLink = 'jbecerraofficial@gmail.com'
 const linkedinLink = 'https://www.linkedin.com/in/jd-becerra'
 const githubLink = 'https://github.com/jd-becerra'
 let hovSocialIcon = null

@@ -20,7 +20,7 @@
   },
   "about": {
     "title": "Sobre mí",
-    "description": "Actualmente soy estudiante de séptimo semestre de Ingeniería de Software con buena experiencia académica y personal, en busca de trabajos de nivel inicial relacionados con el desarrollo backend. Los lenguajes de programación con los que tengo más experiencia son C/C++, Javascript y PHP, así como frameworks backend como Node.js. También tengo un buen entendimiento de sistemas Linux, Git, diseño y gestión de bases de datos, así como un nivel de competencia C1 en el idioma inglés. Mis principales fortalezas incluyen una curiosidad continua y deseo de aprender sobre nuevas tecnologías y conceptos, capacidad para trabajar en equipo y comunicarme eficazmente con otros, y un fuerte sentido de abstracción y comprensión de un proyecto y sus requisitos. Estoy emocionado de conectar con su organización para aplicar mis habilidades en escenarios del mundo real, seguir aprendiendo y, en última instancia, aportar valor a la visión de sus proyectos al máximo de mis capacidades."
+    "description": "Mi nombre es David. Actualmente soy estudiante de séptimo semestre de Ingeniería de Software con buena experiencia académica y personal, en busca de trabajos de nivel inicial relacionados con el desarrollo backend. Los lenguajes de programación con los que tengo más experiencia son C/C++, Javascript y PHP, así como frameworks backend como Node.js. También tengo un buen entendimiento de sistemas Linux, Git, diseño y gestión de bases de datos, así como un nivel de competencia C1 en el idioma inglés. Mis principales fortalezas incluyen una curiosidad continua y deseo de aprender sobre nuevas tecnologías y conceptos, capacidad para trabajar en equipo y comunicarme eficazmente con otros, y un fuerte sentido de abstracción y comprensión de un proyecto y sus requisitos. Estoy emocionado de conectar con su organización para aplicar mis habilidades en escenarios del mundo real, seguir aprendiendo y, en última instancia, aportar valor a la visión de sus proyectos al máximo de mis capacidades."
   },
   "projects": {
     "title": "Proyectos",
@@ -116,30 +116,32 @@
   },
   "certificates": {
     "title": "Certificados",
+    "expand": "Haz click en el panel para expandir la imagen",
+    "goto-link": "Ir al enlace del certificado",
     "content": [
       {
         "title": "TOEFL ITP",
         "description": "Certificación de competencia en inglés nivel C1, por la Universidad de Colima.",
-        "image": "img\\certs\\toefl.jpg",
+        "image": "toefl.jpg",
         "link": ""
-      },
-      {
-        "title": "Chino para HSK 6",
-        "description": "Certificación de competencia en chino HSK 6 por la Universidad de Pekín en Coursera. El curso se centra en comprensión lectora y auditiva.",
-        "image": "img\\certs\\hsk6.jpeg",
-        "link": "https://www.coursera.org/account/accomplishments/verify/7983U7F5RGUQ"
       },
       {
         "title": "NDG Linux Essentials",
         "description": "Certificación Linux Essentials por Cisco Networking Academy. Esto me ayudó a repasar y solidificar mi comprensión de sistemas Linux, uso de la línea de comandos y administración básica de sistemas.",
-        "image": "img\\certs\\ndg_linux.jpg",
+        "image": "ndg_linux.jpg",
         "link": ""
       },
       {
         "title": "CCNAv7: Introducción a redes",
         "description": "Certificación Introducción a redes por Cisco Networking Academy. Este curso me enseñó los fundamentos de redes, incluyendo protocolos, direccionamiento IP y diseño de redes.",
-        "image": "img\\certs\\ccna.jpg",
+        "image": "ccna.jpg",
         "link": ""
+      },
+      {
+        "title": "Chino para HSK 6",
+        "description": "Certificación de competencia en chino HSK 6 por la Universidad de Pekín en Coursera. El curso se centra en comprensión lectora y auditiva.",
+        "image": "hsk6.jpeg",
+        "link": "https://www.coursera.org/account/accomplishments/verify/7983U7F5RGUQ"
       }
     ]
   },

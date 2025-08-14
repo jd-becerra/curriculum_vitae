@@ -20,7 +20,7 @@
   },
   "about": {
     "title": "About me",
-    "description": "I'm currently a 7th grade Software Engineering student with good academic and personal experience, seeking for entry level jobs involving backend development. The programming languages I have most experience with are C/C++, Javascript and PHP, as well as backend frameworks such as Node.js. I also have a good understanding on Linux systems, Git, database design and management, as well as a C1 proficiency level in the English language. My main strengths include a continuous curiosity and pursuit for learning about new technologies and concepts, ability to work in a team and communicate effectively with others, and a strong sense of abstraction and understanding of a project and its requirements. I am excited to connect with your organization in order to apply my skills to real world scenarios, continue learning, and ultimately bring value to your projects' vision to the best of my abilities."
+    "description": "My name is David. I'm currently a 7th grade Software Engineering student with good academic and personal experience, seeking for entry level jobs involving backend development. The programming languages I have most experience with are C/C++, Javascript and PHP, as well as backend frameworks such as Node.js. I also have a good understanding on Linux systems, Git, database design and management, as well as a C1 proficiency level in the English language. My main strengths include a continuous curiosity and pursuit for learning about new technologies and concepts, ability to work in a team and communicate effectively with others, and a strong sense of abstraction and understanding of a project and its requirements. I am excited to connect with your organization in order to apply my skills to real world scenarios, continue learning, and ultimately bring value to your projects' vision to the best of my abilities."
   },
   "projects": {
     "title": "Projects",
@@ -116,30 +116,32 @@
   },
   "certificates": {
     "title": "Certificates",
+    "expand": "Click on the panel to expand the image",
+    "goto-link": "Go to certificate link",
     "content": [
       {
         "title": "TOEFL ITP",
         "description": "C1 level English proficiency certification, by the University of Colima.",
-        "image": "img\\certs\\toefl.jpg",
+        "image": "toefl.jpg",
         "link": ""
-      },
-      {
-        "title": "Chinese for HSK 6",
-        "description": "HSK 6 Chinese proficiency certification by Peking University on Coursera. The course focuses on reading and listening comprehension.",
-        "image": "img\\certs\\hsk6.jpeg",
-        "link": "https://www.coursera.org/account/accomplishments/verify/7983U7F5RGUQ"
       },
       {
         "title": "NDG Linux Essentials",
         "description": "Linux Essentials certification by Cisco Networking Academy. This helped me review and solidify my understanding of Linux systems, command line usage, and basic system administration.",
-        "image": "img\\certs\\ndg_linux.jpg",
+        "image": "ndg_linux.jpg",
         "link": ""
       },
       {
         "title": "CCNAv7: Introduction to Networks",
         "description": "Introduction to Networks certification by Cisco Networking Academy. This course taught me the fundamentals of networking, including protocols, IP addressing, and network design.",
-        "image": "img\\certs\\ccna.jpg",
+        "image": "ccna.jpg",
         "link": ""
+      },
+      {
+        "title": "Chinese for HSK 6",
+        "description": "HSK 6 Chinese proficiency certification by Peking University on Coursera. The course focuses on reading and listening comprehension.",
+        "image": "hsk6.jpeg",
+        "link": "https://www.coursera.org/account/accomplishments/verify/7983U7F5RGUQ"
       }
     ]
   },
