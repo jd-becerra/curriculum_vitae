@@ -12,6 +12,7 @@ export const useMainStore = defineStore('main', {
 
     navigationMenuVisible: false,
     shouldOpenNavigationMenu: false,
+    showInfoButton: false,
     infoPanelVisible: false,
     showSettingsMenu: false,
     showDownloadCV: false,
@@ -39,6 +40,7 @@ export const useMainStore = defineStore('main', {
 
     computerVisible: false,
     currentProjectIndex: 0,
+    cycleProjects: true,
 
     showPngHeadersLoading: false,
 
@@ -79,6 +81,7 @@ export const useMainStore = defineStore('main', {
       this.showProjects = true
       this.aboutNavigationVisible = false
       this.showDownloadCV = false
+      this.cycleProjects = false
 
       // Set all other elements to false
       this.showHardSkills = false
@@ -191,14 +194,19 @@ export const useMainStore = defineStore('main', {
       this.computerVisible = true
     },
     showCursorCircle() {
+      if (this.isVueLabelOpen || !this.showInfoButton) return
+
       this.cursorCircleVisible = true
     },
     enableInfoPanel() {
+      this.showInfoButton = false
       this.infoPanelVisible = true
       this.disableMouseEvents()
       this.showDownloadCV = false
       this.showSettingsMenu = false
       this.delayClick = true
+      this.cursorCircleVisible = false
+      this.navigationMenuVisible = false
 
       // Remove elements in class "hover-tag" (created by mouse_events.js)
       const hoverTags = document.querySelectorAll('.hover-tag')
@@ -222,6 +230,9 @@ export const useMainStore = defineStore('main', {
 
       this.disableMouseEvents()
     },
+    enableInfoButton() {
+      this.showInfoButton = true
+    },
 
     // Hide elements
     hideHardSkills() {
@@ -238,6 +249,7 @@ export const useMainStore = defineStore('main', {
       this.showProjects = false
       this.aboutNavigationVisible = true
       this.showDownloadCV = true
+      this.cycleProjects = true
     },
     hideAbout() {
       this.showAbout = false
@@ -297,14 +309,22 @@ export const useMainStore = defineStore('main', {
     },
     hideCursorCircle() {
       this.cursorCircleVisible = false
+
+      // Remove elements in class "hover-tag" (created by mouse_events.js)
+      const hoverTags = document.querySelectorAll('.hover-tag')
+      hoverTags.forEach((tag) => {
+        tag.remove()
+      })
     },
     disableInfoPanel() {
       this.infoPanelVisible = false
       this.showSettingsMenu = true
+      this.showInfoButton = true
 
       // If Vue labels are open, don't enable mouse events
       if (!this.isVueLabelOpen) {
         this.showDownloadCV = true
+        this.navigationMenuVisible = true
         this.enableMouseEvents()
       }
     },
@@ -317,9 +337,9 @@ export const useMainStore = defineStore('main', {
     hidePngHeadersLoading() {
       this.showPngHeadersLoading = false
 
-      if (this.isVueLabelOpen) return;
+      if (this.isVueLabelOpen) return
+      if (!this.infoPanelVisible) this.navigationMenuVisible = true
 
-      this.navigationMenuVisible = true
       this.aboutNavigationVisible = true
       this.shouldOpenNavigationMenu = false
       this.cursorCircleVisible = true
@@ -328,6 +348,9 @@ export const useMainStore = defineStore('main', {
         // To avoid the click event being triggered immediately after the loading animation is hidden
         this.enableMouseEvents()
       }, 50)
+    },
+    disableInfoButton() {
+      this.showInfoButton = false
     },
 
     // Setters
@@ -366,9 +389,11 @@ export const useMainStore = defineStore('main', {
     isNavigationMenuVisible: (state) => state.navigationMenuVisible,
     isNavigationMenuOpen: (state) => state.shouldOpenNavigationMenu,
     isInfoPanelVisible: (state) => state.infoPanelVisible,
+    isInfoButtonVisible: (state) => state.showInfoButton,
     isSettingsMenuVisible: (state) => state.showSettingsMenu,
     isDownloadCVVisible: (state) => state.showDownloadCV,
     isComputerVisible: (state) => state.computerVisible,
+    canCycleProjects: (state) => state.cycleProjects,
     getLocale: (state) => state.locale,
     getPanelHardSkills: (state) => state.panelHardSkills,
     shouldDelayClick: (state) => state.delayClick,

@@ -14,10 +14,9 @@ function createLights() {
   // Create two directional lights (one in front, one behind), and one below pointing up
   const lights = [
     // light (color, intensity, distance, decay)
-    new AmbientLight('white', 1),
+    new AmbientLight('white', 2),
     new DirectionalLight(0xa8bcff, 1.0), // Moonlight
-    new RectAreaLight('white', 15, 5, 10), // Rectangular light
-    new AmbientLight('white', 0.5),
+    new RectAreaLight('white', 20, 5, 10), // Rectangular light
     new PointLight('yellow', 5, 10, 2.0), // Candle light
     new PointLight('orange', 5, 50, 0.5), // Fireplace light
   ]

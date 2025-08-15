@@ -1,18 +1,19 @@
 {
   "menu": {
-    "open": "Navegation",
-    "close": "Close",
+    "open": "Open Navegation Menu",
+    "close": "Close Navigation Menu",
     "main-view": "Return to Main View",
-    "about": "About Me",
+    "about": "Go to About Me Section",
     "summary": "Summary",
     "skills": "My Skills",
-    "experience": "Certificates, Education and Experience",
-    "socials": "Contact and Credits",
-    "projects": "My Projects",
-    "info_panel": "Help",
+    "experience": "Certificates and Experience",
+    "socials": "Go to Contact and Credits Section",
+    "projects": "Go to My Projects Section",
+    "info_panel": "Help and Settings",
     "click_interact": "Click on highlighted objects to interact with them",
     "click_and_drag": "Click and drag mouse to move the camera",
-    "scroll_zoom": "Scroll to zoom in and out"
+    "scroll_zoom": "Scroll to zoom in and out",
+    "download": "Download CV in PDF format"
   },
   "scene-renderer": {
     "loading-text": "Loading scene...",
@@ -28,27 +29,27 @@
       {
         "title": "Collabtales - Imagine, write share, collaborate!",
         "description": "Collabtales is a web platform designed to create and develop stories in collaboration with others. Each user can start a story and generate a unique code to invite other participants to continue the narrative. The goal is to foster skills like creativity, teamwork, writing, and reading (especially in younger audiences). It was built using the Vue.js framework for the frontend, and PHP with a MySQL database for the backend. The platform includes features such as user authentication, story creation and management, and a voting system based on likes, plus localization support for both English and Spanish languages.",
-        "image": "img\\projects_scr\\collabtales.png",
+        "image": "collabtales.png",
         "link": "https://collabtales.avaldez0.com",
         "github_link": "https://github.com/jd-becerra/collabtales"
       },
       {
         "title": "Chess Game for Nand2Tetris ",
         "description": "This project is a simulation of a chess game built for the Nand2Tetris platform, specifically designed to run within the VM Emulator. The main objective was to deepen my understanding of low-level programming and assembly language by implementing chessboard logic, move handling, and graphics rendering from scratch. This was made after completing course modules corresponding to building essential computer components like: a Virtual Machine, a simple CPU, the Operating System, plus a custom programming language, a compiler and a basic graphics library.",
-        "image": "img\\projects_scr\\chess.png",
+        "image": "chess.png",
         "github_link": "https://github.com/jd-becerra/nand2tetris-Chess"
       },
       {
         "title": "Alicia - Demo for a Time Bending Game",
         "description": "This is a short, narrative-driven adventure game demo built in Godot that focuses on time manipulation mechanics. Developing this project gave me hands-on experience in key areas of game development, including programming functional game mechanics, creating a character control system based on unconventional physics, animation, and UI/UX design. The codebase showcases practical applications of software engineering principles such as event-driven programming, finite state machines, debugging, and optimization. NOTE: The demo was made with only Spanish language support.",
-        "image": "img\\projects_scr\\alicia.png",
+        "image": "alicia.png",
         "link": "https://alicia-juego.netlify.app/",
         "github_link": "https://github.com/jd-becerra/alicia"
       },
       {
         "title": "Interpolation Calculator",
         "description": "A small web tool developed for a Discrete Mathematics course, designed to visualize and compare four interpolation methods: Linear, Quadratic, and Lagrange of first and second order. Built with HTML, CSS, and JavaScript, it allows users to input data points and estimate unknown values using different interpolation techniques, displaying both the calculated results and the relative error percentage. The project integrates the GeoGebra API to graphically represent the data points, interpolation curves, and the estimated values, distinguishing between interpolation and extrapolation cases. NOTE: The tool and its documentation are only available in Spanish.",
-        "image": "img\\projects_scr\\interpolation.png",
+        "image": "interpolation.png",
         "link": "https://metodos-interpolacion.netlify.app/",
         "github_link": "https://github.com/jd-becerra/interpolationCalculator"
       }
@@ -157,8 +158,11 @@
   },
   "credits": {
     "title": "Credits",
-    "description": "The 3D scene shown in this website was assembled on Blender using different models and textures, many of which were sourced from other creators that shared their work freely on the internet. Here are the 3D models I used in this scene:",
+    "description": "The 3D scene shown in this website was assembled on Blender using different models and textures, many of which were sourced from other creators that shared their work freely on the internet. Here I list the 3D models used for this project.",
+    "note-title": "NOTE: ",
     "note": "If you are the owner of any content used here and have not been properly credited, please contact me so I can rectify the attribution.",
+    "author_by": "made by: ",
+    "link": "Link: ",
     "models": [
       {
         "name": "Wooden Ceiling Lamp",

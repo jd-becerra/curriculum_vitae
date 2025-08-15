@@ -1,18 +1,19 @@
 {
   "menu": {
-    "open": "Navegación",
-    "close": "Cerrar",
+    "open": "Abrir Menú de Navegación",
+    "close": "Cerrar Menú de Navegación",
     "main-view": "Regresar a la vista principal",
-    "about": "Sobre mí",
+    "about": "Ir a Sección Sobre mí",
     "summary": "Resumen",
     "skills": "Mis habilidades",
-    "experience": "Certificados, educación y experiencia",
-    "socials": "Contacto y créditos",
-    "projects": "Mis proyectos",
-    "info_panel": "Ayuda",
+    "experience": "Certificados y experiencia",
+    "socials": "Ir a Sección Contacto y créditos",
+    "projects": "Ir a Sección Mis proyectos",
+    "info_panel": "Ayuda y Configuración",
     "click_interact": "Haz clic en los objetos resaltados para interactuar con ellos",
     "click_and_drag": "Haz clic y arrastra el ratón para mover la cámara",
-    "scroll_zoom": "Desplázate para acercar y alejar"
+    "scroll_zoom": "Desplázate para acercar y alejar",
+    "download": "Descargar CV en formato PDF"
   },
   "scene-renderer": {
     "loading-text": "Cargando escena...",
@@ -28,27 +29,27 @@
       {
         "title": "Collabtales - ¡Imagina, escribe, comparte, colabora!",
         "description": "Collabtales es una plataforma web diseñada para crear y desarrollar historias en colaboración con otros. Cada usuario puede iniciar una historia y generar un código único para invitar a otros participantes a continuar la narrativa. El objetivo es fomentar habilidades como la creatividad, el trabajo en equipo, la escritura y la lectura (especialmente en audiencias jóvenes). Fue construida usando el framework Vue.js para el frontend, y PHP con una base de datos MySQL para el backend. La plataforma incluye funciones como autenticación de usuarios, creación y gestión de historias, y un sistema de votación basado en 'me gusta', además de soporte de localización para inglés y español.",
-        "image": "img\\projects_scr\\collabtales.png",
+        "image": "collabtales.png",
         "link": "https://collabtales.avaldez0.com",
         "github_link": "https://github.com/jd-becerra/collabtales"
       },
       {
         "title": "Juego de ajedrez para Nand2Tetris",
         "description": "Este proyecto es una simulación de un juego de ajedrez construida para la plataforma Nand2Tetris, diseñada específicamente para ejecutarse en el VM Emulator. El objetivo principal fue profundizar mi comprensión de la programación de bajo nivel y el lenguaje ensamblador implementando la lógica del tablero de ajedrez, manejo de movimientos y renderizado gráfico desde cero. Se realizó después de completar módulos del curso relacionados con la construcción de componentes esenciales de una computadora como: una máquina virtual, una CPU simple, el sistema operativo, además de un lenguaje de programación personalizado, un compilador y una biblioteca gráfica básica.",
-        "image": "img\\projects_scr\\chess.png",
+        "image": "chess.png",
         "github_link": "https://github.com/jd-becerra/nand2tetris-Chess"
       },
       {
         "title": "Alicia - Demo de un juego de manipulación del tiempo",
         "description": "Esta es una breve demo de un juego de aventuras narrativo construido en Godot que se centra en mecánicas de manipulación del tiempo. Desarrollar este proyecto me dio experiencia práctica en áreas clave del desarrollo de videojuegos, incluyendo la programación de mecánicas funcionales, la creación de un sistema de control de personajes basado en física no convencional, animación y diseño UI/UX. El código muestra aplicaciones prácticas de principios de ingeniería de software como programación orientada a eventos, máquinas de estados finitos, depuración y optimización. NOTA: La demo solo está disponible en español.",
-        "image": "img\\projects_scr\\alicia.png",
+        "image": "alicia.png",
         "link": "https://alicia-juego.netlify.app/",
         "github_link": "https://github.com/jd-becerra/alicia"
       },
       {
         "title": "Calculadora de interpolación",
         "description": "Una pequeña herramienta web desarrollada para un curso de Matemáticas Discretas, diseñada para visualizar y comparar cuatro métodos de interpolación: lineal, cuadrática y Lagrange de primer y segundo orden. Construida con HTML, CSS y JavaScript, permite a los usuarios ingresar puntos de datos y estimar valores desconocidos usando diferentes técnicas de interpolación, mostrando tanto los resultados calculados como el porcentaje de error relativo. El proyecto integra la API de GeoGebra para representar gráficamente los puntos de datos, las curvas de interpolación y los valores estimados, distinguiendo entre casos de interpolación y extrapolación. NOTA: La herramienta y su documentación solo están disponibles en español.",
-        "image": "img\\projects_scr\\interpolation.png",
+        "image": "interpolation.png",
         "link": "https://metodos-interpolacion.netlify.app/",
         "github_link": "https://github.com/jd-becerra/interpolationCalculator"
       }
@@ -117,7 +118,7 @@
   "certificates": {
     "title": "Certificados",
     "expand": "Haz click en el panel para expandir la imagen",
-    "goto-link": "Ir al enlace del certificado",
+    "goto-link": "Visitar enlace del certificado",
     "content": [
       {
         "title": "TOEFL ITP",
@@ -157,8 +158,11 @@
   },
   "credits": {
     "title": "Créditos",
-    "description": "La escena 3D mostrada en este sitio web fue ensamblada en Blender utilizando varios modelos y texturas, muchos de los cuales fueron obtenidos de otros creadores que compartieron su trabajo libremente en internet. Aquí listo los modelos que utilicé en esta escena:",
+    "description": "La escena 3D mostrada en este sitio web fue ensamblada en Blender utilizando varios modelos y texturas, muchos de los cuales fueron obtenidos de otros creadores que compartieron su trabajo libremente en internet. Aquí se listan los modelos 3D utilizados para este proyecto.",
+    "note-title": "AVISO: ",
     "note": "Si eres el propietario de algún contenido utilizado y no has sido debidamente acreditado, por favor contáctame para que pueda rectificar la atribución.",
+    "author_by": "realizado por: ",
+    "link": "Enlace: ",
     "models": [
       {
         "name": "Wooden Ceiling Lamp",

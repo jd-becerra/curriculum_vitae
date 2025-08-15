@@ -112,37 +112,40 @@ defineExpose({
 }
 
 .loading {
-  position: fixed; /* make it fixed to always cover the screen */
-  left: 0; /* start at the top-left corner */
+  position: fixed;
+  left: 0;
   top: 0;
-  width: 100%; /* cover the entire width of the screen */
-  height: 100%; /* cover the entire height of the screen */
-  background-color: #555555;
-  z-index: 9999; /* ensure it is above all other elements */
+  width: 100%;
+  height: 100%;
+  background-color: #030303;
+  z-index: 9999;
   display: flex;
-  flex-direction: column; /* stack elements vertically */
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   pointer-events: none;
-  /* opacity: 0.1; /* for debugging */
 }
 .loading-bar-container {
-  width: 50%;
-  height: 10px;
-  background-color: #333;
-  border-radius: 5px;
+  width: 75%;
+  height: 15px;
+  background-color: #353535;
+  border-radius: 10px;
   overflow: hidden;
+  box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.2); /* glow effect */
 }
 
 .loading-bar {
   height: 100%;
   width: 0%;
-  background: #888109;
+  background: #ffffff;
   transition: width 0.3s ease;
+  box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.6); /* glow effect */
 }
 
 .loading-description {
   color: white;
+  font-size: 1.2em;
+  font-weight: bold;
   margin-top: 10px;
 }
 

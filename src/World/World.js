@@ -148,7 +148,7 @@ class World {
     scene.add(createComputerLabel(container.clientWidth, container.clientHeight))
 
     // Create selectors to move through the scene
-    createAreaSelectors(scene)
+    createAreaSelectors(scene, loop)
 
     controls = createOrbitControls(camera, labelRenderer.domElement)
 

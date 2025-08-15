@@ -5,6 +5,7 @@ import { ref, onMounted, onBeforeUnmount, computed, inject } from 'vue'
 import NavigationItem from './NavigationItem.vue'
 import { useI18n } from 'vue-i18n'
 import { useMainStore } from './store'
+import '../assets/base.css'
 
 import {
   mdiHome,
@@ -15,6 +16,7 @@ import {
   mdiMenuDown,
 } from '@mdi/js'
 import type { VListGroup } from 'vuetify/components'
+import { remove } from '@tweenjs/tween.js'
 
 const world = inject('world') as any
 const { t, locale } = useI18n()
@@ -39,8 +41,7 @@ const isNavOpen = computed({
       store.disableMouseEvents()
     } else {
       store.closeNavigationMenu()
-      if (!store.isVueLabelOpen && !store.isPngHeadersLoadingVisible)
-        store.enableMouseEvents()
+      if (!store.isVueLabelOpen && !store.isPngHeadersLoadingVisible) store.enableMouseEvents()
     }
   },
 })
@@ -135,6 +136,24 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 }
 
+const removeMouseArtifacts = () => {
+  // Remove decorative elements that follow the mouse
+  store.hideCursorCircle()
+  removeHoverTags()
+}
+
+const toggleNavigationMenu = () => {
+  isNavOpen.value = !isNavOpen.value
+  removeHoverTags()
+}
+
+const removeHoverTags = () => {
+  const hoverTags = document.querySelectorAll('.hover-tag')
+  hoverTags.forEach((tag) => {
+    tag.remove()
+  })
+}
+
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
 })
@@ -145,74 +164,68 @@ onBeforeUnmount(() => {
 
 <template>
   <v-main>
-    <v-list
+    <v-container
       ref="menuRef"
       class="menu-container"
       v-show="showNavigationMenu"
-      @mouseenter="store.hideCursorCircle()"
+      @mouseenter.stop.prevent="removeMouseArtifacts"
       @mouseleave="store.showCursorCircle()"
     >
-      <v-list-item @click="isNavOpen = !isNavOpen">
-        <v-list-item-title>
-          {{ isNavOpen ? 'Close' : 'Navigation' }}
-        </v-list-item-title>
-      </v-list-item>
+      <v-btn @click.stop.prevent="toggleNavigationMenu" class="pa-0 ma-0">
+        <v-img src="/icons/location.svg" width="24" height="24" class="mr-2" />
+        {{ isNavOpen ? $t('menu.close') : $t('menu.open') }}
 
-      <transition name="fade-slide">
+        <v-img v-if="isNavOpen" src="/icons/chevron_left.svg" width="24" height="24" class="ml-8" />
+        <v-img v-else src="/icons/chevron_right.svg" width="24" height="24" class="ml-8" />
+      </v-btn>
+      <transition name="fade-slide" class="navigation-menu-transition">
         <div v-show="isNavOpen">
           <!-- Main View -->
-          <v-list-item>
-            <NavigationItem :prepend-icon="mdiHome" @click.stop.prevent="returnToMainView">
-              <template #heading>{{ $t('menu.main-view') }}</template>
-            </NavigationItem>
-          </v-list-item>
+          <v-btn @click.stop.prevent="returnToMainView" class="d-flex justify-start">
+            <v-icon class="mr-2">{{ mdiHome }}</v-icon>
+            {{ $t('menu.main-view') }}
+          </v-btn>
 
-          <!-- Projects -->
-          <v-list-item>
-            <NavigationItem
-              :prepend-icon="mdiBriefcaseOutline"
-              @click.stop.prevent="moveToProjects"
-            >
-              <template #heading>{{ $t('menu.projects') }}</template>
-            </NavigationItem>
-          </v-list-item>
-
-          <!-- Socials -->
-          <v-list-item>
-            <NavigationItem :prepend-icon="mdiGithub" @click.stop.prevent="moveToSocials">
-              <template #heading>{{ $t('menu.socials') }}</template>
-            </NavigationItem>
-          </v-list-item>
+          <!-- Projects Section -->
+          <v-btn @click.stop.prevent="moveToProjects" class="d-flex justify-start">
+            <v-icon class="mr-2">{{ mdiBriefcaseOutline }}</v-icon>
+            {{ $t('menu.projects') }}
+          </v-btn>
 
           <!-- About Section -->
-          <v-list-item @click.stop.prevent="isAboutOpen = !isAboutOpen">
-            <NavigationItem :prepend-icon="mdiAccountCircle">
-              <template #heading>{{ $t('menu.about') }}</template>
-            </NavigationItem>
-          </v-list-item>
+
+          <v-btn @click.stop.prevent="isAboutOpen = !isAboutOpen" class="d-flex justify-start">
+            <v-icon class="mr-2">{{ mdiAccountCircle }}</v-icon>
+            {{ $t('menu.about') }}
+            <v-img src="/icons/arrow_down.svg" width="24" height="24" class="ml-8" />
+          </v-btn>
 
           <transition name="fade-slide">
             <div v-show="isAboutOpen" class="about-subitems">
-              <v-list-item>
-                <NavigationItem @click.stop.prevent="moveToAboutSkills"
-                  ><template #heading>{{ $t('menu.skills') }}</template></NavigationItem
-                >
-              </v-list-item>
-              <v-list-item>
-                <NavigationItem @click.stop.prevent="moveToAboutMain"
-                  ><template #heading>{{ $t('menu.summary') }}</template></NavigationItem
-                >
-              </v-list-item>
-              <v-list-item>
-                <NavigationItem @click.stop.prevent="moveToAboutExperience"
-                  ><template #heading>{{ $t('menu.experience') }}</template></NavigationItem
-                >
-              </v-list-item>
+              <v-btn @click.stop.prevent="moveToAboutMain" class="d-flex justify-start">
+                <v-img src="/icons/summary.svg" width="24" height="24" class="mr-2" />
+                {{ $t('menu.summary') }}
+              </v-btn>
+              <v-btn @click.stop.prevent="moveToAboutSkills" class="d-flex justify-start">
+                <v-img src="/icons/skill.svg" width="24" height="24" class="mr-2" />
+                {{ $t('menu.skills') }}
+              </v-btn>
+              <v-btn @click.stop.prevent="moveToAboutExperience" class="d-flex justify-start">
+                <v-img src="/icons/certified.svg" width="24" height="24" class="mr-2" />
+                {{ $t('menu.experience') }}
+              </v-btn>
             </div>
           </transition>
+
+          <!-- Socials -->
+
+          <v-btn @click.stop.prevent="moveToSocials" class="d-flex justify-start">
+            <v-icon class="mr-2">{{ mdiGithub }}</v-icon>
+            {{ $t('menu.socials') }}
+          </v-btn>
         </div>
       </transition>
-    </v-list>
+    </v-container>
 
     <v-container class="about-navigation" v-show="showAboutNavigationBtns">
       <v-btn
@@ -232,16 +245,23 @@ onBeforeUnmount(() => {
       </v-btn>
     </v-container>
 
-    <v-container
-      class="menu-download-cv"
+    <v-btn
+      class="download-cv-btn"
       v-show="showDownloadCV"
-      @mouseenter="store.hideCursorCircle()"
+      @mouseenter.stop.prevent="removeMouseArtifacts"
       @mouseleave="store.showCursorCircle()"
     >
-      <v-btn>Download CV</v-btn>
-    </v-container>
+      <v-img src="/icons/download.svg" width="24" height="24" class="mr-2" />
+      {{ t('menu.download') }}
+    </v-btn>
 
-    <v-btn @click.stop.prevent="store.enableInfoPanel()" class="language-button">
+    <v-btn
+      @click.stop.prevent="store.enableInfoPanel()"
+      @mouseenter.stop.prevent="removeMouseArtifacts"
+      v-show="store.isInfoButtonVisible"
+      class="language-button"
+    >
+      <v-img src="/icons/help.svg" width="24" height="24" class="mr-2" />
       {{ t('menu.info_panel') }}
     </v-btn>
 
@@ -249,7 +269,7 @@ onBeforeUnmount(() => {
       class="info"
       ref="infoPanelRef"
       v-show="infoPanelVisible"
-      @mouseenter="store.hideCursorCircle()"
+      @mouseenter.stop.prevent="removeMouseArtifacts"
       @mouseleave="store.showCursorCircle()"
     >
       <div class="info-item d-flex justify-end">
@@ -320,48 +340,42 @@ onBeforeUnmount(() => {
   overflow: hidden;
 }
 
-.toggle-button {
-  background-color: rgb(58, 58, 58);
-  color: white;
+.language-button {
+  position: fixed;
+  top: 2%;
+  left: 2%;
+  z-index: 1000;
+  pointer-events: all;
 }
-
+.download-cv-btn {
+  position: fixed;
+  top: 6%;
+  left: 2%;
+  pointer-events: all;
+  z-index: 1000;
+}
 .menu-container {
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 10%;
+  left: 2%;
+  z-index: 1000;
+  margin: 0;
   padding: 0;
-  z-index: 10;
   pointer-events: auto;
-  width: auto;
-  height: auto;
-  background-color: rgb(58, 58, 58);
-  color: white;
-  opacity: 0.9;
+  display: flex;
+  flex-direction: row;
 }
 
 .menu-container-buttons {
   display: flex;
   flex-direction: column;
   padding-left: 1rem;
-  background-color: rgb(58, 58, 58);
-  color: white;
   opacity: 0.9;
 }
 
 .section-buttons-container {
   margin-top: -1rem;
   margin-left: 0.5rem;
-}
-
-.menu-download-cv {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-  justify-content: flex-end; /* Align buttons to the right */
-  pointer-events: all;
-  padding: 16px;
-  width: 20%;
 }
 
 .menu-settings {
@@ -423,17 +437,6 @@ onBeforeUnmount(() => {
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
   cursor: default;
-}
-
-.language-button {
-  background-color: rgb(58, 58, 58);
-  color: white;
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin: 16px;
-  z-index: 1000;
-  pointer-events: all;
 }
 
 .about-subitems {
@@ -554,5 +557,13 @@ onBeforeUnmount(() => {
   left: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none;
+}
+
+.v-btn {
+  min-width: var(--button-width);
+  height: var(--button-height);
+  border: 3px solid #030303;
+  border-radius: var(--border-radius);
+  text-align: right;
 }
 </style>

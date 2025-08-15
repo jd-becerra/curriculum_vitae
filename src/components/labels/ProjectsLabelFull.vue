@@ -1,77 +1,139 @@
 <template>
-  <v-container
-    class="projects"
-  >
-    <v-btn @click="closeView">X</v-btn>
-    <v-carousel v-model="selectedProject">
-      <v-carousel-item
-        v-for="(project, index) in projects"
-        :key="index"
-        cover
+  <LabelContainer @close="closeView">
+    <h1 class="projects-title">{{ $t('projects.title') }}</h1>
+    <div class="carousel-container">
+      <v-carousel
+        v-model="selectedProject"
+        class="projects-carousel"
+        hide-delimiter-background
+        color="black"
+        show-arrows="hover"
+        @mouseenter="showDescriptions = true"
+        @mouseleave="showDescriptions = false"
       >
-        <v-card class="project-card">
-          <v-card-title>{{ project.title }}</v-card-title>
-          <v-card-text>
-            <p v-html="project.description"></p>
-            <p v-if="project.link && project.link.trim() !== ''">
-              <a :href="project.link" target="_blank">{{ project.link }}</a>
-            </p>
-          </v-card-text>
-          <v-img :src="project.image" class="project-image"></v-img>
-        </v-card>
-      </v-carousel-item>
-    </v-carousel>
+        <v-carousel-item
+          class="project-item"
+          v-for="(project, index) in projects"
+          :key="index"
+          :src="`/img/projects_scr/${project.image}`"
+          cover
+        >
+          <v-overlay absolute v-if="showDescriptions">
+            <div class="project-overlay">
+              <h2 class="text-center">{{ project.title }}</h2>
 
-    <div class="background"></div>
-  </v-container>
+              {{ project.description }}
+
+              <p v-if="project.link && project.link.trim() !== ''">
+                <strong>Visit the website:</strong>
+                <a :href="project.link" target="_blank">
+                  {{ project.link }}
+                </a>
+              </p>
+
+              <p v-if="project.github_link && project.github_link.trim() !== ''">
+                <strong>Check the code on GitHub:</strong>
+                <a :href="project.github_link" target="_blank">
+                  {{ project.github_link }}
+                </a>
+              </p>
+            </div>
+          </v-overlay>
+        </v-carousel-item>
+      </v-carousel>
+    </div>
+  </LabelContainer>
 </template>
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { useMainStore } from '../store';
-import { computed } from 'vue';
+import { useMainStore } from '../store'
+import { computed, ref, watch } from 'vue'
+import LabelContainer from '../LabelContainer.vue'
 
 interface Project {
   title: string
   description: string
   image: string
   link?: string
+  github_link?: string
 }
 
 const { tm } = useI18n()
-const projects = (tm('projects.cards') as Project[]);
+const projects = ref<Project[]>(tm('projects.cards'))
 
-const mainStore = useMainStore();
+watch(
+  () => tm('projects.cards'),
+  (newProjects) => {
+    projects.value = newProjects as Project[]
+  },
+)
+
+const mainStore = useMainStore()
+
 const selectedProject = computed({
-  get: () => mainStore.getSelectedProjectIndex,  // Get the currently selected project index
+  get: () => mainStore.getSelectedProjectIndex, // Get the currently selected project index
   /* The set method helps us update the selection, since without it, the computed property
   would be read-only and it would get stuck on the first project selected */
-  set: (val: number) => mainStore.setCurrentProjectIndex(val)
-});
+  set: (val: number) => mainStore.setCurrentProjectIndex(val),
+})
 
 const closeView = () => {
-  (document.querySelector('.label-renderer') as HTMLElement).style.pointerEvents = "auto";
-  (document.querySelector('.inspect-view') as HTMLElement).style.pointerEvents = "none";
-  (document.querySelector('.menu-container') as HTMLElement).style.display = 'block';
+  ;(document.querySelector('.label-renderer') as HTMLElement).style.pointerEvents = 'auto'
+  ;(document.querySelector('.inspect-view') as HTMLElement).style.pointerEvents = 'none'
+  ;(document.querySelector('.menu-container') as HTMLElement).style.display = 'block'
 
-  mainStore.hideProjects();
+  mainStore.hideProjects()
   setTimeout(() => {
     // Avoid the click overlapping with PickHelper
     mainStore.enableMouseEvents()
   }, 100)
-  mainStore.showNavigationMenu();
+  mainStore.showNavigationMenu()
 }
+
+const showDescriptions = ref<boolean>(false)
 </script>
 
 <style scoped>
-.background {
-  position: fixed;
-  top: 0;
-  left: 0;
+.projects-container {
+  display: flex;
+  align-items: center;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: -1;
+}
+.projects-title {
+  font-weight: bold;
+  height: 20%;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
+  color: white;
+}
+.projects-carousel {
+  width: 100%;
+  height: 100%;
+}
+.carousel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+
+  margin-top: 2rem;
+}
+.project-overlay {
+  background-color: rgba(39, 39, 39, 0.95);
+  color: white;
+  padding: 1.5rem;
+  text-align: justify;
+}
+a {
+  color: #72fdfd;
+  text-decoration: underline;
 }
 </style>
-

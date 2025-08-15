@@ -132,7 +132,7 @@ function handleReturnToMainView(controls, loop, scene) {
   useMainStore().disableComputerVisible()
 
   // Return area selectors
-  createAreaSelectors(scene)
+  createAreaSelectors(scene, loop)
   const headersToRender = ['my_projects', 'professional_overview', 'contact_me']
   createPngHeaders(loop, scene, headersToRender, getCurrentLocale())
 

@@ -1,25 +1,31 @@
 <template>
-  <v-container class="credits-label">
-    <v-btn @click="closeView">X</v-btn>
-    <h1>{{ tm('credits.title') }}</h1>
-    <p>{{ tm('credits.description') }}</p>
-    <v-list class="credits-list">
-      <v-list-item v-for="(model, index) in credits" :key="index">
-        <v-list-item-title>{{ model.name }}</v-list-item-title>
-        <v-list-item-subtitle>{{ model.author }}</v-list-item-subtitle>
-        <v-list-item-subtitle>
-          <a :href="model.link" target="_blank">{{ model.link }}</a>
-        </v-list-item-subtitle>
-      </v-list-item>
-    </v-list>
-
-    <div class="background"></div>
-  </v-container>
+  <LabelContainer @close="closeView">
+    <div class="credits">
+      <h1 class="label-title">{{ tm('credits.title') }}</h1>
+      <div class="credits-content">
+        <p class="mt-2">{{ tm('credits.description') }}</p>
+        <p>
+          <strong>{{ tm('credits.note-title') }}</strong> {{ tm('credits.note') }}
+        </p>
+        <ul class="credits-list">
+          <li v-for="(model, index) in credits" :key="index">
+            {{ model.name }}, {{ tm('credits.author_by') }} <strong>{{ model.author }}</strong
+            >.
+            {{ tm('credits.link') }}
+            <a :href="model.link" target="_blank">{{ model.link }}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </LabelContainer>
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useMainStore } from '../store'
+import LabelContainer from '../LabelContainer.vue'
+import '../../assets/base.css'
 
 interface Credit {
   name: string
@@ -28,7 +34,14 @@ interface Credit {
 }
 
 const { tm } = useI18n()
-const credits: Credit[] = tm('credits.models')
+const credits = ref<Array<Credit>>(tm('credits.models'))
+
+watch(
+  () => tm('credits.models'),
+  (newCredits) => {
+    credits.value = newCredits as Credit[]
+  },
+)
 
 const mainStore = useMainStore()
 const closeView = () => {
@@ -47,24 +60,27 @@ const closeView = () => {
 </script>
 
 <style scoped>
-.credits-label {
-  background-color: white;
-  padding: 2rem;
-  margin: 2rem;
-  text-align: justify;
-  font-family: Arial, sans-serif;
-  width: 90%;
-  height: 80%;
-  overflow: scroll;
-}
-
-.background {
-  position: fixed;
-  top: 0;
-  left: 0;
+.credits {
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.credits-content {
+  text-align: justify;
+  font-family: Arial, sans-serif;
+  overflow-y: scroll;
+  padding-left: 5rem;
+  padding-right: 5rem;
+  height: 100%;
+  width: 250%;
+}
+.credits-list {
+  margin-top: 1rem;
+}
+a {
+  color: #00277d;
+  text-decoration: underline;
 }
 </style>

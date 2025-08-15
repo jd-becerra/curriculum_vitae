@@ -33,6 +33,8 @@
   --color-heading: var(--vt-c-text-light-1);
   --color-text: var(--vt-c-text-light-1);
   --color-sweep: #f2f2f2;
+  --button-width: 370px;
+  --button-height: 200px;
 
   --border-radius: 5px;
   --background-color: var(--vt-c-white);

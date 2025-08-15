@@ -1,14 +1,14 @@
 <template>
   <v-container class="projects">
-    <v-carousel cycle :show-arrows="false" v-model="currentProjectIndex">
+    <v-carousel
+      :cycle="cycleProjects"
+      :show-arrows="false"
+      v-model="currentProjectIndex"
+      hide-delimiter-background
+      :hide-delimiters="true"
+    >
       <v-carousel-item v-for="(project, index) in projects" :key="index" cover>
-        <v-card class="project-card" style="cursor: pointer">
-          <v-card-title>{{ project.title }}</v-card-title>
-          <v-card-text>
-            <p v-html="project.description"></p>
-          </v-card-text>
-          <v-img :src="project.image" class="project-image"></v-img>
-        </v-card>
+        <v-img :src="`/img/projects_scr/${project.image}`" class="project-image"></v-img>
       </v-carousel-item>
     </v-carousel>
   </v-container>
@@ -20,8 +20,6 @@ import { ref, watch } from 'vue'
 import { useMainStore } from '../store'
 
 interface Project {
-  title: string
-  description: string
   image: string
 }
 
@@ -33,6 +31,15 @@ watch(currentProjectIndex, (newIndex) => {
   const mainStore = useMainStore()
   if (!mainStore.showProjects) mainStore.setCurrentProjectIndex(newIndex)
 })
+
+const mainStore = useMainStore()
+const cycleProjects = ref<boolean>(mainStore.canCycleProjects)
+watch(
+  () => mainStore.canCycleProjects,
+  (newVal) => {
+    cycleProjects.value = newVal
+  },
+)
 </script>
 
 <style scoped>
@@ -41,7 +48,10 @@ watch(currentProjectIndex, (newIndex) => {
   height: 100%;
   top: 0;
   left: 0;
-  margin-top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .projects-carousel {
@@ -49,6 +59,7 @@ watch(currentProjectIndex, (newIndex) => {
   height: 100%;
   max-width: 100%;
   max-height: 100%;
+  cursor: pointer;
 }
 
 .project-slide {
@@ -64,8 +75,10 @@ watch(currentProjectIndex, (newIndex) => {
 }
 
 .project-image {
-  object-fit: scale-down;
-  margin-top: 0; /* Ensure no space between card and image */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
 }
 
 /* Ensure text doesn't overflow */

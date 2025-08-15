@@ -1,22 +1,13 @@
-import {
-  Mesh,
-  BoxGeometry,
-  MeshBasicMaterial, // If we want to use a texture and shadows, use MeshStandardMaterial
-  MeshPhongMaterial,
-  WireframeGeometry,
-  LineSegments,
-  TextureLoader,
-} from 'three'
+import { Mesh, BoxGeometry, MeshPhongMaterial } from 'three'
 
-function createCube(props) {
+function createCube(props, loop) {
   const scale = props.scale || [1, 1, 1]
   const position = props.position || [0, 0, 0]
   const geometry = new BoxGeometry(scale[0], scale[1], scale[2])
-  const wireframe = new WireframeGeometry(geometry)
   const material = new MeshPhongMaterial({
     color: props.color,
     transparent: true,
-    opacity: 0.1, // Default opacity set to 0.5
+    opacity: 0.2, // Default opacity set to 0.5
     emissive: 0x270000,
     depthWrite: false,
   })
@@ -32,13 +23,20 @@ function createCube(props) {
 
   // Custom properties
   cube.clickable = true
+  cube.elapsed = 0 // keep track of total time
 
   cube.tick = (delta) => {
-    //cube.rotation.y += 0.01;
-    /* // Move the cube in orbit
-    cube.position.x = Math.cos(cube.rotation.y) * 2;
-    cube.position.z = Math.sin(cube.rotation.y) * 2; */
+    cube.elapsed += delta // accumulate total time
+
+    const maxEmissive = 0x808080
+    const speed = 1 // lower = slower pulsing
+    const wave = (Math.sin(cube.elapsed * speed) + 1) / 2 // range [0, 1]
+
+    const color = wave * (maxEmissive / 0xffffff)
+    cube.material.emissive.setRGB(color, color, color)
   }
+
+  loop.updatables.push(cube)
 
   return cube
 }
@@ -60,28 +58,39 @@ function removeAreaSelectors(scene) {
   }
 }
 
-function createAreaSelectors(scene) {
+function createAreaSelectors(scene, loop) {
   // create cubes that will be used as click areas for the labels
-  const cubeComputer = createCube({
-    color: 'blue',
-    scale: [15, 10, 20],
-    position: [-15, -3, -5],
-    name: 'Projects Area',
-  })
+
+  const color = 'gray'
+  const cubeComputer = createCube(
+    {
+      color: color,
+      scale: [14, 20, 20],
+      position: [-23, 0, -11],
+      name: 'Projects Area',
+    },
+    loop,
+  )
   scene.add(cubeComputer)
-  const cubeSocials = createCube({
-    color: 'red',
-    scale: [14, 22, 10],
-    position: [14, 0, -30],
-    name: 'Socials Area',
-  })
+  const cubeSocials = createCube(
+    {
+      color: color,
+      scale: [14, 20, 5],
+      position: [14, 0, -26],
+      name: 'Socials Area',
+    },
+    loop,
+  )
   scene.add(cubeSocials)
-  const cubeBookcase = createCube({
-    color: 'yellow',
-    scale: [14, 22, 10],
-    position: [-5, 0, -30],
-    name: 'About Area',
-  })
+  const cubeBookcase = createCube(
+    {
+      color: color,
+      scale: [14, 20, 5],
+      position: [-5, 0, -26],
+      name: 'About Area',
+    },
+    loop,
+  )
   scene.add(cubeBookcase)
 }
 

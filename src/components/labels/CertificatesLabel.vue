@@ -3,7 +3,6 @@
     <h1 class="certificates-title">{{ $t('certificates.title') }}</h1>
     <div class="carousel-container">
       <v-carousel
-        cycle
         class="certificates-carousel"
         hide-delimiter-background
         color="black"
@@ -21,9 +20,9 @@
           <v-img :src="`/img/certs/${certificate.image}`" class="certificate-image">
             <v-overlay v-if="showDescriptions" absolute>
               <div class="certificate-overlay">
-                <p>
+                <h2>
                   <strong>{{ certificate.title }}</strong>
-                </p>
+                </h2>
                 <p>
                   {{ certificate.description }}
                 </p>
@@ -34,10 +33,14 @@
             </v-overlay>
           </v-img>
 
-          <v-img src="/icons/expand.svg" class="expand-icon" />
+          <v-img
+            src="/icons/expand.svg"
+            class="expand-icon"
+            @click.stop.prevent="showExpandedImage(certificate.image)"
+          />
         </v-carousel-item>
       </v-carousel>
-      <p class="expand-text">{{ $t('certificates.expand') }}</p>
+      <p class="expand-text font-weight-bold">{{ $t('certificates.expand') }}</p>
     </div>
     <div v-if="expandImage" class="expand-image">
       <v-img v-if="currentImage" :src="currentImage" @click.stop.prevent="hideExpandedImage" />
@@ -63,7 +66,7 @@ interface Certificate {
 const { tm } = useI18n()
 // Safely access certificates array from i18n messages
 const certificates = ref<Array<Certificate>>((tm('certificates.content') as Certificate[]) || [])
-const showDescriptions = ref<boolean>(true)
+const showDescriptions = ref<boolean>(false)
 
 watch(
   () => tm('certificates.content'),
@@ -96,10 +99,12 @@ const showExpandedImage = (image: string) => {
   expandImage.value = true
   currentImage.value = `/img/certs/${image}`
   mainStore.disableInfoPanel()
+  mainStore.disableInfoButton()
 }
 const hideExpandedImage = () => {
   expandImage.value = false
   currentImage.value = null
+  mainStore.enableInfoButton()
 }
 </script>
 
@@ -172,6 +177,7 @@ const hideExpandedImage = () => {
   right: 0;
   z-index: 999;
   background-color: black;
+  cursor: pointer;
 }
 .expand-text {
   width: 100%;
@@ -183,12 +189,19 @@ const hideExpandedImage = () => {
   height: 24px;
   padding: 1rem;
   position: absolute;
-  bottom: 5%;
+  bottom: 10%;
   right: 20%;
   z-index: 10;
   background-color: rgba(10, 10, 10, 0.8);
   border-radius: 5px;
   object-fit: contain;
+  cursor: pointer;
+}
+.expand-icon:hover {
+  transform: scale(1.25); /* grow icon when hovering */
+}
+.certificate-item {
+  cursor: pointer;
 }
 .certificate-item:hover .expand-icon {
   transform: scale(1.25); /* grow icon when hovering anywhere on the panel */
@@ -198,7 +211,7 @@ const hideExpandedImage = () => {
   height: 32px;
   padding: 1rem;
   position: absolute;
-  top: 15%;
+  bottom: 15%;
   right: 15%;
   z-index: 1000;
   background-color: rgba(10, 10, 10, 0.6);
@@ -207,5 +220,9 @@ const hideExpandedImage = () => {
 }
 .expand-image:hover .hide-icon {
   transform: scale(1.25); /* grow icon when hovering on the expanded image */
+}
+a {
+  color: #72fdfd;
+  text-decoration: underline;
 }
 </style>

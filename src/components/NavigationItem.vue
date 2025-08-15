@@ -12,8 +12,7 @@
   position: relative;
   place-content: left;
   place-items: left;
-  background-color: transparent;
-  color: white;
+
   width: 100%;
   justify-content: left;
 }
@@ -21,7 +20,5 @@
 .header {
   font-size: 1rem;
   font-weight: 300;
-  color: white;
 }
-
 </style>
