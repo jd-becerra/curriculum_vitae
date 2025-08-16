@@ -1,4 +1,6 @@
-# My Curriculum Vitae: An Interactive Site with Three.js + Vue.js
+# My Curriculum Vitae: An Interactive 3D Website with Three.js + Vue.js
+
+### Link to website: https://curriculum-vitae-chi-plum.vercel.app
 
 This is my personal curriculum website, built using Three.js and Vue.js. It features an interactive 3D scene that showcases my skills and experience in a visually engaging way.
 

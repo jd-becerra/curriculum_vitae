@@ -284,6 +284,8 @@ onBeforeUnmount(() => {
       v-show="showDownloadCV"
       @mouseenter.stop.prevent="removeMouseArtifacts"
       @mouseleave="store.showCursorCircle()"
+      href="/cv.pdf"
+      download
     >
       <v-img src="/icons/download.svg" width="24" height="24" class="mr-2" />
       {{ t('menu.download') }}
@@ -456,6 +458,11 @@ onBeforeUnmount(() => {
   left: 2%;
   pointer-events: all;
   z-index: 1000;
+  text-decoration: none;
+  color: black;
+}
+.download-cv-btn:hover {
+  background-color: rgb(249, 249, 249);
 }
 .menu-container {
   position: fixed;
