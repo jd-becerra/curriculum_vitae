@@ -136,6 +136,17 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 }
 
+const handleClickMenuContainer = () => {
+  /** When the container expands, there's an area that is not visible to the user
+   * but still blocks clicks from the scene behind. Handle this case as if we
+   * had clicked outside the menu container.
+   */
+  if (!store.isPngHeadersLoadingVisible && !store.isVueLabelOpen) {
+    store.closeNavigationMenu()
+    store.enableMouseEvents()
+  }
+}
+
 const removeMouseArtifacts = () => {
   // Remove decorative elements that follow the mouse
   store.hideCursorCircle()
@@ -154,6 +165,23 @@ const removeHoverTags = () => {
   })
 }
 
+const getAboutNavigationButtons = () => {
+  const subarea = store.getCurrentArea
+  const buttons = { up: '', down: '' }
+
+  if (subarea == 'about') {
+    buttons.up = 'move_up_skills'
+    buttons.down = 'move_down_experience'
+  } else if (subarea == 'skills') {
+    buttons.down = 'move_down_about'
+  } else if (subarea == 'experience') {
+    buttons.up = 'move_up_about'
+  }
+
+  // It's ok if we get empty strings, because in those cases the buttons are not rendered
+  return buttons
+}
+
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
 })
@@ -164,10 +192,12 @@ onBeforeUnmount(() => {
 
 <template>
   <v-main>
+    <!-- Navigation Menu -->
     <v-container
       ref="menuRef"
       class="menu-container"
       v-show="showNavigationMenu"
+      @click="handleClickMenuContainer"
       @mouseenter.stop.prevent="removeMouseArtifacts"
       @mouseleave="store.showCursorCircle()"
     >
@@ -227,13 +257,15 @@ onBeforeUnmount(() => {
       </transition>
     </v-container>
 
+    <!-- Navigation Buttons for About Section -->
     <v-container class="about-navigation" v-show="showAboutNavigationBtns">
       <v-btn
         v-show="store.moveUpToSkills || store.moveUpToAbout"
         @click.stop.prevent="moveAboutUp"
         class="about-navigation-up"
       >
-        <v-icon :icon="mdiMenuUp" class="about-nav-icon"></v-icon>
+        {{ $t(`menu.${getAboutNavigationButtons().up}`) }}
+        <v-icon :icon="mdiMenuUp" class="about-nav-icon ml-2" width="32" height="32"></v-icon>
       </v-btn>
 
       <v-btn
@@ -241,10 +273,12 @@ onBeforeUnmount(() => {
         @click.stop.prevent="moveAboutDown"
         class="about-navigation-down"
       >
-        <v-icon :icon="mdiMenuDown" class="about-nav-icon"></v-icon>
+        {{ $t(`menu.${getAboutNavigationButtons().down}`) }}
+        <v-icon :icon="mdiMenuDown" class="about-nav-icon ml-2" width="32" height="32"></v-icon>
       </v-btn>
     </v-container>
 
+    <!-- Download Button -->
     <v-btn
       class="download-cv-btn"
       v-show="showDownloadCV"
@@ -255,6 +289,7 @@ onBeforeUnmount(() => {
       {{ t('menu.download') }}
     </v-btn>
 
+    <!-- Button to open Settings Menu -->
     <v-btn
       @click.stop.prevent="store.enableInfoPanel()"
       @mouseenter.stop.prevent="removeMouseArtifacts"
@@ -265,6 +300,7 @@ onBeforeUnmount(() => {
       {{ t('menu.info_panel') }}
     </v-btn>
 
+    <!-- Settings Menu -->
     <v-container
       class="info"
       ref="infoPanelRef"
@@ -272,39 +308,106 @@ onBeforeUnmount(() => {
       @mouseenter.stop.prevent="removeMouseArtifacts"
       @mouseleave="store.showCursorCircle()"
     >
-      <div class="info-item d-flex justify-end">
-        <v-btn class="close-info" @click.stop.prevent="store.disableInfoPanel()"> X </v-btn>
-      </div>
+      <v-btn class="close-info" @click.stop.prevent="store.disableInfoPanel()">
+        <v-img src="/icons/close_black.svg" width="24" height="24"
+      /></v-btn>
+
+      <v-container class="pa-0 ma-0 d-flex align-end justify-end mb-12">
+        <v-list>
+          <v-list-group>
+            <template v-slot:activator="{ props }">
+              <v-list-item v-bind="props" class="change_language_open">
+                <v-list-item-title class="d-flex justify-end">{{
+                  t('menu.change_language')
+                }}</v-list-item-title>
+              </v-list-item>
+            </template>
+            <v-list-item @click.stop.prevent="setLang('en')" class="change_language_item en">
+              <div class="d-flex">
+                <v-img src="/icons/english.png" width="24" height="24" class="mr-4" />
+                {{ t('menu.english') }}
+              </div>
+            </v-list-item>
+            <v-list-item @click.stop.prevent="setLang('es')" class="change_language_item es">
+              <div class="d-flex">
+                <v-img src="/icons/spanish.png" width="24" height="24" class="mr-4" />
+                {{ t('menu.spanish') }}
+              </div>
+            </v-list-item>
+          </v-list-group>
+        </v-list>
+      </v-container>
+
+      <h3 class="text-h5">{{ t('menu.instructions_title') }}</h3>
+      <p class="mb-4">{{ t('menu.instructions') }}</p>
       <v-list>
         <v-list-group>
           <template v-slot:activator="{ props }">
             <v-list-item v-bind="props">
-              <v-list-item-title>Change Language</v-list-item-title>
+              <v-list-item-title>1. {{ t('menu.click_and_drag') }}</v-list-item-title>
             </v-list-item>
           </template>
           <v-list-item>
-            <v-btn @click.stop.prevent="setLang('en')">English</v-btn>
+            <v-img class="w-100" src="/img/info/drag.gif" alt="Drag"></v-img>
           </v-list-item>
+        </v-list-group>
+        <v-list-group>
+          <template v-slot:activator="{ props }">
+            <v-list-item v-bind="props">
+              <v-list-item-title>2. {{ t('menu.click_interact') }}</v-list-item-title>
+            </v-list-item>
+          </template>
           <v-list-item>
-            <v-btn @click.stop.prevent="setLang('es')">Español</v-btn>
+            <v-img class="w-100" src="/img/info/click.gif" alt="Click"></v-img>
+          </v-list-item>
+        </v-list-group>
+        <v-list-group>
+          <template v-slot:activator="{ props }">
+            <v-list-item v-bind="props">
+              <v-list-item-title>3. {{ t('menu.scroll_zoom') }}</v-list-item-title>
+            </v-list-item>
+          </template>
+          <v-list-item>
+            <v-img class="w-100" src="/img/info/zoom.gif" alt="Scroll"></v-img>
+          </v-list-item>
+        </v-list-group>
+        <v-list-group>
+          <template v-slot:activator="{ props }">
+            <v-list-item v-bind="props">
+              <v-list-item-title>4. {{ t('menu.instructions_navigation') }}</v-list-item-title>
+            </v-list-item>
+          </template>
+          <v-list-item>
+            <v-img
+              class="w-100"
+              src="/img/info/instructions_navigation.gif"
+              alt="Navigation"
+            ></v-img>
+          </v-list-item>
+        </v-list-group>
+        <v-list-group>
+          <template v-slot:activator="{ props }">
+            <v-list-item v-bind="props">
+              <v-list-item-title>5. {{ t('menu.instructions_download') }}</v-list-item-title>
+            </v-list-item>
+          </template>
+          <v-list-item>
+            <v-img class="w-100" src="/img/info/instructions_download.png" alt="Download"></v-img>
           </v-list-item>
         </v-list-group>
       </v-list>
-      <div class="info-item">
-        <v-img src="/img/click.gif" width="50" height="50" alt="Click"></v-img>
-        <span class="info-text">{{ t('menu.click_interact') }}</span>
-      </div>
-      <div class="info-item">
-        <div style="height: 50px; width: 50px; position: relative">
-          <v-img id="drag-icon" src="/img/drag.png" width="50" height="50" alt="Drag"></v-img>
-        </div>
-        <span class="info-text">{{ t('menu.click_and_drag') }}</span>
-      </div>
-      <div class="info-item">
-        <v-img id="scroll-icon" src="/img/scroll.png" width="50" height="50" alt="Scroll"></v-img>
-        <span class="info-text">{{ t('menu.scroll_zoom') }}</span>
+
+      <div class="visit_link">
+        <p>
+          {{ t('menu.visit_link') }}
+          <a href="https://github.com/jd-becerra/curriculum_vitae" target="_blank"
+            >https://github.com/jd-becerra/curriculum_vitae</a
+          >
+        </p>
       </div>
     </v-container>
+
+    <!-- Background Overlay -->
     <div class="info-background" v-if="infoPanelVisible"></div>
     <div class="png-headers-loading" v-show="showPngHeadersLoading">
       <v-progress-circular
@@ -356,6 +459,7 @@ onBeforeUnmount(() => {
 }
 .menu-container {
   position: fixed;
+  width: auto;
   top: 10%;
   left: 2%;
   z-index: 1000;
@@ -396,9 +500,10 @@ onBeforeUnmount(() => {
 
 .info {
   position: absolute;
+  border: 5px solid black;
   right: 0;
   padding: 16px;
-  width: 30%;
+  width: 50%;
   height: 100%;
   pointer-events: all;
   display: flex;
@@ -407,6 +512,7 @@ onBeforeUnmount(() => {
   animation: slide-in 0.5s ease-in-out;
   z-index: 1000;
   cursor: default;
+  overflow-y: auto;
 }
 @keyframes slide-in {
   from {
@@ -422,10 +528,15 @@ onBeforeUnmount(() => {
   margin-bottom: 2rem;
 }
 .close-info {
-  background-color: transparent;
-  color: black;
-  border: none;
-  font-size: 1.5rem;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  min-width: 24px !important;
+  width: 24px !important;
+  height: 24px !important;
+  padding: 0 !important;
+  align-self: flex-end;
+  margin: 1rem 1rem 1rem 0;
 }
 .info-background {
   position: fixed;
@@ -438,7 +549,6 @@ onBeforeUnmount(() => {
   -webkit-backdrop-filter: blur(2px);
   cursor: default;
 }
-
 .about-subitems {
   padding-left: 30px;
 }
@@ -447,24 +557,15 @@ onBeforeUnmount(() => {
 .about-navigation-up,
 .about-navigation-down {
   position: fixed;
-  color: black;
   z-index: 15;
-  font-size: 2rem;
-  height: auto;
-  width: auto;
   pointer-events: auto;
-  transform: translate(-50%, -50%);
+  transform: translate(50%, -50%);
   /** center objects (vertically and horizontally) */
   display: flex;
   align-items: center;
   justify-content: center;
   border: 2px solid black;
   background-color: white;
-
-  /* New glowing border effect */
-  border-image: linear-gradient(90deg, transparent, var(--color-sweep), transparent);
-  border-image-slice: 1;
-  animation: glow-sweep 3s infinite;
 }
 
 @keyframes bounce {
@@ -485,58 +586,6 @@ onBeforeUnmount(() => {
 .about-navigation-down {
   bottom: 20%;
   right: 15%;
-
-  animation-delay: 0.75s; /* Add delay to alternate the bounce */
-}
-
-#drag-icon {
-  animation: drag 3s infinite ease-in-out;
-}
-@keyframes drag {
-  0% {
-    transform: translateX(0);
-    width: 50px;
-    height: 50px;
-  }
-  30% {
-    transform: translateX(0);
-    width: 50px;
-    height: 50px;
-  }
-  40% {
-    transform: translateX(0);
-    width: 45px;
-    height: 45px;
-  }
-  60% {
-    transform: translateX(10px);
-  }
-  90% {
-    width: 45px;
-    height: 45px;
-    transform: translateX(0);
-  }
-}
-
-#scroll-icon {
-  animation: scroll 3s infinite ease-in-out;
-}
-@keyframes scroll {
-  0% {
-    transform: translateY(0);
-  }
-  30% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-2px);
-  }
-  60% {
-    transform: translateY(5px);
-  }
-  90% {
-    transform: translateY(0);
-  }
 }
 
 .png-headers-loading {
@@ -565,5 +614,29 @@ onBeforeUnmount(() => {
   border: 3px solid #030303;
   border-radius: var(--border-radius);
   text-align: right;
+}
+
+.change_language_open {
+  border-bottom: 1px solid black;
+}
+.change_language_item {
+  width: 100%;
+  border: 1px solid black;
+  display: flex;
+}
+.en {
+  margin-top: 0.5rem;
+  border-bottom: 0px;
+}
+.visit_link {
+  display: flex;
+  font-size: 0.9rem;
+  align-items: end;
+  justify-content: end;
+  flex-grow: 1;
+}
+a {
+  color: #00277d;
+  text-decoration: underline;
 }
 </style>

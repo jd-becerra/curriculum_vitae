@@ -16,6 +16,7 @@ const sceneContainer = ref<HTMLDivElement | null>(null)
 const labelsContainer = ref<HTMLDivElement | null>(null)
 const loading = ref<HTMLDivElement | null>(null)
 const sceneSectionHeaders = ref<HTMLDivElement | null>(null)
+const cursorScale = ref<number>(1)
 
 // Store state variables
 const store = useMainStore()
@@ -33,7 +34,7 @@ const addCircleOverCursor = (event: MouseEvent) => {
   const cursor = document.querySelector('.cursor') as HTMLElement
   if (cursor) {
     const offset = 20
-    cursor.style.transform = `translate(${event.clientX - offset}px, ${event.clientY - offset}px)`
+    cursor.style.transform = `translate(${event.clientX - offset}px, ${event.clientY - offset}px) scale(${cursorScale.value})`
   }
 }
 
@@ -44,10 +45,42 @@ const getContainer = () => {
 defineExpose({
   getContainer,
 })
+
+const cursorMouseDown = () => {
+  const cursor = document.querySelector('.cursor') as HTMLElement
+  if (cursor) {
+    // Get current transform and add scale to it
+    const currentTransform = cursor.style.transform || ''
+    const translateMatch = currentTransform.match(/translate\([^)]+\)/)
+    const translatePart = translateMatch ? translateMatch[0] : 'translate(0px, 0px)'
+
+    cursorScale.value = 1.2
+    cursor.style.transform = `${translatePart} scale(${cursorScale.value})`
+  }
+}
+
+const cursorMouseUp = () => {
+  const cursor = document.querySelector('.cursor') as HTMLElement
+  if (cursor) {
+    // Get current transform and remove scale
+    const currentTransform = cursor.style.transform || ''
+    const translateMatch = currentTransform.match(/translate\([^)]+\)/)
+    const translatePart = translateMatch ? translateMatch[0] : 'translate(0px, 0px)'
+
+    cursorScale.value = 1
+    cursor.style.transform = `${translatePart} scale(${cursorScale.value})`
+  }
+}
 </script>
 
 <template>
-  <div ref="mainContainer" class="main-container" @mousemove="addCircleOverCursor">
+  <div
+    ref="mainContainer"
+    class="main-container"
+    @mousemove="addCircleOverCursor"
+    @mousedown="cursorMouseDown"
+    @mouseup="cursorMouseUp"
+  >
     <div ref="loading" class="loading">
       <div class="loading-bar-container">
         <div class="loading-bar"></div>

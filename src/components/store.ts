@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 
 export const useMainStore = defineStore('main', {
   state: () => ({
+    currentArea: 'main',
+
     showHardSkills: false,
     showSoftSkills: false,
     showProjects: false,
@@ -207,6 +209,7 @@ export const useMainStore = defineStore('main', {
       this.delayClick = true
       this.cursorCircleVisible = false
       this.navigationMenuVisible = false
+      this.aboutNavigationVisible = false
 
       // Remove elements in class "hover-tag" (created by mouse_events.js)
       const hoverTags = document.querySelectorAll('.hover-tag')
@@ -323,6 +326,10 @@ export const useMainStore = defineStore('main', {
 
       // If Vue labels are open, don't enable mouse events
       if (!this.isVueLabelOpen) {
+        if (this.currentArea === 'skills') this.showAboutNavigation('skills')
+        else if (this.currentArea === 'about') this.showAboutNavigation('main')
+        else if (this.currentArea === 'experience') this.showAboutNavigation('experience')
+
         this.showDownloadCV = true
         this.navigationMenuVisible = true
         this.enableMouseEvents()
@@ -337,7 +344,7 @@ export const useMainStore = defineStore('main', {
     hidePngHeadersLoading() {
       this.showPngHeadersLoading = false
 
-      if (this.isVueLabelOpen) return
+      if (this.isVueLabelOpen || this.infoPanelVisible) return
       if (!this.infoPanelVisible) this.navigationMenuVisible = true
 
       this.aboutNavigationVisible = true
@@ -376,6 +383,9 @@ export const useMainStore = defineStore('main', {
     setCurrentProjectIndex(index: number) {
       this.currentProjectIndex = index
     },
+    setCurrentArea(area: string) {
+      this.currentArea = area
+    },
   },
   getters: {
     isHardSkillsVisible: (state) => state.showHardSkills,
@@ -402,6 +412,7 @@ export const useMainStore = defineStore('main', {
     getOutlinePass: (state) => state.outlinePass,
     get3DScene: (state) => state.scene,
     getSelectedProjectIndex: (state) => state.currentProjectIndex,
+    getCurrentArea: (state) => state.currentArea,
     isPngHeadersLoadingVisible: (state) => state.showPngHeadersLoading,
     isVueLabelOpen: (state) => {
       return (

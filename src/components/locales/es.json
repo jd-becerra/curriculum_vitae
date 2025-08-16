@@ -3,17 +3,29 @@
     "open": "Abrir Menú de Navegación",
     "close": "Cerrar Menú de Navegación",
     "main-view": "Regresar a la vista principal",
-    "about": "Ir a Sección Sobre mí",
+    "about": "Ir a Sección 'Sobre mí'",
     "summary": "Resumen",
     "skills": "Mis habilidades",
     "experience": "Certificados y experiencia",
-    "socials": "Ir a Sección Contacto y créditos",
-    "projects": "Ir a Sección Mis proyectos",
+    "socials": "Ir a Sección 'Contacto y créditos'",
+    "projects": "Ir a Sección 'Mis proyectos'",
     "info_panel": "Ayuda y Configuración",
-    "click_interact": "Haz clic en los objetos resaltados para interactuar con ellos",
-    "click_and_drag": "Haz clic y arrastra el ratón para mover la cámara",
-    "scroll_zoom": "Desplázate para acercar y alejar",
-    "download": "Descargar CV en formato PDF"
+    "instructions_title": "¿Cómo funciona este sitio?",
+    "instructions": "Aquí hay una guía para navegar e interactuar con el sitio (haz clic en las instrucciones para abrir un tutorial en video):",
+    "change_language": "Cambiar idioma",
+    "english": "Inglés",
+    "spanish": "Español",
+    "click_interact": "Haz clic en los objetos resaltados para interactuar con ellos.",
+    "click_and_drag": "Haz clic y arrastra el ratón para mover la cámara.",
+    "scroll_zoom": "Desplázate para acercar y alejar la cámara.",
+    "instructions_navigation": "También puedes usar el menú de navegación en el lado izquierdo para moverte entre secciones.",
+    "instructions_download": "También hay una opción para descargar mi CV en formato PDF en el lado izquierdo.",
+    "download": "Descargar CV en formato PDF",
+    "move_down_about": "Bajar a la sección 'Resumen'",
+    "move_up_skills": "Subir a la sección 'Habilidades'",
+    "move_down_experience": "Bajar a la sección 'Experiencia'",
+    "move_up_about": "Subir a la sección 'Sobre mí'",
+    "visit_link": "Si estás interesado en este proyecto, puedes consultar el código fuente en este enlace de Github:"
   },
   "scene-renderer": {
     "loading-text": "Cargando escena...",
@@ -383,6 +395,16 @@
         "name": "Flaticon - interaction animated icons",
         "author": "Freepik",
         "link": "https://www.flaticon.com/free-animated-icons/interaction"
+      },
+      {
+        "name": "Flaticon - United Kingdom free icon",
+        "author": "Freepik",
+        "link": "https://www.flaticon.com/free-icons/uk"
+      },
+      {
+        "name": "Flaticon - Spain free icon",
+        "author": "Freepik",
+        "link": "https://www.flaticon.com/free-icons/spain"
       }
     ]
   }

@@ -11,6 +11,7 @@ function createLoadingManager() {
     store.disableInfoPanel()
     store.disableInfoButton()
     store.hideNavigationMenu()
+    store.disableDownloadCV()
   }
 
   manager.onLoad = function () {

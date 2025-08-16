@@ -129,7 +129,10 @@ function handleReturnToMainView(controls, loop, scene) {
   isSocialsAreaActive = false
   isAboutAreaActive = false
   isProjectsAreaActive = false
-  useMainStore().disableComputerVisible()
+
+  const store = useMainStore()
+  store.disableComputerVisible()
+  store.setCurrentArea('main')
 
   // Return area selectors
   createAreaSelectors(scene, loop)
@@ -173,6 +176,7 @@ function handleProjectsClick(controls, loop, scene) {
 
   const store = useMainStore()
   store.enableComputerVisible()
+  store.setCurrentArea('projects')
 }
 
 // Moves to the general Socials area (over the fireplace, with trophies (contact icons) and a plaque with credits)
@@ -184,7 +188,10 @@ function handleSocialsClick(controls, loop, scene) {
   isAboutAreaActive = false
   isSocialsAreaActive = true
   isProjectsAreaActive = false
-  useMainStore().disableComputerVisible()
+
+  const store = useMainStore()
+  store.disableComputerVisible()
+  store.setCurrentArea('socials')
 
   // Render header
   const headersToRender = ['credits', 'socials']
@@ -207,6 +214,9 @@ function handleAboutSubarea(controls, loop, scene, subarea = 'main') {
 
   isAboutAreaActive = true
   store.disableComputerVisible()
+
+  if (subarea == 'main') store.setCurrentArea('about')
+  else store.setCurrentArea(subarea)
 
   removeAreaSelectors(scene)
 

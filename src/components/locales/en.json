@@ -10,10 +10,22 @@
     "socials": "Go to Contact and Credits Section",
     "projects": "Go to My Projects Section",
     "info_panel": "Help and Settings",
-    "click_interact": "Click on highlighted objects to interact with them",
-    "click_and_drag": "Click and drag mouse to move the camera",
-    "scroll_zoom": "Scroll to zoom in and out",
-    "download": "Download CV in PDF format"
+    "instructions_title": "How does this site work?",
+    "instructions": "Here is a guide to navigate and interact with the site (click on the instructions to open a video tutorial):",
+    "change_language": "Change Language",
+    "english": "English",
+    "spanish": "Spanish",
+    "click_interact": "Click on highlighted objects to interact with them.",
+    "click_and_drag": "Click and drag mouse to move the camera.",
+    "scroll_zoom": "Scroll to zoom in and out.",
+    "instructions_navigation": "You can also use the navigation menu on the left side to move between sections.",
+    "instructions_download": "There is also an option to download my CV in PDF format on the left side.",
+    "download": "Download CV in PDF format",
+    "move_down_about": "Move Down to Summary Section",
+    "move_up_skills": "Move Up to Skills Section",
+    "move_down_experience": "Move Down to Experience Section",
+    "move_up_about": "Move Up to About Section",
+    "visit_link": "If you are interested in this project, you can check the source code on this Github link:"
   },
   "scene-renderer": {
     "loading-text": "Loading scene...",
@@ -383,6 +395,16 @@
         "name": "Flaticon - interaction animated icons",
         "author": "Freepik",
         "link": "https://www.flaticon.com/free-animated-icons/interaction"
+      },
+      {
+        "name": "Flaticon - United Kingdom free icon",
+        "author": "Freepik",
+        "link": "https://www.flaticon.com/free-icons/uk"
+      },
+      {
+        "name": "Flaticon - Spain free icon",
+        "author": "Freepik",
+        "link": "https://www.flaticon.com/free-icons/spain"
       }
     ]
   }
