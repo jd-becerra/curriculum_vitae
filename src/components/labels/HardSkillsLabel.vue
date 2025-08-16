@@ -13,7 +13,7 @@
             :key="index"
             :text="hard_skill.description"
             :title="`${index + 1}. ${hard_skill.name}`"
-            :ref="(el) => (panelRefs[index] = el as HTMLElement)"
+            :ref="(el) => (panelRefs[index] = el)"
           ></v-expansion-panel>
         </v-expansion-panels>
       </div>
@@ -25,6 +25,7 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import { useMainStore } from '../store'
 import { useI18n } from 'vue-i18n'
+import { VExpansionPanel } from 'vuetify/components'
 import LabelContainer from '../LabelContainer.vue'
 import '../../assets/base.css'
 
@@ -66,19 +67,20 @@ const closeHardSkills = () => {
 }
 
 // Scroll to first selected panel
-const panelRefs = ref<HTMLElement[]>([])
+import type { ComponentPublicInstance } from 'vue'
+const panelRefs = ref<Array<ComponentPublicInstance | Element | null>>([])
 watch(panel, async (val) => {
   if (val.length === 1) {
-    // Will only work if only one panel is selected
-    await nextTick().then(() => {
-      const target = panelRefs.value[val[0]]
-      if (target?.$el || target?.$el?.scrollIntoView) {
+    await nextTick()
+    const target = panelRefs.value[val[0]]
+    // If it's a Vue component, use $el; if it's an Element, use directly
+    if (target) {
+      if ('$el' in target && target.$el instanceof Element) {
         target.$el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      } else if (target?.scrollIntoView) {
-        console.log('Scrolling into view')
+      } else if (target instanceof Element) {
         target.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
-    })
+    }
   }
 })
 const expandAllPanels = () => {
